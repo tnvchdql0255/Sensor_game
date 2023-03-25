@@ -11,15 +11,16 @@ class StageL1 extends StatefulWidget {
 
 class _Stage1State extends State<StageL1> {
   String _batteryStatus = "CurrentStatus";
+  Icon currentValue = const Icon(Icons.battery_6_bar);
   BatteryState? _batteryState;
   final Battery _battery = Battery();
   late Timer timer;
   StreamSubscription<BatteryState>? _batteryStateSubscription;
-
+  int persentage = 0;
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       getBatteryStatus();
     });
     _batteryStateSubscription = _battery.onBatteryStateChanged.listen((status) {
@@ -37,19 +38,21 @@ class _Stage1State extends State<StageL1> {
     setState(() {
       switch (_batteryState) {
         case BatteryState.full:
-          _batteryStatus = "full";
+          currentValue = const Icon(Icons.battery_charging_full);
+          persentage++;
           break;
         case BatteryState.charging:
-          _batteryStatus = "isCharging";
+          currentValue = const Icon(Icons.battery_charging_full);
+          persentage++;
           break;
         case BatteryState.discharging:
-          _batteryStatus = "discharging";
+          currentValue = const Icon(Icons.battery_0_bar);
           break;
         case BatteryState.unknown:
           _batteryStatus = "unknown";
           break;
         default:
-          _batteryStatus = "default";
+          currentValue = const Icon(Icons.battery_0_bar);
           break;
       }
     });
@@ -58,19 +61,15 @@ class _Stage1State extends State<StageL1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.lightBlue,
       appBar: AppBar(
-        title: Text("배터리상태 예제"),
+        title: const Text("배터리상태 예제"),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(_batteryStatus),
-          SizedBox(
-            height: 50,
-          ),
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.backspace_outlined),
-          ),
+          currentValue,
+          Text("$persentage"),
         ],
       ),
     );

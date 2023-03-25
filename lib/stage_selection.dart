@@ -9,12 +9,12 @@ class StageSelectionMenu extends StatefulWidget {
 }
 
 class _StageSelectionMenuState extends State<StageSelectionMenu> {
-  List<Widget> stageRoute = [StageL1()];
+  List<Widget> stageRoute = [const StageL1()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Temp")),
+        appBar: AppBar(title: const Text("Temp")),
         backgroundColor: Colors.lightBlue,
         body: Column(
           children: [
@@ -38,56 +38,48 @@ class RowStageSelection extends StatelessWidget {
         height: 20,
       ),
       itemBuilder: (context, index) {
-        return Container(
-          height: 50,
-          width: 50,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            color: Colors.blue.shade200,
-          ),
-          child: TextButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => stageRoute[index]));
-            },
-            child: Text(
-              "Stage $index",
-              style: TextStyle(fontSize: 30),
-            ),
-          ),
-        );
+        return stageSelectionPannel(context, index);
       },
     );
   }
-}
 
-class gridStageSelection extends StatelessWidget {
-  const gridStageSelection({
-    super.key,
-    required this.stageRoute,
-  });
-
-  final List<Widget> stageRoute;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: GridView.builder(
-        itemCount: 30,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 3 / 1,
+  GestureDetector stageSelectionPannel(BuildContext context, int index) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (_) => stageRoute[index]));
+      },
+      child: Container(
+        height: 50,
+        width: 200,
+        margin: const EdgeInsets.all(10),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+          color: Colors.blue.shade200,
         ),
-        itemBuilder: (BuildContext context, int index) {
-          return TextButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => stageRoute[index]));
-            },
-            child: Text('Button $index'),
-          );
-        },
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: const [
+                  Icon(
+                    Icons.lock_open,
+                    color: Colors.white,
+                  )
+                ],
+              ),
+              Text(
+                "Stage ${index + 1}",
+                style: const TextStyle(fontSize: 30, color: Colors.white),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
