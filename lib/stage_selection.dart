@@ -1,5 +1,7 @@
+import 'package:sensor_game/service/db_manager.dart';
 import 'package:sensor_game/stage/stage_L_1.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 class StageSelectionMenu extends StatefulWidget {
   const StageSelectionMenu({super.key});
@@ -10,6 +12,20 @@ class StageSelectionMenu extends StatefulWidget {
 
 class _StageSelectionMenuState extends State<StageSelectionMenu> {
   List<Widget> stageRoute = [const StageL1()];
+  late List<bool> isClearedList;
+  late final DBHelper dbHelper;
+  late Database db;
+  @override
+  void initState() {
+    getStage();
+    super.initState();
+  }
+
+  void getStage() async {
+    dbHelper = DBHelper();
+    db = await dbHelper.db;
+    isClearedList = await dbHelper.getAllStageStatus();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +34,28 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
         backgroundColor: Colors.lightBlue,
         body: Column(
           children: [
-            Expanded(child: RowStageSelection(stageRoute: stageRoute)),
+            Expanded(
+                child: RowStageSelection(
+              stageRoute: stageRoute,
+              stageStatusList: isClearedList,
+            )),
           ],
         ));
   }
 }
 
-class RowStageSelection extends StatelessWidget {
-  const RowStageSelection({super.key, required this.stageRoute});
+// ignore: must_be_immutable
+class RowStageSelection extends StatefulWidget {
+  RowStageSelection(
+      {super.key, required this.stageRoute, required this.stageStatusList});
   final List<Widget> stageRoute;
+  List<bool> stageStatusList;
 
+  @override
+  State<RowStageSelection> createState() => _RowStageSelectionState();
+}
+
+class _RowStageSelectionState extends State<RowStageSelection> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
@@ -38,49 +66,47 @@ class RowStageSelection extends StatelessWidget {
         height: 20,
       ),
       itemBuilder: (context, index) {
-        return stageSelectionPannel(context, index);
-      },
-    );
-  }
-
-  GestureDetector stageSelectionPannel(BuildContext context, int index) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (_) => stageRoute[index]));
-      },
-      child: Container(
-        height: 50,
-        width: 200,
-        margin: const EdgeInsets.all(10),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
-          color: Colors.blue.shade200,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  Icon(
-                    Icons.lock_open,
-                    color: Colors.white,
-                  )
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => widget.stageRoute[index]));
+          },
+          child: Container(
+            height: 50,
+            width: 200,
+            margin: const EdgeInsets.all(10),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              color: Colors.blue.shade200,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Icon(
+                        widget.stageStatusList[index]
+                            ? Icons.lock_open
+                            : Icons.lock,
+                        color: Colors.white,
+                      )
+                    ],
+                  ),
+                  Text(
+                    "Stage ${index + 1}",
+                    style: const TextStyle(fontSize: 30, color: Colors.white),
+                  ),
                 ],
               ),
-              Text(
-                "Stage ${index + 1}",
-                style: const TextStyle(fontSize: 30, color: Colors.white),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
