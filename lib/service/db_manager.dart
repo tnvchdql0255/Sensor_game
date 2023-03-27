@@ -60,4 +60,17 @@ class DBHelper {
     }
     return isClearedList;
   }
+
+  ///targetStage: 현재 스테이지, state: 바꿀 클리어 상태
+  Future<bool> changeIsCleared(int targetStage, bool state) async {
+    final db = await this.db;
+    try {
+      await db.rawUpdate(
+          '''UPDATE $TABLE_NAME SET isCleared = ? WHERE StageNum = ?''',
+          [state, targetStage]);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

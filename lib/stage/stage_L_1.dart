@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:battery_plus/battery_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:sensor_game/service/db_manager.dart';
+import 'package:sqflite/sqflite.dart';
 
 class StageL1 extends StatefulWidget {
   const StageL1({super.key});
@@ -10,6 +12,12 @@ class StageL1 extends StatefulWidget {
 }
 
 class _Stage1State extends State<StageL1> {
+  DBHelper dbHelper = DBHelper();
+  late final Database db;
+  void getDB() async {
+    db = await dbHelper.db;
+  }
+
   String _batteryStatus = "CurrentStatus";
   Icon currentValue = const Icon(Icons.battery_6_bar);
   BatteryState? _batteryState;
@@ -70,6 +78,16 @@ class _Stage1State extends State<StageL1> {
         children: [
           currentValue,
           Text("$persentage"),
+          IconButton(
+              onPressed: () async {
+                dbHelper.changeIsCleared(1, true);
+              },
+              icon: const Icon(Icons.add)),
+          IconButton(
+              onPressed: () async {
+                dbHelper.changeIsCleared(1, false);
+              },
+              icon: const Icon(Icons.remove)),
         ],
       ),
     );
