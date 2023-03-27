@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:sensor_game/stage_selection.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: MyHome());
+    return const MaterialApp(debugShowCheckedModeBanner: false, home: MyHome());
   }
 }
 
@@ -25,15 +24,15 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> {
   @override
   Widget build(BuildContext context) {
-    var textStyle = TextStyle(
+    var textStyle = const TextStyle(
         color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600);
     return Scaffold(
-      appBar: AppBar(title: Text("Temp")),
+      appBar: AppBar(title: const Text("Temp")),
       backgroundColor: Colors.lightBlue,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Game Title",
             style: TextStyle(fontSize: 40, color: Colors.white60),
           ),
@@ -41,7 +40,7 @@ class _MyHomeState extends State<MyHome> {
               onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => StageSelectionMenu()),
+                        builder: (context) => const StageSelectionMenu()),
                   ),
               child: Text(
                 "게임 시작",
