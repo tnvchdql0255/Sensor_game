@@ -43,6 +43,9 @@ class DBHelper {
             VALUES (?, ?)
             ''', [i, false]);
         }
+        await db.rawUpdate('''
+          UPDATE $TABLE_NAME SET isCleared = ? WHERE StageNum = ?
+          ''', [true, 1]);
       });
       return db;
     } else {
