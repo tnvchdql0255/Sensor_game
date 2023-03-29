@@ -13,10 +13,10 @@ packages:
     dependency: transitive
     description:
       name: async
-      sha256: bfe67ef28df125b7dddcea62755991f807aa39a2492a23e1550161692950bbe0
+      sha256: "947bfcf187f74dbc5e146c9eb9c0f10c9f8b30743e341481c1e2ed3ecc18c20c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.10.0"
+    version: "2.11.0"
   battery_plus:
     dependency: "direct main"
     description:
@@ -128,6 +128,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
+  light:
+    dependency: "direct main"
+    description:
+      name: light
+      sha256: b4c8f9f1faad2c0b60f53ae0bc78c02a5645edeb889802cfed2137a0a04ed57a
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   lints:
     dependency: transitive
     description:
