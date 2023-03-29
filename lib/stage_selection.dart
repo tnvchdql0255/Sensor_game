@@ -11,7 +11,7 @@ class StageSelectionMenu extends StatefulWidget {
 }
 
 class _StageSelectionMenuState extends State<StageSelectionMenu> {
-  List<Widget> stageRoute = [StageL1()];
+  List<Widget> stageRoute = [const StageL1()];
 
   @override
   void initState() {
@@ -45,7 +45,7 @@ class RowStageSelection extends StatefulWidget {
 }
 
 class _RowStageSelectionState extends State<RowStageSelection> {
-  late List<bool> isClearedList;
+  late List<bool> isAccessibleList;
   late final DBHelper dbHelper;
   late Database db;
 
@@ -57,8 +57,8 @@ class _RowStageSelectionState extends State<RowStageSelection> {
 
   Future<List<bool>> getStage() async {
     db = await dbHelper.db;
-    isClearedList = await dbHelper.getAllStageStatus();
-    return isClearedList;
+    isAccessibleList = await dbHelper.getAllStageStatus();
+    return isAccessibleList;
   }
 
   @override
