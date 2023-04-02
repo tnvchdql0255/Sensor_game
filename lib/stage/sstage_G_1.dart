@@ -15,6 +15,7 @@ class _StageG1State extends State<StageG1> {
   String _luxString = 'Unknown'; //밝기의 초기값은 'Unknown'으로 지정
   late Light _light; //밝기 값을 읽어들이는 _light 변수 선언
   late StreamSubscription _subscription; //이벤트 처리를 위한 StreamSubscription 변수 선언
+  //int lux = 0;
 
   //읽어들인 밝기 값(luxvalue)의 상태를 출력하는 onData 함수 생성
   void onData(int luxValue) async {
@@ -47,6 +48,15 @@ class _StageG1State extends State<StageG1> {
     initPlatformState();
   }
 
+  /*
+  void main() {
+    try {
+      Timer(Duration(seconds: 4), () => lux = int.parse(_luxString));
+    } on FormatException catch (exception) {
+      lux = -1;
+    }
+  }*/
+
   //초기 상태는 startListening 함수를 실행하여 밝기 값을 읽어들이는 상태로 설정
   Future<void> initPlatformState() async {
     startListening();
@@ -59,8 +69,33 @@ class _StageG1State extends State<StageG1> {
       home: new Scaffold(
         appBar: new AppBar(
           title: const Text('눈을 감기게 해줘라!'),
+          centerTitle: true,
         ),
-        body: new Center(child: new Text('밝기 값: $_luxString\n')),
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                    child: new Text('밝기 값: $_luxString\n',
+                        style: TextStyle(fontSize: 30))),
+                Container(
+                  width: 400,
+                  height: 400,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/insomnia.png'),
+                      /*
+                      image: lux > 10
+                          ? AssetImage('assets/images/insomnia.png')
+                          : AssetImage('assets/images/sleeping.png'),*/
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
