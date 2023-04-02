@@ -110,6 +110,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  flutter_speech:
+    dependency: "direct main"
+    description:
+      name: flutter_speech
+      sha256: d818e653b72516fd93bdb19731c98f3daf46d7990c77c4a84920a44830460a20
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter

@@ -3,15 +3,15 @@ import 'dart:async';
 import 'package:light/light.dart';
 import 'package:flutter/material.dart';
 
-//StatefulWidget을 사용하는 StageG1 클래스 생성
-class StageG1 extends StatefulWidget {
-  const StageG1({super.key});
+//StatefulWidget을 사용하는 StageG3 클래스 생성
+class StageG3 extends StatefulWidget {
+  const StageG3({super.key});
 
   @override
-  State<StageG1> createState() => _StageG1State();
+  State<StageG3> createState() => _StageG3State();
 }
 
-class _StageG1State extends State<StageG1> {
+class _StageG3State extends State<StageG3> {
   int _luxint = 0; //밝기의 초기값은 0으로 지정
   late Light _light; //밝기 값을 읽어들이는 _light 변수 선언
   late StreamSubscription _subscription; //이벤트 처리를 위한 StreamSubscription 변수 선언
@@ -59,7 +59,7 @@ class _StageG1State extends State<StageG1> {
       home: new Scaffold(
         appBar: new AppBar(
           //상단의 타이틀 부분 설정 (가운데 정렬)
-          title: const Text('눈을 감기게 해줘라!'),
+          title: const Text('스파이를 숨겨줘라!'),
           centerTitle: true,
         ),
         body: SafeArea(
@@ -78,11 +78,11 @@ class _StageG1State extends State<StageG1> {
                   width: 400,
                   height: 400,
                   decoration: BoxDecoration(
-                    //밝기 값이 15보다 작으면 자는 이미지를 출력하고, 그렇지 않으면 졸린 이미지를 출력
+                    //밝기 값이 15보다 작으면 달리는 이미지를 출력하고, 그렇지 않으면 스파이 이미지를 출력
                     image: DecorationImage(
                         image: _luxint < 15
-                            ? AssetImage('assets/images/insomnia.png')
-                            : AssetImage('assets/images/sleeping.png')),
+                            ? AssetImage('assets/images/run.png')
+                            : AssetImage('assets/images/espionage.png')),
                   ),
                 ),
               ],
