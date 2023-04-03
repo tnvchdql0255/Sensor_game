@@ -42,15 +42,9 @@ class DBHelper {
             VALUES (?, ?, ?)
             ''', [i, false, false]);
         }
-<<<<<<< HEAD
-        await db.rawUpdate('''
-          UPDATE $TABLE_NAME SET isCleared = ? WHERE StageNum = ?
-          ''', [true, 1]);
-=======
         await db.rawUpdate(
             ''' UPDATE $TABLE_NAME SET isAccessible = ? WHERE StageNum = ?''',
             [true, 1]); //초기화된 스테이지 리스트는 1스테이지만 접근가능
->>>>>>> 8b7043c (stable update on DB)
       });
       return db;
     } else {
