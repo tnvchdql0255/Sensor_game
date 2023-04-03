@@ -1,4 +1,5 @@
 import 'package:sensor_game/stage/stage_L_1.dart';
+import 'package:sensor_game/stage/stage_S_1.dart';
 import 'package:flutter/material.dart';
 
 class StageSelectionMenu extends StatefulWidget {
@@ -9,7 +10,9 @@ class StageSelectionMenu extends StatefulWidget {
 }
 
 class _StageSelectionMenuState extends State<StageSelectionMenu> {
-  List<Widget> stageRoute = [StageL1()];
+  List<Widget> stageRoute = [
+    const StageS1(),
+    const StageL1()];
 
   @override
   Widget build(BuildContext context) {
