@@ -63,7 +63,6 @@ class _StageG2State extends State<StageG2> {
           centerTitle: true,
         ),
         body: SafeArea(
-          //body 부분 설정)
           child: Center(
             //아래의 요소들을 가로로 가운데 정렬
             child: Column(
