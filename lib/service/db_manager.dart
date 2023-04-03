@@ -33,19 +33,24 @@ class DBHelper {
           onCreate: (Database db, int version) async {
         await db.execute('''
           CREATE TABLE $TABLE_NAME (
-            StageNum INTEGER PRIMARY KEY,
-            isCleared BOOLEAN NOT NULL
+            StageNum INTEGER PRIMARY KEY, isCleared BOOLEAN NOT NULL, isAccessible BOOLEAN NOT NULL
           )
           ''');
         for (int i = 1; i <= 30; i++) {
           await db.rawInsert('''
-            INSERT INTO $TABLE_NAME (StageNum, isCleared)
-            VALUES (?, ?)
-            ''', [i, false]);
+            INSERT INTO $TABLE_NAME (StageNum, isCleared, isAccessible)
+            VALUES (?, ?, ?)
+            ''', [i, false, false]);
         }
+<<<<<<< HEAD
         await db.rawUpdate('''
           UPDATE $TABLE_NAME SET isCleared = ? WHERE StageNum = ?
           ''', [true, 1]);
+=======
+        await db.rawUpdate(
+            ''' UPDATE $TABLE_NAME SET isAccessible = ? WHERE StageNum = ?''',
+            [true, 1]); //초기화된 스테이지 리스트는 1스테이지만 접근가능
+>>>>>>> 8b7043c (stable update on DB)
       });
       return db;
     } else {
@@ -56,12 +61,12 @@ class DBHelper {
 
   Future<List<bool>> getAllStageStatus() async {
     final db = await this.db;
-    List<Map> result = await db.query(TABLE_NAME, columns: ['isCleared']);
-    List<bool> isClearedList = [];
+    List<Map> result = await db.query(TABLE_NAME, columns: ['isAccessible']);
+    List<bool> isAccessibleList = [];
     for (int i = 0; i < result.length; i++) {
-      isClearedList.add(result[i]['isCleared'] == 1 ? true : false);
+      isAccessibleList.add(result[i]['isAccessible'] == 1 ? true : false);
     }
-    return isClearedList;
+    return isAccessibleList;
   }
 
   ///targetStage: 현재 스테이지, state: 바꿀 클리어 상태
@@ -70,6 +75,19 @@ class DBHelper {
     try {
       await db.rawUpdate(
           '''UPDATE $TABLE_NAME SET isCleared = ? WHERE StageNum = ?''',
+          [state, targetStage]);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  ///tragetStage:현재 스테이지 + 1(클리어시 다음스테이지 언락), state:바꿀 acccessible 상태
+  Future<bool> changeIsAccessible(int targetStage, bool state) async {
+    final db = await this.db;
+    try {
+      await db.rawUpdate(
+          '''UPDATE $TABLE_NAME SET isAccessible = ? WHERE StageNum = ?''',
           [state, targetStage]);
       return true;
     } catch (e) {
