@@ -11,20 +11,11 @@ class StageSelectionMenu extends StatefulWidget {
 }
 
 class _StageSelectionMenuState extends State<StageSelectionMenu> {
-  List<Widget> stageRoute = [const StageL1()];
-  late List<bool> isClearedList;
-  late final DBHelper dbHelper;
-  late Database db;
+  List<Widget> stageRoute = [StageL1()];
+
   @override
   void initState() {
-    getStage();
     super.initState();
-  }
-
-  void getStage() async {
-    dbHelper = DBHelper();
-    db = await dbHelper.db;
-    isClearedList = await dbHelper.getAllStageStatus();
   }
 
   @override
@@ -37,7 +28,6 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
             Expanded(
                 child: RowStageSelection(
               stageRoute: stageRoute,
-              stageStatusList: isClearedList,
             )),
           ],
         ));
@@ -46,16 +36,31 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
 
 // ignore: must_be_immutable
 class RowStageSelection extends StatefulWidget {
-  RowStageSelection(
-      {super.key, required this.stageRoute, required this.stageStatusList});
+  // ignore: prefer_const_constructors_in_immutables
+  RowStageSelection({super.key, required this.stageRoute});
   final List<Widget> stageRoute;
-  List<bool> stageStatusList;
 
   @override
   State<RowStageSelection> createState() => _RowStageSelectionState();
 }
 
 class _RowStageSelectionState extends State<RowStageSelection> {
+  late List<bool> isClearedList;
+  late final DBHelper dbHelper;
+  late Database db;
+
+  @override
+  void initState() {
+    dbHelper = DBHelper();
+    super.initState();
+  }
+
+  Future<List<bool>> getStage() async {
+    db = await dbHelper.db;
+    isClearedList = await dbHelper.getAllStageStatus();
+    return isClearedList;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
@@ -69,7 +74,8 @@ class _RowStageSelectionState extends State<RowStageSelection> {
         return GestureDetector(
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (_) => widget.stageRoute[index]));
+                    MaterialPageRoute(builder: (_) => widget.stageRoute[index]))
+                .then((value) => setState(() {}));
           },
           child: Container(
             height: 50,
@@ -81,28 +87,38 @@ class _RowStageSelectionState extends State<RowStageSelection> {
               borderRadius: const BorderRadius.all(Radius.circular(20)),
               color: Colors.blue.shade200,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Icon(
-                        widget.stageStatusList[index]
-                            ? Icons.lock_open
-                            : Icons.lock,
-                        color: Colors.white,
-                      )
-                    ],
-                  ),
-                  Text(
-                    "Stage ${index + 1}",
-                    style: const TextStyle(fontSize: 30, color: Colors.white),
-                  ),
-                ],
-              ),
+            child: FutureBuilder(
+              future: getStage(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Icon(
+                              snapshot.data![index]
+                                  ? Icons.lock_open
+                                  : Icons.lock,
+                              color: Colors.white,
+                            )
+                          ],
+                        ),
+                        Text(
+                          "Stage ${index + 1}",
+                          style: const TextStyle(
+                              fontSize: 30, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              },
             ),
           ),
         );
