@@ -114,5 +114,26 @@ class PopUps {
   }
 
   ///스테이지 마다 override 해서 사용
-  void resetStage() {}
+  Future<dynamic> showHintTabBar(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            insetPadding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.5),
+            elevation: 0,
+            content: Center(
+              child: Column(
+                children: const [
+                  TabBar(tabs: [
+                    Tab(
+                      child: Text("hardCoded"),
+                    )
+                  ])
+                ],
+              ),
+            ),
+          );
+        });
+  }
 }
