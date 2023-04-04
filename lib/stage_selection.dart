@@ -16,12 +16,11 @@ class StageSelectionMenu extends StatefulWidget {
 
 class _StageSelectionMenuState extends State<StageSelectionMenu> {
   List<Widget> stageRoute = [
-    const StageG4(),
     const StageG1(),
     const StageG2(),
     const StageG3(),
     const StageG4(),
-    const StageL1()
+    const StageL1(),
   ];
 
   @override

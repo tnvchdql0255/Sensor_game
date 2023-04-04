@@ -2,6 +2,9 @@
 import 'dart:async';
 import 'package:light/light.dart';
 import 'package:flutter/material.dart';
+import 'package:sensor_game/common_ui/start.dart';
+import 'package:sensor_game/service/db_manager.dart';
+import 'package:sqflite/sqflite.dart';
 
 //StatefulWidget을 사용하는 StageG1 클래스 생성
 class StageG1 extends StatefulWidget {
@@ -12,9 +15,22 @@ class StageG1 extends StatefulWidget {
 }
 
 class _StageG1State extends State<StageG1> {
-  int _luxint = 0; //밝기의 초기값은 0으로 지정
+  int _luxint = 0; //밝기의 값을 저장하는 _luxint 변수 선언
+  bool isClear = false; //클리어 조건을 만족했는지를 체크하는 isClear 변수 선언
+
+  late Timer _timer; //타이머를 위한 _timer 변수 선언
+  late Timer _timer2;
   late Light _light; //밝기 값을 읽어들이는 _light 변수 선언
   late StreamSubscription _subscription; //이벤트 처리를 위한 StreamSubscription 변수 선언
+
+  List<int> lightList = []; //밝기 값을 저장하는 lightList 생성
+
+  PopUps popUps = const PopUps(startMessage: "스테이지 1", quest: "눈을 감기게 해줘라!");
+  DBHelper dbHelper = DBHelper();
+  late final Database db;
+  void getDB() async {
+    db = await dbHelper.db;
+  }
 
   //읽어들인 밝기 값(luxvalue)의 상태를 출력하는 onData 함수 생성
   void onData(int luxValue) async {
@@ -38,6 +54,27 @@ class _StageG1State extends State<StageG1> {
       //예외 처리
       print(exception);
     }
+
+    //1초마다 반복되는 타이머 생성
+    _timer = Timer.periodic(Duration(milliseconds: 1000), (timer) {
+      //만약 읽어들인 밝기 값이 15보다 작다면 lightList에 추가
+      if (_luxint < 15) {
+        setState(() {
+          lightList.add(_luxint);
+
+          //만약 4초 동안 읽어들인 밝기 값이 15보다 작다면
+          if (lightList.length == 4 &&
+              lightList.every((element) => element < 15)) {
+            _timer.cancel(); //타이머를 종료
+            lightList.clear(); //lightList를 비움
+            isClear = true; //클리어 조건을 만족했음을 알리는 isClear 변수를 true로 설정
+          }
+        });
+      } else {
+        //그 외의 경우에는 lightList를 비움
+        lightList.clear();
+      }
+    });
   }
 
   //초기 상태를 설정하는 initState 함수 생성
@@ -45,11 +82,39 @@ class _StageG1State extends State<StageG1> {
   void initState() {
     super.initState();
     initPlatformState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      popUps.showStartMessage(context);
+    });
   }
 
   //초기 상태는 startListening 함수를 실행하여 밝기 값을 읽어들이는 상태로 설정
   Future<void> initPlatformState() async {
     startListening();
+
+    _timer2 = Timer.periodic(const Duration(seconds: 1), (timer) {
+      clearStatus();
+    });
+  }
+
+  void clearStatus() async {
+    setState(() {
+      if (isClear == true) {
+        _timer2.cancel();
+        popUps.showClearedMessage(context).then((value) {
+          if (value == 1) {
+            //다시하기 버튼 코드
+            initPlatformState();
+            setState(() {});
+          }
+          if (value == 2) {
+            //메뉴 버튼 코드
+          }
+          dbHelper.changeIsAccessible(2, true);
+          dbHelper.changeIsCleared(1, true);
+        });
+      }
+    });
   }
 
   //위젯 설정
@@ -70,16 +135,16 @@ class _StageG1State extends State<StageG1> {
               children: <Widget>[
                 Container(
                     //밝기 값을 출력하는 컨테이너
-                    child: new Text('밝기 값: $_luxint\n',
+                    child: new Text('밝기 값: $_luxint, $lightList',
                         style: TextStyle(fontSize: 30))),
                 Container(
                   //이미지를 출력하는 컨테이너
                   width: 400,
                   height: 400,
                   decoration: BoxDecoration(
-                    //밝기 값이 15보다 작으면 자는 이미지를 출력하고, 그렇지 않으면 졸린 이미지를 출력
+                    //클리어 조건을 만족 시 자는 이미지를 출력하고, 그렇지 않으면 졸린 이미지를 출력
                     image: DecorationImage(
-                        image: _luxint < 15
+                        image: isClear == false
                             ? AssetImage('assets/images/insomnia.png')
                             : AssetImage('assets/images/sleeping.png')),
                   ),
