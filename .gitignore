@@ -47,3 +47,4 @@ ios/Podfile
 ios/Podfile.lock
 macos/Podfile
 macos/Podfile.lock
+.vscode/
