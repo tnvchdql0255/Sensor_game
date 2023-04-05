@@ -16,23 +16,27 @@ class StageG1 extends StatefulWidget {
 
 class _StageG1State extends State<StageG1> {
   int _luxint = 0; //밝기의 값을 저장하는 _luxint 변수 선언
-  bool isClear = false; //클리어 조건을 만족했는지를 체크하는 isClear 변수 선언
+  int _bRGB = 255; //배경 화면의 RGB 값을 저장하는 _bRGB 변수 선언
+  bool _isClear = false; //클리어 조건을 만족했는지를 체크하는 _isClear 변수 선언
 
-  late Timer _timer; //타이머를 위한 _timer 변수 선언
-  late Timer _timer2;
+  late Timer checkLightTimer; //1초마다 밝기 값이 낮은지를 체크하는 타이머를 위한 변수 선언
+  late Timer checkClearTimer; //1초마다 클리어 상태를 체크하는 타이머를 위한 변수 선언
   late Light _light; //밝기 값을 읽어들이는 _light 변수 선언
-  late StreamSubscription _subscription; //이벤트 처리를 위한 StreamSubscription 변수 선언
+  late StreamSubscription _subscription; //이벤트 처리를 위한 _subscription 변수 선언
 
   List<int> lightList = []; //밝기 값을 저장하는 lightList 생성
 
+  //스테이지 시작 시, 스테이지 설명을 출력하는 PopUps 클래스의 인스턴스 생성
   PopUps popUps = const PopUps(startMessage: "스테이지 1", quest: "눈을 감기게 해줘라!");
   DBHelper dbHelper = DBHelper();
   late final Database db;
+
   void getDB() async {
+    //DB를 불러오는 getDB 함수 생성
     db = await dbHelper.db;
   }
 
-  //읽어들인 밝기 값(luxvalue)의 상태를 출력하는 onData 함수 생성
+  //읽어들인 밝기 값(luxValue)의 상태를 출력하는 onData 함수 생성
   void onData(int luxValue) async {
     print("밝기 값: $luxValue");
     setState(() {
@@ -56,23 +60,28 @@ class _StageG1State extends State<StageG1> {
     }
 
     //1초마다 반복되는 타이머 생성
-    _timer = Timer.periodic(Duration(milliseconds: 1000), (timer) {
-      //만약 읽어들인 밝기 값이 15보다 작다면 lightList에 추가
+    checkLightTimer = Timer.periodic(Duration(milliseconds: 1000), (timer) {
+      //만약 읽어들인 밝기 값이 15보다 작다면
       if (_luxint < 15) {
         setState(() {
-          lightList.add(_luxint);
+          lightList.add(_luxint); //읽어들인 밝기 값을 lightList에 추가
+          _bRGB -= 50; //배경 화면의 RGB 값을 50씩 감소
 
           //만약 4초 동안 읽어들인 밝기 값이 15보다 작다면
           if (lightList.length == 4 &&
               lightList.every((element) => element < 15)) {
-            _timer.cancel(); //타이머를 종료
+            checkLightTimer.cancel(); //타이머를 종료
+            stopListening(); //밝기 값을 읽어들이는 것을 중지
+
             lightList.clear(); //lightList를 비움
-            isClear = true; //클리어 조건을 만족했음을 알리는 isClear 변수를 true로 설정
+            _bRGB = 0; //배경 화면의 RGB 값을 0으로 설정
+            _isClear = true; //클리어 조건을 만족했음을 알리는 isClear 변수를 true로 설정
           }
         });
       } else {
-        //그 외의 경우에는 lightList를 비움
-        lightList.clear();
+        //그 외의 경우에는
+        _bRGB = 255; //배경 화면의 RGB 값을 255로 설정
+        lightList.clear(); //lightList를 비움
       }
     });
   }
@@ -92,26 +101,37 @@ class _StageG1State extends State<StageG1> {
   Future<void> initPlatformState() async {
     startListening();
 
-    _timer2 = Timer.periodic(const Duration(seconds: 1), (timer) {
+    //1초마다 반복되는 타이머 생성
+    checkClearTimer =
+        Timer.periodic(const Duration(milliseconds: 1000), (timer) {
       clearStatus();
     });
   }
 
+  //클리어 상태를 확인하는 clearStatus 함수 생성
   void clearStatus() async {
     setState(() {
-      if (isClear == true) {
-        _timer2.cancel();
+      if (_isClear == true) {
+        //클리어 조건을 만족했다면
+        checkClearTimer.cancel(); //타이머를 종료
         popUps.showClearedMessage(context).then((value) {
+          //클리어 메시지를 출력
           if (value == 1) {
             //다시하기 버튼 코드
-            initPlatformState();
-            setState(() {});
+            initPlatformState(); //다시 시작할 시, 밝기 값을 읽어들이는 상태로 재설정
+            setState(() {
+              _bRGB = 255; //다시 시작할 시, 배경 화면의 RGB 값을 255로 재설정
+              _isClear = false; //다시 시작할 시, isClear 변수를 false로 재설정
+            });
           }
           if (value == 2) {
             //메뉴 버튼 코드
+            setState(() {
+              _isClear = false; //메뉴로 돌아갈 시, isClear 변수를 false로 재설정
+            });
           }
-          dbHelper.changeIsAccessible(2, true);
-          dbHelper.changeIsCleared(1, true);
+          dbHelper.changeIsAccessible(2, true); //스테이지 2를 이용 가능한 것으로 설정
+          dbHelper.changeIsCleared(1, true); //스테이지 1을 클리어한 것으로 설정
         });
       }
     });
@@ -122,6 +142,7 @@ class _StageG1State extends State<StageG1> {
   Widget build(BuildContext context) {
     return new MaterialApp(
       home: new Scaffold(
+        backgroundColor: Color.fromARGB(255, _bRGB, _bRGB, _bRGB),
         appBar: new AppBar(
           //상단의 타이틀 부분 설정 (가운데 정렬)
           title: const Text('눈을 감기게 해줘라!'),
@@ -138,17 +159,16 @@ class _StageG1State extends State<StageG1> {
                     child: new Text('밝기 값: $_luxint, $lightList',
                         style: TextStyle(fontSize: 30))),
                 Container(
-                  //이미지를 출력하는 컨테이너
-                  width: 400,
-                  height: 400,
-                  decoration: BoxDecoration(
-                    //클리어 조건을 만족 시 자는 이미지를 출력하고, 그렇지 않으면 졸린 이미지를 출력
-                    image: DecorationImage(
-                        image: isClear == false
-                            ? AssetImage('assets/images/insomnia.png')
-                            : AssetImage('assets/images/sleeping.png')),
-                  ),
-                ),
+                    //이미지를 출력하는 컨테이너
+                    width: 400,
+                    height: 400,
+                    decoration: BoxDecoration(
+                      //클리어 조건을 만족 시 자는 이미지를 출력하고, 그렇지 않으면 졸린 이미지를 출력
+                      image: DecorationImage(
+                          image: _isClear == false
+                              ? AssetImage('assets/images/insomnia.png')
+                              : AssetImage('assets/images/sleeping.png')),
+                    )),
               ],
             ),
           ),
