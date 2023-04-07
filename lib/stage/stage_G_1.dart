@@ -31,8 +31,8 @@ class _StageG1State extends State<StageG1> {
   DBHelper dbHelper = DBHelper();
   late final Database db;
 
+  //DB를 불러오는 getDB 함수 생성
   void getDB() async {
-    //DB를 불러오는 getDB 함수 생성
     db = await dbHelper.db;
   }
 
@@ -59,7 +59,7 @@ class _StageG1State extends State<StageG1> {
       print(exception);
     }
 
-    //1초마다 반복되는 타이머 생성
+    //1초마다 클리어 조건을 만족하는지 확인하는 타이머 생성
     checkLightTimer = Timer.periodic(Duration(milliseconds: 1000), (timer) {
       //만약 읽어들인 밝기 값이 15보다 작다면
       if (_luxint < 15) {
@@ -101,7 +101,7 @@ class _StageG1State extends State<StageG1> {
   Future<void> initPlatformState() async {
     startListening();
 
-    //1초마다 반복되는 타이머 생성
+    //1초마다 클리어 상태를 확인하는 타이머 생성
     checkClearTimer =
         Timer.periodic(const Duration(milliseconds: 1000), (timer) {
       clearStatus();
@@ -140,10 +140,10 @@ class _StageG1State extends State<StageG1> {
   //위젯 설정
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new Scaffold(
+    return MaterialApp(
+      home: Scaffold(
         backgroundColor: Color.fromARGB(255, _bRGB, _bRGB, _bRGB),
-        appBar: new AppBar(
+        appBar: AppBar(
           //상단의 타이틀 부분 설정 (가운데 정렬)
           title: const Text('눈을 감기게 해줘라!'),
           centerTitle: true,
@@ -156,7 +156,7 @@ class _StageG1State extends State<StageG1> {
               children: <Widget>[
                 Container(
                     //밝기 값을 출력하는 컨테이너
-                    child: new Text('밝기 값: $_luxint, $lightList',
+                    child: Text('밝기 값: $_luxint, $lightList',
                         style: TextStyle(fontSize: 30))),
                 Container(
                     //이미지를 출력하는 컨테이너
