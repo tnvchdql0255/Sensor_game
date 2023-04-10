@@ -40,6 +40,7 @@ dependencies:
   path: ^1.8.2
   light: ^2.1.0
   flutter_speech: ^2.0.0
+  flutter_svg: ^2.0.4
 
 dev_dependencies:
   flutter_test:
@@ -65,13 +66,16 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/insomnia.png
-    - assets/images/sleeping.png
     - assets/images/egg.png
     - assets/images/hatch.png
     - assets/images/espionage.png
     - assets/images/run.png
     - assets/images/parrot.png
+    - assets/audios/Peace.ogg
+    - assets/images/stage_G_1_1.svg
+    - assets/images/stage_G_1_2.svg
+    - assets/images/stage_G_1_3.svg
+    - assets/images/stage_G_1_4.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
