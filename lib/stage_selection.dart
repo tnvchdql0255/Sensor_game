@@ -1,6 +1,8 @@
+import 'package:sensor_game/service/db_manager.dart';
 import 'package:sensor_game/stage/stage_L_1.dart';
 import 'package:sensor_game/stage/stage_S_1.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 class StageSelectionMenu extends StatefulWidget {
   const StageSelectionMenu({super.key});
@@ -10,26 +12,55 @@ class StageSelectionMenu extends StatefulWidget {
 }
 
 class _StageSelectionMenuState extends State<StageSelectionMenu> {
-  List<Widget> stageRoute = [
-    const StageS1(),
-    const StageL1()];
+  List<Widget> stageRoute = [const StageL1(), const StageS1()];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Temp")),
+        appBar: AppBar(title: const Text("Temp")),
         backgroundColor: Colors.lightBlue,
         body: Column(
           children: [
-            Expanded(child: RowStageSelection(stageRoute: stageRoute)),
+            Expanded(
+                child: RowStageSelection(
+              stageRoute: stageRoute,
+            )),
           ],
         ));
   }
 }
 
-class RowStageSelection extends StatelessWidget {
-  const RowStageSelection({super.key, required this.stageRoute});
+// ignore: must_be_immutable
+class RowStageSelection extends StatefulWidget {
+  // ignore: prefer_const_constructors_in_immutables
+  RowStageSelection({super.key, required this.stageRoute});
   final List<Widget> stageRoute;
+
+  @override
+  State<RowStageSelection> createState() => _RowStageSelectionState();
+}
+
+class _RowStageSelectionState extends State<RowStageSelection> {
+  late List<bool> isAccessibleList;
+  late final DBHelper dbHelper;
+  late Database db;
+
+  @override
+  void initState() {
+    dbHelper = DBHelper();
+    super.initState();
+  }
+
+  Future<List<bool>> getStage() async {
+    db = await dbHelper.db;
+    isAccessibleList = await dbHelper.getAllStageStatus();
+    return isAccessibleList;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,57 +72,58 @@ class RowStageSelection extends StatelessWidget {
         height: 20,
       ),
       itemBuilder: (context, index) {
-        return Container(
-          height: 50,
-          width: 50,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            color: Colors.blue.shade200,
-          ),
-          child: TextButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => stageRoute[index]));
-            },
-            child: Text(
-              "Stage $index",
-              style: TextStyle(fontSize: 30),
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => widget.stageRoute[index]))
+                .then((value) => setState(() {}));
+          },
+          child: Container(
+            height: 50,
+            width: 200,
+            margin: const EdgeInsets.all(10),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              color: Colors.blue.shade200,
+            ),
+            child: FutureBuilder(
+              future: getStage(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Icon(
+                              snapshot.data![index]
+                                  ? Icons.lock_open
+                                  : Icons.lock,
+                              color: Colors.white,
+                            )
+                          ],
+                        ),
+                        Text(
+                          "Stage ${index + 1}",
+                          style: const TextStyle(
+                              fontSize: 30, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              },
             ),
           ),
         );
       },
-    );
-  }
-}
-
-class gridStageSelection extends StatelessWidget {
-  const gridStageSelection({
-    super.key,
-    required this.stageRoute,
-  });
-
-  final List<Widget> stageRoute;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: GridView.builder(
-        itemCount: 30,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 3 / 1,
-        ),
-        itemBuilder: (BuildContext context, int index) {
-          return TextButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => stageRoute[index]));
-            },
-            child: Text('Button $index'),
-          );
-        },
-      ),
     );
   }
 }
