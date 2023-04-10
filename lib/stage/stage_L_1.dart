@@ -13,7 +13,10 @@ class StageL1 extends StatefulWidget {
 }
 
 class _Stage1State extends State<StageL1> {
-  PopUps popUps = const PopUps(startMessage: "스테이지 1", quest: "자동차를 충전시켜라!");
+  PopUps popUps = const PopUps(
+      startMessage: "스테이지 1",
+      quest: "자동차를 충전시켜라!",
+      hints: ["힌트1", "힌트2", "힌트3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
   void getDB() async {
@@ -116,6 +119,11 @@ class _Stage1State extends State<StageL1> {
                     dbHelper.changeIsAccessible(2, false);
                   },
                   icon: const Icon(Icons.remove, color: Colors.red)),
+              IconButton(
+                  onPressed: () {
+                    popUps.showHintTabBar(context);
+                  },
+                  icon: Icon(Icons.question_mark))
             ],
           )
         ],
