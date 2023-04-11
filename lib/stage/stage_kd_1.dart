@@ -23,7 +23,7 @@ class _StageK1State extends State<StageK1> {
   late NoiseMeter _noiseMeter;
   double _decibel = 0.0;
   late NoiseReading noiseReading;
-  late AssetImage _sleepingImage;
+  late Image _image;
 
   void getDB() async {
     db = await dbHelper.db;
@@ -32,6 +32,7 @@ class _StageK1State extends State<StageK1> {
   @override
   void initState() {
     super.initState();
+    _image = Image.asset('assets/icons/sleeping.png');
     _noiseMeter = NoiseMeter(onError);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       popUps.showStartMessage(context).then((value) => {start()});
@@ -42,13 +43,17 @@ class _StageK1State extends State<StageK1> {
   }
 
   void checkDecibel() {
-    if (_decibel >= 20) {
+    if (_decibel >= 50) {
       _count++;
       if (_count >= 3) {
         stop();
-        popUps
-            .showClearedMessage(context)
-            .then((value) => {setState(() {}), start()});
+        _image = Image.asset('assets/icons/get-up.png');
+        popUps.showClearedMessage(context).then((value) => {
+              setState(() {
+                _image = Image.asset('assets/icons/sleeping.png');
+              }),
+              start()
+            });
         dbHelper.changeIsAccessible(3, true);
         dbHelper.changeIsCleared(2, true);
       }
@@ -118,23 +123,21 @@ class _StageK1State extends State<StageK1> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Image(
-            image: AssetImage('assets/icons/sleeping.png'),
-          ),
-          // Text(
-          //   'Decibel: ${_decibel.toStringAsFixed(2)} dB',
-          //   style: const TextStyle(fontSize: 36),
-          // ),
+          child: _image,
         ),
-        // floatingActionButton: FloatingActionButton(
-        //     backgroundColor: _isRecording ? Colors.red : Colors.green,
-        //     onPressed: _isRecording ? stop : start,
-        //     child:
-        //         _isRecording ? const Icon(Icons.stop) : const Icon(Icons.mic)),
+        // Text(
+        //   'Decibel: ${_decibel.toStringAsFixed(2)} dB',
+        //   style: const TextStyle(fontSize: 36),
+        // ),
       ),
+      // floatingActionButton: FloatingActionButton(
+      //     backgroundColor: _isRecording ? Colors.red : Colors.green,
+      //     onPressed: _isRecording ? stop : start,
+      //     child:
+      //         _isRecording ? const Icon(Icons.stop) : const Icon(Icons.mic)),
     );
   }
 }
