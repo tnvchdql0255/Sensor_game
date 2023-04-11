@@ -48,18 +48,29 @@ class _StageK1State extends State<StageK1> {
       if (_count >= 3) {
         stop();
         _image = Image.asset('assets/icons/get-up.png');
-        popUps.showClearedMessage(context).then((value) => {
-              setState(() {
-                _image = Image.asset('assets/icons/sleeping.png');
-              }),
-              start()
-            });
+        popUps.showClearedMessage(context).then((value) {
+          if (value == 1) {
+            //다시하기 버튼 코드
+            initStage();
+          }
+          if (value == 2) {
+            //메뉴 버튼 코드
+          }
+        });
         dbHelper.changeIsAccessible(3, true);
         dbHelper.changeIsCleared(2, true);
       }
     } else {
       _count = 0;
     }
+  }
+
+  void initStage() {
+    _count = 0;
+    setState(() {
+      _image = Image.asset('assets/icons/sleeping.png');
+    });
+    start();
   }
 
   @override
@@ -123,16 +134,16 @@ class _StageK1State extends State<StageK1> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: _image,
-        ),
-        // Text(
-        //   'Decibel: ${_decibel.toStringAsFixed(2)} dB',
-        //   style: const TextStyle(fontSize: 36),
-        // ),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Stage 2')),
+      body: Center(
+        child: _image,
       ),
+      // Text(
+      //   'Decibel: ${_decibel.toStringAsFixed(2)} dB',
+      //   style: const TextStyle(fontSize: 36),
+      // ),
+
       // floatingActionButton: FloatingActionButton(
       //     backgroundColor: _isRecording ? Colors.red : Colors.green,
       //     onPressed: _isRecording ? stop : start,
