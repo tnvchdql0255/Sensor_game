@@ -45,3 +45,6 @@ app.*.map.json
 
 ios/Podfile
 macos/Podfile
+.vscode/
+ios/Podfile.lock
+macos/Podfile.lock
