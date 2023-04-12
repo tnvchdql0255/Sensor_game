@@ -19,6 +19,7 @@ class _StageL2State extends State<StageL2> {
   double pressure = 0;
   double anchorPressure = 0;
   static const pressureChannel = EventChannel('com.sensorIO.sensor');
+  static const methodChannel = MethodChannel("com.sensorIO.method");
   StreamSubscription? pressureSubscription;
   bool bgColorState = false;
   PopUps popUps = const PopUps(
@@ -34,11 +35,18 @@ class _StageL2State extends State<StageL2> {
   @override
   void initState() {
     super.initState();
-    _startReading();
-
+    setSensorState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       popUps.showStartMessage(context);
     });
+  }
+
+  void setSensorState() async {
+    int result = await methodChannel.invokeMethod("callPressureSensor");
+    if (result != 1) {
+      print("sensor is not available");
+    }
+    _startReading();
   }
 
   void _startReading() {

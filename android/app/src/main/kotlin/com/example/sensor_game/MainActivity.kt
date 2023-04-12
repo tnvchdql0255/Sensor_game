@@ -13,21 +13,41 @@ import io.flutter.plugin.common.MethodChannel
 import java.util.stream.Stream
 
 class MainActivity: FlutterActivity() {
-    private val PRESSURE_CHANNEL_NAME = "com.sensorIO.sensor"
+    private val EVENT_CHANNEL_NAME = "com.sensorIO.sensor"
+    private val METHOD_CHANNEL_NAME = "com.sensorIO.method"
     private lateinit var sensorManager: SensorManager
-    private var pressureChannel: EventChannel? = null
-    private var pressureStreamHandler:StreamHandler? = null
-
+    private var methodChannel:MethodChannel? = null
+    private var eventChannel: EventChannel? = null
+    private var sensorStreamHandler:StreamHandler? = null
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        setupChannels(this, flutterEngine.dartExecutor.binaryMessenger)
-    }
-    private fun setupChannels(context: Context, messenger: BinaryMessenger){
-        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        pressureChannel = EventChannel(messenger, PRESSURE_CHANNEL_NAME)
-        pressureStreamHandler = StreamHandler(sensorManager!!, Sensor.TYPE_PRESSURE)
-        pressureChannel!!.setStreamHandler(pressureStreamHandler)
 
+
+        methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL_NAME)
+        methodChannel!!.setMethodCallHandler { call, result ->
+            if(call.method == "callPressureSensor"){
+                setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_PRESSURE)
+                result.success(1)
+            }
+            if(call.method == "callTemperatureSensor"){
+                setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_AMBIENT_TEMPERATURE)
+                result.success(1)
+            }
+            if(call.method == "callAccelerometerSensor"){
+
+            }
+        }
+    }
+    private fun setupChannels(context: Context, messenger: BinaryMessenger, SensorType: Int){
+        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        eventChannel = EventChannel(messenger, EVENT_CHANNEL_NAME)
+        sensorStreamHandler = StreamHandler(sensorManager!!, SensorType)
+        eventChannel!!.setStreamHandler(sensorStreamHandler)
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }
 
