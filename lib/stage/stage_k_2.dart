@@ -18,10 +18,12 @@ class _StageK2State extends State<StageK2> {
   late final Database db;
   AccelerometerEvent? _event;
   int _count = 0;
+  late Image _image;
 
   @override
   void initState() {
     super.initState();
+    _image = Image.asset('assets/icons/apple.png');
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       popUps.showStartMessage(context).then((value) => {});
     });
@@ -35,6 +37,7 @@ class _StageK2State extends State<StageK2> {
         _count++;
         if (_count == 5) {
           // 흔들림 5번 감지되면 클리어
+          _image = Image.asset('assets/icons/drop_apple.png');
           popUps.showClearedMessage(context).then((value) {
             if (value == 1) {
               //다시하기 버튼 코드
@@ -53,13 +56,12 @@ class _StageK2State extends State<StageK2> {
   }
 
   void initStage() {
-    setState(() {
-      _count = 0;
-    });
+    _count = 0;
+    _image = Image.asset('assets/icons/apple.png');
   }
 
   bool _isShaking(AccelerometerEvent event) {
-    const double shakeThreshold = 10.0; // 흔들림 감지 임계값
+    const double shakeThreshold = 15.0; // 흔들림 감지 임계값
     return (event.x.abs() > shakeThreshold ||
         event.y.abs() > shakeThreshold ||
         event.z.abs() > shakeThreshold);
@@ -72,14 +74,16 @@ class _StageK2State extends State<StageK2> {
         title: const Text('Stage 3'),
       ),
       body: Center(
-        child: Text(
-          "$_count",
-          style: const TextStyle(fontSize: 100),
-          // child: Text(
-          //   _event != null
-          //       ? 'Accelerometer: ${_event!.x.toStringAsFixed(2)}, ${_event!.y.toStringAsFixed(2)}, ${_event!.z.toStringAsFixed(2)}'
-          //       : 'Accelerometer not available',
-        ),
+        child: _image,
+        // child: Text(
+        //   // "$_count",
+        //   // style: const TextStyle(fontSize: 100),
+        // ),
+        // child: Text(
+        //   _event != null
+        //       ? 'Accelerometer: ${_event!.x.toStringAsFixed(2)}, ${_event!.y.toStringAsFixed(2)}, ${_event!.z.toStringAsFixed(2)}'
+        //       : 'Accelerometer not available',
+        // ),
       ),
     );
   }

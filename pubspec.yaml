@@ -67,6 +67,8 @@ flutter:
   assets:
     - assets/icons/sleeping.png
     - assets/icons/get-up.png
+    - assets/icons/apple.png
+    - assets/icons/drop_apple.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
