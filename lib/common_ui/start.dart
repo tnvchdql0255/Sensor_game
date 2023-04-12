@@ -132,7 +132,7 @@ class PopUps {
               child: Scaffold(
                 appBar: AppBar(
                   automaticallyImplyLeading: false,
-                  title: const Text('Hint'),
+                  title: const Text('Hints'),
                   bottom: const TabBar(
                     tabs: <Widget>[
                       Tab(

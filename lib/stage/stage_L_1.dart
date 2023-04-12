@@ -123,7 +123,7 @@ class _Stage1State extends State<StageL1> {
                   onPressed: () {
                     popUps.showHintTabBar(context);
                   },
-                  icon: Icon(Icons.question_mark))
+                  icon: const Icon(Icons.question_mark))
             ],
           )
         ],
