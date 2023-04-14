@@ -60,8 +60,8 @@ class _StageK1State extends State<StageK1> {
             //메뉴 버튼 코드
           }
         });
-        dbHelper.changeIsAccessible(3, true);
-        dbHelper.changeIsCleared(2, true);
+        dbHelper.changeIsAccessible(4, true);
+        dbHelper.changeIsCleared(3, true);
       }
     } else {
       _count = 0;
