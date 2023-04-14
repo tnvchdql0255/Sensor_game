@@ -77,6 +77,9 @@ class _StageL2State extends State<StageL2> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: bgColorState ? Colors.green : Colors.red,
+        appBar: AppBar(
+          title: const Text("Stage 2"),
+        ),
         body: SafeArea(
           child: Center(
             child: Column(
