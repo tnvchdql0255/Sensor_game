@@ -13,12 +13,14 @@ import io.flutter.plugin.common.MethodChannel
 import java.util.stream.Stream
 
 class MainActivity: FlutterActivity() {
-    private val EVENT_CHANNEL_NAME = "com.sensorIO.sensor"
-    private val METHOD_CHANNEL_NAME = "com.sensorIO.method"
-    private lateinit var sensorManager: SensorManager
-    private var methodChannel:MethodChannel? = null
-    private var eventChannel: EventChannel? = null
-    private var sensorStreamHandler:StreamHandler? = null
+    private val EVENT_CHANNEL_NAME = "com.sensorIO.sensor" //이벤트기반 채널통신 주소
+    private val METHOD_CHANNEL_NAME = "com.sensorIO.method"// 메소드 인보크 기반 주소
+
+    private lateinit var sensorManager: SensorManager //센서 데이터를 불러오기위해 필요함
+
+    private var methodChannel:MethodChannel? = null //메소드 채널용
+    private var eventChannel: EventChannel? = null //이벤트 채널용
+    private var sensorStreamHandler:StreamHandler? = null //이벤트기반으로 센서데이터를 방송하기위해 필요함
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 

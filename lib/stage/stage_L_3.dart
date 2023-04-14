@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:sensor_game/common_ui/start.dart';
+import 'package:sensor_game/service/db_manager.dart';
 
 class StageL3 extends StatefulWidget {
   const StageL3({super.key});
@@ -18,10 +18,16 @@ class _StageL3State extends State<StageL3> {
   static const temperatureChannel = EventChannel('com.sensorIO.sensor');
   static const methodChannel = MethodChannel("com.sensorIO.method");
   StreamSubscription? temperatureSubscription;
+  DBHelper dbHelper = DBHelper();
+  PopUps popUps = const PopUps(
+      startMessage: "스테이지 3",
+      quest: "시원하게 만들어라!",
+      hints: ["힌트1", "힌트2", "힌트3"]);
 
   @override
   void initState() {
     super.initState();
+    setSensorState();
   }
 
   void setSensorState() async {
@@ -30,6 +36,9 @@ class _StageL3State extends State<StageL3> {
       print("sensor is not available");
     }
     _startReading();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      popUps.showStartMessage(context);
+    });
   }
 
   void _startReading() {
@@ -37,7 +46,7 @@ class _StageL3State extends State<StageL3> {
         temperatureChannel.receiveBroadcastStream().listen((event) {
       temperature = event;
       if (anchorTemperature == 0) {
-        anchorTemperature = temperature; //초기 대기압 값을 현재 상태로 초기화
+        anchorTemperature = temperature; //초기 온도값을 현재 상태로 초기화
       }
       //bgColorState = getCurrentDifference();
       setState(() {});
@@ -45,11 +54,19 @@ class _StageL3State extends State<StageL3> {
   }
 
   @override
+  void dispose() {
+    temperatureSubscription?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("Stage L3")),
         body: Center(
-          child: Column(children: const []),
+          child: Column(children: [
+            Text("$temperature"),
+          ]),
         ));
   }
 }

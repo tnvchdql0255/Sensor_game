@@ -57,6 +57,7 @@ class _StageL2State extends State<StageL2> {
         anchorPressure = pressure; //초기 대기압 값을 현재 상태로 초기화
       }
       bgColorState = getCurrentDifference();
+      print("%%%%%%%%%%%still Listening%%%%%%%%%%%%%%%");
       setState(() {});
     });
   }
@@ -71,6 +72,14 @@ class _StageL2State extends State<StageL2> {
 
   void initStage() {
     anchorPressure = 0;
+  }
+
+  @override
+  void dispose() {
+    print("트리에서 제거됨");
+    pressureSubscription
+        ?.cancel(); //스트림을 해제하지 않고 페이지에서 벗어날시 setState가 스트림채널에 물려 지속적으로 호출되어 에러가 발생한다.
+    super.dispose();
   }
 
   @override
