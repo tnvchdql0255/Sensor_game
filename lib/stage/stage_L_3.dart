@@ -1,17 +1,18 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sensor_game/common_ui/start.dart';
 import 'package:sensor_game/service/db_manager.dart';
 
-class StageG2 extends StatefulWidget {
-  const StageG2({super.key});
+class StageL3 extends StatefulWidget {
+  const StageL3({super.key});
 
   @override
-  State<StageG2> createState() => _StageG2State();
+  State<StageL3> createState() => _StageL3State();
 }
 
-class _StageG2State extends State<StageG2> {
+class _StageL3State extends State<StageL3> {
   double temperature = 0;
   double anchorTemperature = 0;
   static const temperatureChannel = EventChannel('com.sensorIO.sensor');
@@ -62,7 +63,7 @@ class _StageG2State extends State<StageG2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("StageG2")),
+        appBar: AppBar(title: const Text("Stage L3")),
         body: Center(
           child: Column(children: [
             Text("$temperature"),

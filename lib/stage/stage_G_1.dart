@@ -121,6 +121,7 @@ class _StageG1State extends State<StageG1> {
         stopListening(); //밝기 값을 읽어들이는 것을 중지
 
         lightList.clear(); //lightList를 비움
+        _bRGB = 0; //배경 화면의 RGB 값을 0으로 설정
         _asset = 'assets/images/stage_G_1_4.svg'; //svg를 자는 사람으로 변경
 
         popUps.showClearedMessage(context).then((value) {
@@ -147,6 +148,15 @@ class _StageG1State extends State<StageG1> {
     });
   }
 
+  @override
+  void dispose() {
+    //스테이지가 종료될 때
+    super.dispose();
+    checkLightTimer.cancel(); //밝기 값이 낮은지를 확인하는 타이머를 종료
+    checkClearTimer.cancel(); //클리어 조건을 만족하는지 확인하는 타이머를 종료
+    stopListening(); //밝기 값을 읽어들이는 것을 중지
+  }
+
   //위젯 설정
   @override
   Widget build(BuildContext context) {
@@ -164,13 +174,24 @@ class _StageG1State extends State<StageG1> {
             child: Column(
               children: <Widget>[
                 Container(
+                    margin: EdgeInsets.only(top: 20.0), //바깥쪽 여백을 줌
+                    padding: EdgeInsets.fromLTRB(10, 5, 10, 5), //안쪽 여백을 줌
+                    decoration: BoxDecoration(
+                        //박스의 스타일을 지정
+                        color: Color.fromARGB(255, 247, 249, 208),
+                        border: Border.all(
+                            color: Color.fromARGB(255, 135, 135, 135),
+                            width: 4.0),
+                        borderRadius: BorderRadius.horizontal(
+                            left: Radius.circular(20.0),
+                            right: Radius.circular(20.0))),
                     //밝기 값을 출력하는 컨테이너
                     child:
                         Text('밝기 값: $_luxint', style: TextStyle(fontSize: 20))),
-                Container(
+                Expanded(
                     //이미지를 출력하는 컨테이너
                     //클리어 조건을 만족 시 자는 이미지를 출력하고, 그렇지 않으면 졸린 이미지를 출력
-                    child: Expanded(child: SvgPicture.asset(_asset)))
+                    child: SvgPicture.asset(_asset))
               ],
             ),
           ),

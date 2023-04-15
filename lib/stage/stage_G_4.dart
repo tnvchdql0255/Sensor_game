@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_speech/flutter_speech.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sensor_game/common_ui/start.dart';
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sqflite/sqflite.dart';
@@ -44,7 +45,54 @@ class _StageG4State extends State<StageG4> {
   late SpeechRecognition _speech; //음성 인식을 받아오는 _speech 변수 선언
 
   //앵무새가 말하는 단어 리스트 생성
-  List<String> _Kor_parrot = ["안녕하세요", "반가워요", "사랑해요", "왱알왱알", "헬로"];
+  List<String> _Kor_parrot = [
+    "안녕하세요",
+    "반가워요",
+    "사랑해요",
+    "잘 자요",
+    "행복해요",
+    "안아 주세요"
+  ];
+  List<String> _Eng_parrot = [
+    "hello",
+    "hi",
+    "i love you",
+    "goodbye",
+    "happy",
+    "hug me"
+  ];
+  List<String> _Fr_parrot = [
+    "bonjour", //봉쥬르
+    "enchanté ", //앙샹떼
+    "je t'aime", //쥬뗌므
+    "dors bien", //도르비앙
+    "Je suis heureuse",
+    "Fais-moi un câlin"
+  ];
+  List<String> _Ru_parrot = [
+    "Здравствуйте",
+    "Рад познакомиться",
+    "Люблю",
+    "Спокойной ночи",
+    "Я счастлив",
+    "Обнимите"
+  ];
+  List<String> _It_parrot = [
+    "Salve",
+    "Piacere di conoscerti",
+    "Ti amo",
+    "Buonanotte",
+    "Sono felice",
+    "Abbracciami"
+  ];
+  List<String> _Es_parrot = [
+    "Hola",
+    "Encantada",
+    "Te quiero",
+    "Buenas noches",
+    "Soy feliz",
+    "Dame un abrazo"
+  ];
 
   //설정이 가능한 언어들을 리스트로 만들어서 반환하는 _buildLanguagesWidgets 함수 생성
   List<CheckedPopupMenuItem<Language>> get _buildLanguagesWidgets => languages
@@ -84,6 +132,34 @@ class _StageG4State extends State<StageG4> {
   //선택한 언어로 설정을 변경하는 _selectLangHandler 함수 생성
   void _selectLangHandler(Language lang) {
     setState(() => selectedLang = lang);
+    parrotLanguage();
+  }
+
+  //언어가 변경될 때마다, 앵무새의 언어 또한 변경하는 parrotLanguage 함수 생성
+  void parrotLanguage() {
+    switch (selectedLang.name) {
+      case '한국어':
+        word = (_Kor_parrot.toList()..shuffle()).first;
+        break;
+      case 'English':
+        word = (_Eng_parrot.toList()..shuffle()).first;
+        break;
+      case 'Francais':
+        word = (_Fr_parrot.toList()..shuffle()).first;
+        break;
+      case 'Pусский':
+        word = (_Ru_parrot.toList()..shuffle()).first;
+        break;
+      case 'Italiano':
+        word = (_It_parrot.toList()..shuffle()).first;
+        break;
+      case 'Español':
+        word = (_Es_parrot.toList()..shuffle()).first;
+        break;
+      default:
+        word = (_Kor_parrot.toList()..shuffle()).first;
+        break;
+    }
   }
 
   //음성 인식이 시작되면 선택한 언어로 음성을 받아옴
@@ -142,8 +218,7 @@ class _StageG4State extends State<StageG4> {
   initState() {
     super.initState();
     activateSpeechRecognizer(); //스테이지가 시작될 때, 음성 인식을 활성화
-
-    word = (_Kor_parrot.toList()..shuffle()).first; //앵무새의 말을 랜덤으로 추출
+    parrotLanguage(); //스테이지가 시작될 때, 앵무새의 언어를 설정
 
     //1초마다 클리어 상태를 확인하는 타이머 생성
     checkClearTimer =
@@ -181,14 +256,21 @@ class _StageG4State extends State<StageG4> {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    checkClearTimer.cancel(); //타이머를 종료
+  }
+
   //위젯 설정
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
         appBar: AppBar(
           //상단의 타이틀 부분 설정 (가운데 정렬)
-          title: const Text('음성 인식'),
+          title: const Text('앵무새의 말을 따라해라!'),
           centerTitle: true,
 
           //오른쪽에 언어 설정 버튼을 추가
@@ -208,20 +290,32 @@ class _StageG4State extends State<StageG4> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
-                      //이미지를 출력하는 컨테이너
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage('assets/images/parrot.png')))),
-                  Container(
-                      //앵무새가 말하는 문장을 출력하는 컨테이너
-                      child: Text(
-                    '현재 앵무새가 하는 말: $word',
-                    style: TextStyle(fontSize: 20),
-                    textAlign: TextAlign.center,
-                  )),
-
+                      child: Row(children: [
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.all(15),
+                        margin: const EdgeInsets.only(bottom: 5),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 230, 226, 215),
+                          border: Border.all(
+                              color: Color.fromARGB(255, 178, 176, 161),
+                              width: 4.0),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(19),
+                            bottomLeft: Radius.circular(19),
+                            bottomRight: Radius.circular(19),
+                          ),
+                        ),
+                        child: Text(
+                          '$word',
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontSize: 18),
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Image.asset('assets/images/parrot.png'))
+                  ])),
                   //Expanded를 사용하여, 음성을 길게 말한 경우 출력 화면을 그만큼 늘린다
                   Expanded(
                       child: Container(
@@ -271,4 +365,29 @@ class _StageG4State extends State<StageG4> {
                   const TextStyle(color: Colors.white), //버튼의 텍스트 색상은 흰색으로 지정한다
             ),
           ));
+}
+
+class StackWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Container(
+            margin: EdgeInsets.only(top: 20.0), //바깥쪽 여백을 줌
+            padding: EdgeInsets.fromLTRB(10, 5, 10, 5), //안쪽 여백을 줌
+            decoration: BoxDecoration(
+                //박스의 스타일을 지정
+                color: Color.fromARGB(255, 247, 249, 208),
+                border: Border.all(
+                    color: Color.fromARGB(255, 135, 135, 135), width: 4.0),
+                borderRadius: BorderRadius.horizontal(
+                    left: Radius.circular(20.0), right: Radius.circular(20.0))),
+            //밝기 값을 출력하는 컨테이너
+            child: Text(
+              '밝기 값:',
+              style: TextStyle(fontSize: 20),
+            ))
+      ],
+    );
+  }
 }
