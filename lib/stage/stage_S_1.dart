@@ -25,6 +25,7 @@ class _StageS1State extends State<StageS1> {
   }
 
   int _steps = 0;                                                     //걸음 수를 저장할 변수
+  late Image _image;                                                       //이미지를 저장할 변수
   List<double> _accelerometerValues = <double>[0, 0, 0];              //가속도센서 값 저장할 변수
   final List<StreamSubscription<dynamic>> _streamSubscriptions =      //이벤트 구독을 저장할 변수
       <StreamSubscription<dynamic>>[];  
@@ -33,38 +34,47 @@ class _StageS1State extends State<StageS1> {
   void initState() {            
     super.initState(); 
     initStage();                                               //스테이지 초기화 
-    sensorStart();                                             //센서 시작
+    
+    _image = Image.asset('assets/images/fat_person.png'); //이미지를 불러옴
     //해당 메서드 안에 팝업 메서드를 넣어야 정상적으로 실행됨 (위젯트리 로딩 이후에 실행되어야 하기 때문)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       popUps.showStartMessage(context);
     });
+
+    sensorStart();                                             //센서 시작
   }
 
   void initStage() {                                           //스테이지 초기화 메서드
     _steps = 0;                                                //걸음 수를 저장할 변수 초기화
+    _image = Image.asset('assets/images/fat_person.png');     //이미지를 불러옴
     _accelerometerValues = <double>[0, 0, 0];                  //가속도센서 값 저장할 변수 초기화
     _streamSubscriptions.clear();                              //이벤트 구독을 초기화
   }
 
   void sensorStart() async {                             //센서를 시작하는 메서드
     _streamSubscriptions    
-      .add(accelerometerEvents.listen((AccelerometerEvent event) {
+      .add(accelerometerEvents.listen((AccelerometerEvent event) {   //가속도 센서의 이벤트를 구독합니다.
       // 이벤트 콜백 함수에서 UI 업데이트를 위해 setState 메서드를 호출합니다.
         setState(() {      
           _accelerometerValues = <double>[event.x, event.y, event.z];         //가속도 센서의 x,y,z값을 리스트에 저장
           _steps = _calculateSteps(_accelerometerValues);                     //걸음 수를 계산하는 메서드를 호출하여 걸음 수를 저장
-        if (_steps >= 10) {                                                 //걸음 수가 20이상이면
+        if (_steps == 10) {                                                 //걸음 수가 10이 되면
+          print("%%%%%%%%%%%%%%%%%%%%%스테이지 걸음 수 다 채움%%%%%%%%%%%%%%%%%%%%%");
+          print('걸음 수: $_steps');                                         //걸음 수를 출력
+          _image = Image.asset('assets/images/thin_person.png');             //이미지를 불러옴
           popUps.showClearedMessage(context).then((value) {                 //클리어 메시지를 출력하고
             if (value == 1) {
+              print("####################다시하기 버튼 눌림####################");
               //다시하기 버튼 코드
-              initState();
+              initStage();
               setState(() {});
             }
             if (value == 2) {
+              print("####################메뉴 버튼 눌림####################");
               //메뉴 버튼 코드
             }
             dbHelper.changeIsAccessible(3, true);          
-            dbHelper.changeIsAccessible(2, true);  
+            dbHelper.changeIsCleared(2, true);  
           });
         }
       });
@@ -92,36 +102,24 @@ class _StageS1State extends State<StageS1> {
   @override
   void dispose() {
     // 모든 이벤트 구독을 취소합니다.
+    print("####################트리에서 제거됨 1번####################");
     for (StreamSubscription<dynamic> subscription in _streamSubscriptions) {
       subscription.cancel();
     }
+    print("####################트리에서 제거됨 2번####################");
     super.dispose();
   }
 
   //위젯 설정
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('다이어트를 시켜라!'),
+        title: const Text('Stage 2'),
         centerTitle: true,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              _steps >= 10 ? 'assets/images/thin_person.jpg' : 'assets/images/fat_person.jpg',
-              width: 400,
-              height: 400,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              '걸음 수: $_steps',
-              style: const TextStyle(fontSize: 24),
-            ),
-          ],
-        ),
+        child: _image,
       ),
     );
   }

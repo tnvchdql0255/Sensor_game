@@ -25,6 +25,12 @@ flutter pedometer package example code 테스트까지 완료
 
 2023.04.08 작성
 결국 COUNT(걸음 수)가 계속 증가하지 않아서 <가속도 센서와 자이로스코프 센서> flutter sensor_plus package 사용해서 직접 구현
+    pubspec.yaml에서 sensor_plus: ^2.0.2 추가한 후
+    flutter pub get     or      저장을 한 후 실행해야한다.
+
+    assets\images 폴더에 fat_person.jpg(확장자), thin_person.jpg를 추가한 후
+    pubspec.yaml에서 assets 주석 해제 후 파일이름 추가
+
     가속도 센서와 자이로스코프 센서를 활용해서 걸음 수를 측정한다.
     
     가속도 센서의 x,y,z 값을 담고 있는 values 리스트를 입력을 받는다.
