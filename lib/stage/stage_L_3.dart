@@ -13,10 +13,12 @@ class StageL3 extends StatefulWidget {
 }
 
 class _StageL3State extends State<StageL3> {
-  double temperature = 0;
-  double anchorTemperature = 0;
-  static const temperatureChannel = EventChannel('com.sensorIO.sensor');
+  int temperature = 0;
+  int anchorTemperature = 0;
   static const methodChannel = MethodChannel("com.sensorIO.method");
+  late Timer timer;
+  int r = 255;
+  int b = 0;
   StreamSubscription? temperatureSubscription;
   DBHelper dbHelper = DBHelper();
   PopUps popUps = const PopUps(
@@ -27,35 +29,47 @@ class _StageL3State extends State<StageL3> {
   @override
   void initState() {
     super.initState();
-    setSensorState();
-  }
-
-  void setSensorState() async {
-    int result = await methodChannel.invokeMethod("callTemperatureSensor");
-    if (result != 1) {
-      print("sensor is not available");
-    }
-    _startReading();
+    setDefaultState();
+    startTimer();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       popUps.showStartMessage(context);
     });
   }
 
-  void _startReading() {
-    temperatureSubscription =
-        temperatureChannel.receiveBroadcastStream().listen((event) {
-      temperature = event;
-      if (anchorTemperature == 0) {
-        anchorTemperature = temperature; //초기 온도값을 현재 상태로 초기화
+  void startTimer() async {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      temperature = await methodChannel.invokeMethod("callTemperatureSensor");
+      print(temperature);
+      if (temperature - 70 < anchorTemperature) {
+        r = r - 25;
+        b = b + 25;
+        print('r: $r, b: $b');
       }
-      //bgColorState = getCurrentDifference();
+      if (checkIsCooled()) {
+        timer.cancel();
+      }
       setState(() {});
     });
   }
 
+  void setDefaultState() async {
+    r = 255;
+    b = 0;
+    int result = await methodChannel.invokeMethod("callTemperatureSensor");
+    anchorTemperature = result;
+  }
+
+  bool checkIsCooled() {
+    if (b >= 250) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   void dispose() {
-    temperatureSubscription?.cancel();
+    timer.cancel();
     super.dispose();
   }
 
@@ -63,9 +77,11 @@ class _StageL3State extends State<StageL3> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("Stage L3")),
+        backgroundColor: Color.fromARGB(255, r, 0, b),
         body: Center(
           child: Column(children: [
-            Text("$temperature"),
+            TextButton(onPressed: setDefaultState, child: const Text("call?")),
+            Text("($temperature)"),
           ]),
         ));
   }
