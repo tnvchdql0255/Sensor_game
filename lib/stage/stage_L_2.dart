@@ -45,8 +45,9 @@ class _StageL2State extends State<StageL2> {
     int result = await methodChannel.invokeMethod("callPressureSensor");
     if (result != 1) {
       print("sensor is not available");
+    } else {
+      _startReading();
     }
-    _startReading();
   }
 
   void _startReading() {

@@ -19,7 +19,7 @@ class _StageL3State extends State<StageL3> {
   late Timer timer;
   int r = 255;
   int b = 0;
-  StreamSubscription? temperatureSubscription;
+
   DBHelper dbHelper = DBHelper();
   PopUps popUps = const PopUps(
       startMessage: "스테이지 3",
@@ -45,9 +45,8 @@ class _StageL3State extends State<StageL3> {
         b = b + 25;
         print('r: $r, b: $b');
       }
-      if (checkIsCooled()) {
-        timer.cancel();
-      }
+      checkIsCooled();
+
       setState(() {});
     });
   }
@@ -55,12 +54,14 @@ class _StageL3State extends State<StageL3> {
   void setDefaultState() async {
     r = 255;
     b = 0;
-    int result = await methodChannel.invokeMethod("callTemperatureSensor");
-    anchorTemperature = result;
+    anchorTemperature =
+        await methodChannel.invokeMethod("callTemperatureSensor");
   }
 
   bool checkIsCooled() {
     if (b >= 250) {
+      popUps.showClearedMessage(context);
+      timer.cancel();
       return true;
     } else {
       return false;

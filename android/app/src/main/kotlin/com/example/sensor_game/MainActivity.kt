@@ -49,6 +49,12 @@ class MainActivity: FlutterActivity() {
             if(call.method == "callAccelerometerSensor"){
 
             }
+            if(call.method == "callRotationVectorSensor"){
+                setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_ROTATION_VECTOR)
+                result.success(1)
+            }else{
+                result.success(0)
+            }
         }
     }
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -60,11 +66,11 @@ class MainActivity: FlutterActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
+    //5스테이지용
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         if(newConfig.isNightModeActive){
             println("config changed")
-            exitProcess(0)
         }
     }
     private fun setupChannels(context: Context, messenger: BinaryMessenger, SensorType: Int){
@@ -84,6 +90,7 @@ class StreamHandler(private val sensorManager: SensorManager, sensorType: Int,
                     private var interval: Int = SensorManager.SENSOR_DELAY_NORMAL ):EventChannel.StreamHandler, SensorEventListener {
     private val sensor = sensorManager.getDefaultSensor(sensorType)
     private var eventSink:EventChannel.EventSink? = null
+    val streamedSensorType = sensorType //플러터로 1개 초과의 데이터를 넘겨줄 필요가 있는 센서타입인지 체크 하는 용도 예)3축 사용 센서들
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         if(sensor !=null){
@@ -98,8 +105,16 @@ class StreamHandler(private val sensorManager: SensorManager, sensorType: Int,
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        val sensorValues = event!!.values[0]
-        eventSink?.success(sensorValues)
+        ///센서가 로테이션 벡터의 3축 값을 넘겨주어야 하는지 체크
+        if(streamedSensorType == Sensor.TYPE_ROTATION_VECTOR){
+            val sensorValues = event!!.values
+            eventSink?.success(sensorValues)
+        }
+        else{
+            val sensorValues = event!!.values[0]
+            eventSink?.success(sensorValues)
+        }
+
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy:Int) {
