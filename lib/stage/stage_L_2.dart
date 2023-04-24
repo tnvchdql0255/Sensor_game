@@ -41,6 +41,12 @@ class _StageL2State extends State<StageL2> {
     });
   }
 
+  @override
+  void dispose() {
+    pressureSubscription?.cancel();
+    super.dispose();
+  }
+
   void setSensorState() async {
     int result = await methodChannel.invokeMethod("callPressureSensor");
     if (result != 1) {
