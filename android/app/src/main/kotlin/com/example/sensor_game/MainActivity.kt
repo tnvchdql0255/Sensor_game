@@ -2,15 +2,10 @@ package com.example.sensor_game
 
 import android.content.BroadcastReceiver
 import android.content.Context
-<<<<<<< HEAD
-import android.content.Intent
-import android.content.IntentFilter
-=======
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
->>>>>>> 344b71bd82b62bb5ea6d15fcc89fce2ae14bacd1
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -23,20 +18,6 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
-<<<<<<< HEAD
-
-class MainActivity: FlutterActivity() {
-    private val EVENT_CHANNEL_NAME = "com.sensorIO.sensor"
-    private val METHOD_CHANNEL_NAME = "com.sensorIO.method"
-    private lateinit var sensorManager: SensorManager
-    private lateinit var batteryManager: BatteryManager
-    private var methodChannel:MethodChannel? = null
-    private var eventChannel: EventChannel? = null
-    private var sensorStreamHandler:StreamHandler? = null
-    private lateinit var intent: Intent
-   //private var batteryStreamHandler:BatteryStreamHandler? =null
-
-=======
 import java.util.stream.Stream
 import kotlin.system.exitProcess
 
@@ -52,7 +33,6 @@ class MainActivity: FlutterActivity() {
 
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
->>>>>>> 344b71bd82b62bb5ea6d15fcc89fce2ae14bacd1
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
@@ -64,24 +44,12 @@ class MainActivity: FlutterActivity() {
                 result.success(1)
             }
             if(call.method == "callTemperatureSensor"){
-<<<<<<< HEAD
-                val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
-                var temperature = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 1)
-                print(temperature)
-                result.success(temperature)
-=======
                 var res = getBatteryLevel()
                 result.success(res)
->>>>>>> 344b71bd82b62bb5ea6d15fcc89fce2ae14bacd1
             }
             if(call.method == "callAccelerometerSensor"){
 
             }
-<<<<<<< HEAD
-            else{
-                //result.error("404","404",-1)
-            }
-=======
             if(call.method == "callRotationVectorSensor"){
                 setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_ROTATION_VECTOR)
                 result.success(1)
@@ -104,7 +72,6 @@ class MainActivity: FlutterActivity() {
         super.onConfigurationChanged(newConfig)
         if(newConfig.isNightModeActive){
             println("config changed")
->>>>>>> 344b71bd82b62bb5ea6d15fcc89fce2ae14bacd1
         }
     }
     private fun setupChannels(context: Context, messenger: BinaryMessenger, SensorType: Int){
