@@ -1,9 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:sensor_game/common_ui/start.dart';
+import 'package:sensor_game/service/db_manager.dart';
 
 class StageL3 extends StatefulWidget {
   const StageL3({super.key});
@@ -14,47 +13,75 @@ class StageL3 extends StatefulWidget {
 
 class _StageL3State extends State<StageL3> {
   int temperature = 0;
-  double anchorTemperature = 0;
-  static const temperatureChannel = EventChannel('com.sensorIO.sensor');
+  int anchorTemperature = 0;
   static const methodChannel = MethodChannel("com.sensorIO.method");
-  StreamSubscription? temperatureSubscription;
+  late Timer timer;
+  int r = 255;
+  int b = 0;
+
+  DBHelper dbHelper = DBHelper();
+  PopUps popUps = const PopUps(
+      startMessage: "스테이지 3",
+      quest: "시원하게 만들어라!",
+      hints: ["힌트1", "힌트2", "힌트3"]);
 
   @override
   void initState() {
     super.initState();
-    // setSensorState();
+    setDefaultState();
+    startTimer();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      popUps.showStartMessage(context);
+    });
   }
 
-  void setSensorState() async {
-    int? result = await methodChannel.invokeMethod("callTemperatureSensor");
-    print("temp called value:$result");
-    if (result != null) {
-      temperature = result;
+  void startTimer() async {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      temperature = await methodChannel.invokeMethod("callTemperatureSensor");
+      print(temperature);
+      if (temperature - 70 < anchorTemperature) {
+        r = r - 25;
+        b = b + 25;
+        print('r: $r, b: $b');
+      }
+      checkIsCooled();
+
       setState(() {});
-    }
-    print("temp rebuilded");
+    });
   }
 
-  // void _startReading() {
-  //   temperatureSubscription =
-  //       temperatureChannel.receiveBroadcastStream().listen((event) {
-  //     temperature = event;
-  //     if (anchorTemperature == 0) {
-  //       anchorTemperature = temperature; //초기 대기압 값을 현재 상태로 초기화
-  //     }
-  //     //bgColorState = getCurrentDifference();
-  //     setState(() {});
-  //   });
-  // }
+  void setDefaultState() async {
+    r = 255;
+    b = 0;
+    anchorTemperature =
+        await methodChannel.invokeMethod("callTemperatureSensor");
+  }
+
+  bool checkIsCooled() {
+    if (b >= 250) {
+      popUps.showClearedMessage(context);
+      timer.cancel();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("Stage L3")),
+        backgroundColor: Color.fromARGB(255, r, 0, b),
         body: Center(
           child: Column(children: [
-            Text(temperature.toString()),
-            TextButton(onPressed: setSensorState, child: Text("call"))
+            TextButton(onPressed: setDefaultState, child: const Text("call?")),
+            Text("($temperature)"),
           ]),
         ));
   }
