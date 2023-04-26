@@ -28,23 +28,23 @@ class _StageL3State extends State<StageL3> {
   @override
   void initState() {
     super.initState();
-    setDefaultState();
-    startTimer();
+    //setDefaultState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      popUps.showStartMessage(context);
+      popUps.showStartMessage(context).then(
+            (value) => startTimer(),
+          );
     });
   }
 
-  void startTimer() async {
+  void startTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       temperature = await methodChannel.invokeMethod("callTemperatureSensor");
-      print(temperature);
-      if (temperature - 70 < anchorTemperature) {
+      if ((temperature - 70) < anchorTemperature) {
         r = r - 25;
         b = b + 25;
         print('r: $r, b: $b');
+        checkIsCooled();
       }
-      checkIsCooled();
 
       setState(() {});
     });
@@ -81,7 +81,10 @@ class _StageL3State extends State<StageL3> {
         body: Center(
           child: Column(children: [
             TextButton(onPressed: setDefaultState, child: const Text("call?")),
-            Text("($temperature)"),
+            Text("currtemp: $temperature",
+                style: const TextStyle(color: Colors.white)),
+            Text("anchorTemp: $anchorTemperature",
+                style: const TextStyle(color: Colors.white)),
           ]),
         ));
   }
