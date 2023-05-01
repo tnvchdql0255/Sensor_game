@@ -30,7 +30,7 @@ class MainActivity: FlutterActivity() {
     private var methodChannel:MethodChannel? = null //메소드 채널용
     private var eventChannel: EventChannel? = null //이벤트 채널용
     private var sensorStreamHandler:StreamHandler? = null //이벤트기반으로 센서데이터를 방송하기위해 필요함
-
+    private var themeConfig: Int = 2 //2는 아직 값을 받아오지 않은 상태, 0은 다크모드, 1은 라이트 모드
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -38,24 +38,34 @@ class MainActivity: FlutterActivity() {
         methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL_NAME)
 
         methodChannel!!.setMethodCallHandler { call, result ->
-            if(call.method == "callPressureSensor"){
-                setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_PRESSURE)
-                result.success(1)
-            }
-            if(call.method == "callTemperatureSensor"){
-                var res = getBatteryLevel()
-                result.success(res)
-            }
-            if(call.method == "callAccelerometerSensor"){
-
-            }
-            if(call.method == "callRotationVectorSensor"){
-                setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_ROTATION_VECTOR)
-                result.success(1)
-            }else{
-                result.success(0)
+            when(call.method){
+                "callPressureSensor" -> {
+                    setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_PRESSURE)
+                    result.success(1)
+                }
+                "callTemperatureSensor" -> {
+                    var res = getBatteryLevel()
+                    result.success(res)
+                }
+                "callAccelerometerSensor" -> {
+                    // callAccelerometerSensor의 경우 실행할 내용이 없습니다.
+                }
+                "callRotationVectorSensor" -> {
+                    setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_ROTATION_VECTOR)
+                    result.success(1)
+                }
+                "getConfigData" -> {
+                    result.success(themeConfig)
+                }
+                "resetConfigData" -> {
+                    themeConfig = 2
+                }
+                else -> {
+                    result.success(-1)
+                }
             }
         }
+
     }
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun getBatteryLevel(): Int {
@@ -69,8 +79,10 @@ class MainActivity: FlutterActivity() {
     //5스테이지용
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if(newConfig.isNightModeActive){
-            println("config changed")
+        themeConfig = if(newConfig.isNightModeActive){
+            0 //다크모드
+        }else{
+            1 //라이트모드
         }
     }
     private fun setupChannels(context: Context, messenger: BinaryMessenger, SensorType: Int){
