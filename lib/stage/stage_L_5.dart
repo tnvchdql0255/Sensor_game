@@ -19,7 +19,7 @@ class _StageL5State extends State<StageL5> {
       hints: ["시간과 크게 관련은 없습니다", "밝은걸 싫어하는 유저들은 처음에 밤일겁니다", "상태바 어딘가에.."]);
   DBHelper dbHelper = DBHelper();
   static const methodChannel = MethodChannel("com.sensorIO.method");
-  late int themeState;
+  late int? themeState;
   late int anchorThemeState;
   late Timer timer;
   // ignore: prefer_const_constructors
@@ -28,9 +28,10 @@ class _StageL5State extends State<StageL5> {
   @override
   void initState() {
     super.initState();
-    timer = Timer(const Duration(seconds: 1), () {
-      getThemeState();
-    });
+    getThemeState();
+    // timer = Timer(const Duration(seconds: 1), () {
+    //   getThemeState();
+    // });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       popUps.showStartMessage(context);
@@ -39,12 +40,34 @@ class _StageL5State extends State<StageL5> {
 
   void getThemeState() async {
     if (themeState == 2) {
-      anchorThemeState = await methodChannel.invokeMethod("getThemeState");
+      anchorThemeState = await methodChannel.invokeMethod("getConfigData");
     } else {
-      themeState = await methodChannel.invokeMethod("getThemeState");
+      themeState = await methodChannel.invokeMethod("getConfigData");
     }
     themeIcon = getConfig();
     setState(() {});
+    checkCondition();
+  }
+
+  void checkCondition() {
+    if (themeState != anchorThemeState && themeState != 2) {
+      popUps.showClearedMessage(context).then(
+        (value) async {
+          if (value == 1) {
+            await methodChannel.invokeMethod("resetThemeState");
+          } else {
+            await methodChannel
+                .invokeMethod("resetThemeState"); //뭘 누르든간에 초기화는 해야함...아닐지도
+          }
+        },
+      );
+    }
+  }
+
+  void resetStage() async {
+    themeState = 2;
+    await methodChannel.invokeMethod("resetThemeState");
+    timer.cancel();
   }
 
   Icon getConfig() {

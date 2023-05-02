@@ -6,6 +6,7 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -31,6 +32,8 @@ class MainActivity: FlutterActivity() {
     private var eventChannel: EventChannel? = null //이벤트 채널용
     private var sensorStreamHandler:StreamHandler? = null //이벤트기반으로 센서데이터를 방송하기위해 필요함
     private var themeConfig: Int = 2 //2는 아직 값을 받아오지 않은 상태, 0은 다크모드, 1은 라이트 모드
+    private var nightModeConfiguration = Configuration()
+    //private var nightMode:Boolean = nightModeConfiguration.isNightModeActive
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -77,9 +80,9 @@ class MainActivity: FlutterActivity() {
 
     @RequiresApi(Build.VERSION_CODES.R)
     //5스테이지용
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        themeConfig = if(newConfig.isNightModeActive){
+    override fun onConfigurationChanged(nightModeConfiguration: Configuration) {
+        super.onConfigurationChanged(nightModeConfiguration)
+        themeConfig = if(nightModeConfiguration.isNightModeActive){
             0 //다크모드
         }else{
             1 //라이트모드
