@@ -19,8 +19,9 @@ class _StageL5State extends State<StageL5> {
       hints: ["시간과 크게 관련은 없습니다", "밝은걸 싫어하는 유저들은 처음에 밤일겁니다", "상태바 어딘가에.."]);
   DBHelper dbHelper = DBHelper();
   static const methodChannel = MethodChannel("com.sensorIO.method");
-  late int? themeState;
-  late int anchorThemeState;
+  int themeState = 2;
+  late int? anchorThemeState;
+  int vStack = 0;
   late Timer timer;
   // ignore: prefer_const_constructors
   Icon themeIcon = Icon(Icons.error);
@@ -28,59 +29,72 @@ class _StageL5State extends State<StageL5> {
   @override
   void initState() {
     super.initState();
-    getThemeState();
-    // timer = Timer(const Duration(seconds: 1), () {
-    //   getThemeState();
-    // });
-
+    initStage();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       popUps.showStartMessage(context);
     });
   }
 
-  void getThemeState() async {
-    if (themeState == 2) {
-      anchorThemeState = await methodChannel.invokeMethod("getConfigData");
-    } else {
-      themeState = await methodChannel.invokeMethod("getConfigData");
-    }
-    themeIcon = getConfig();
-    setState(() {});
+  void initStage() {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      getTest();
+    });
+  }
+
+  void getTest() async {
+    themeState = await methodChannel.invokeMethod("getConfigData");
+    print(themeState);
+    getConfig();
     checkCondition();
   }
 
+  // void getThemeState() async {
+  //   if (themeState == 2) {
+  //     anchorThemeState = await methodChannel.invokeMethod("getConfigData");
+  //   } else {
+  //     themeState = await methodChannel.invokeMethod("getConfigData");
+  //   }
+  //
+  //   checkCondition();
+  // }
+
   void checkCondition() {
-    if (themeState != anchorThemeState && themeState != 2) {
-      popUps.showClearedMessage(context).then(
-        (value) async {
-          if (value == 1) {
-            await methodChannel.invokeMethod("resetThemeState");
-          } else {
-            await methodChannel
-                .invokeMethod("resetThemeState"); //뭘 누르든간에 초기화는 해야함...아닐지도
-          }
-        },
-      );
+    if (themeState != 2 && vStack == 0) {
+      anchorThemeState = themeState;
+      vStack++;
+    }
+    if (themeState != anchorThemeState && vStack != 0) {
+      resetStage();
+      popUps.showClearedMessage(context).then((value) {
+        if (value == 1) {}
+      });
     }
   }
 
   void resetStage() async {
     themeState = 2;
+    anchorThemeState = null;
+    vStack = 0;
     await methodChannel.invokeMethod("resetThemeState");
     timer.cancel();
   }
 
-  Icon getConfig() {
+  void getConfig() {
     switch (themeState) {
       case 0:
-        return const Icon(Icons.nightlight_round, size: 100);
+        themeIcon = const Icon(Icons.nightlight_round, size: 100);
+
+        break;
       case 1:
-        return const Icon(Icons.wb_sunny, size: 100);
+        themeIcon = const Icon(Icons.wb_sunny, size: 100);
+        break;
       case 2:
-        return const Icon(Icons.replay_outlined, size: 100);
+        themeIcon = const Icon(Icons.replay_outlined, size: 100);
+        break;
       default:
-        return const Icon(Icons.error);
+        themeIcon = const Icon(Icons.error);
     }
+    setState(() {});
   }
 
   @override
