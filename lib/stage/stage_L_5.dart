@@ -20,18 +20,20 @@ class _StageL5State extends State<StageL5> {
   DBHelper dbHelper = DBHelper();
   static const methodChannel = MethodChannel("com.sensorIO.method");
   int themeState = 2;
-  late int? anchorThemeState;
-  int vStack = 0;
+  int anchorThemeState = 2;
   late Timer timer;
   // ignore: prefer_const_constructors
   Icon themeIcon = Icon(Icons.error);
+  int iconSize = 300;
 
   @override
   void initState() {
     super.initState();
     initStage();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      popUps.showStartMessage(context);
+      popUps.showStartMessage(context).then((value) async {
+        anchorThemeState = await methodChannel.invokeMethod("getConfigData");
+      });
     });
   }
 
@@ -42,54 +44,41 @@ class _StageL5State extends State<StageL5> {
   }
 
   void getTest() async {
+    //여기에 테마 상태 자체를 받아와야함 지금은 변경이 있을때만 불러져서..
     themeState = await methodChannel.invokeMethod("getConfigData");
     print(themeState);
     getConfig();
     checkCondition();
   }
 
-  // void getThemeState() async {
-  //   if (themeState == 2) {
-  //     anchorThemeState = await methodChannel.invokeMethod("getConfigData");
-  //   } else {
-  //     themeState = await methodChannel.invokeMethod("getConfigData");
-  //   }
-  //
-  //   checkCondition();
-  // }
-
   void checkCondition() {
-    if (themeState != 2 && vStack == 0) {
-      anchorThemeState = themeState;
-      vStack++;
-    }
-    if (themeState != anchorThemeState && vStack != 0) {
-      resetStage();
-      popUps.showClearedMessage(context).then((value) {
-        if (value == 1) {}
-      });
+    if (anchorThemeState != themeState) {
+      timer.cancel();
+      popUps.showClearedMessage(context).then(
+        (value) {
+          if (value == 1) {
+            resetStage();
+          }
+        },
+      );
     }
   }
 
-  void resetStage() async {
-    themeState = 2;
-    anchorThemeState = null;
-    vStack = 0;
-    await methodChannel.invokeMethod("resetThemeState");
-    timer.cancel();
+  void resetStage() {
+    anchorThemeState = themeState;
+    initStage();
   }
 
   void getConfig() {
     switch (themeState) {
       case 0:
-        themeIcon = const Icon(Icons.nightlight_round, size: 100);
-
+        themeIcon = const Icon(Icons.nightlight_round, size: 300);
         break;
       case 1:
-        themeIcon = const Icon(Icons.wb_sunny, size: 100);
+        themeIcon = const Icon(Icons.wb_sunny, size: 300);
         break;
       case 2:
-        themeIcon = const Icon(Icons.replay_outlined, size: 100);
+        themeIcon = const Icon(Icons.replay_outlined, size: 300);
         break;
       default:
         themeIcon = const Icon(Icons.error);
@@ -100,27 +89,28 @@ class _StageL5State extends State<StageL5> {
   @override
   void dispose() {
     timer.cancel();
-    methodChannel.invokeListMethod("resetConfigData");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Temp")),
+      appBar: AppBar(
+        title: const Text("Temp"),
+        elevation: 0,
         backgroundColor: Colors.lightBlue,
-        body: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-                onPressed: () {
-                  popUps.showHintTabBar(context);
-                },
-                icon: const Icon(Icons.question_mark)),
-            Center(
-              child: themeIcon,
-            )
-          ],
-        ));
+      ),
+      backgroundColor: Colors.lightBlue,
+      body: Center(
+        child: themeIcon,
+      ),
+      floatingActionButton: FloatingActionButton(
+          tooltip: "힌트",
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(Icons.question_mark)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+    );
   }
 }
