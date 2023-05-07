@@ -43,6 +43,10 @@ dependencies:
   vibration: ^1.7.6
   pedometer: ^3.0.0
   photo_view: ^0.14.0
+  light: ^2.1.0
+  flutter_speech: ^2.0.0
+  flutter_svg: ^2.0.4
+  avatar_glow: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +82,18 @@ flutter:
     - assets/images/photo_frame.png
     - assets/images/volcano_erupt.png
     - assets/images/volcano.png
+    - assets/images/egg.png
+    - assets/images/hatch.png
+    - assets/images/espionage.png
+    - assets/images/run.png
+    - assets/images/stage_G_1_1.svg
+    - assets/images/stage_G_1_2.svg
+    - assets/images/stage_G_1_3.svg
+    - assets/images/stage_G_1_4.svg
+    - assets/images/stage_G_2_1.svg
+    - assets/images/play.png
+    - assets/images/close.png
+    - assets/images/stop.png
       
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

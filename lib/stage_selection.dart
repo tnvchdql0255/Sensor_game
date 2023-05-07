@@ -3,11 +3,15 @@ import 'package:sensor_game/stage/stage_L_1.dart';
 import 'package:sensor_game/stage/stage_S_1.dart';
 import 'package:sensor_game/stage/stage_S_2.dart';
 import 'package:sensor_game/stage/stage_S_3.dart';
-import 'package:flutter/material.dart';
 import 'package:sensor_game/stage/stage_L_2.dart';
 import 'package:sensor_game/stage/stage_L_3.dart';
 import 'package:sensor_game/stage/stage_L_4.dart';
 import 'package:sensor_game/stage/stage_L_5.dart';
+import 'package:sensor_game/stage/stage_G_1.dart';
+import 'package:sensor_game/stage/stage_G_4.dart';
+import 'package:sensor_game/stage/stage_k_1.dart';
+import 'package:sensor_game/stage/stage_k_2.dart';
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 class StageSelectionMenu extends StatefulWidget {
@@ -19,6 +23,8 @@ class StageSelectionMenu extends StatefulWidget {
 
 class _StageSelectionMenuState extends State<StageSelectionMenu> {
   List<Widget> stageRoute = [
+    const StageG1(),
+    const StageG4(),
     const StageL1(),
     const StageL2(),
     const StageL3(),
@@ -27,6 +33,8 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
     const StageS1(),
     const StageS2(),
     const StageS3(),
+    const StageK1(),
+    const StageK2(),
   ];
   late final DBHelper dbHelper;
   late Database db;
