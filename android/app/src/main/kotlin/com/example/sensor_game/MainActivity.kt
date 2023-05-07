@@ -1,36 +1,24 @@
 package com.example.sensor_game
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-<<<<<<< HEAD
 import android.os.BatteryManager
 import android.os.Build
-import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.annotation.RequiresApi
-=======
-import android.os.Bundle
-import android.view.KeyEvent
->>>>>>> 85e99bd (stage k5)
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
-<<<<<<< HEAD
-import java.util.stream.Stream
-import kotlin.system.exitProcess
-=======
->>>>>>> 85e99bd (stage k5)
+import android.view.KeyEvent
+import android.os.Bundle
 
 class MainActivity: FlutterActivity() {
     private val EVENT_CHANNEL_NAME = "com.sensorIO.sensor" //이벤트기반 채널통신 주소
@@ -41,13 +29,7 @@ class MainActivity: FlutterActivity() {
     private var methodChannel:MethodChannel? = null //메소드 채널용
     private var eventChannel: EventChannel? = null //이벤트 채널용
     private var sensorStreamHandler:StreamHandler? = null //이벤트기반으로 센서데이터를 방송하기위해 필요함
-<<<<<<< HEAD
-<<<<<<< HEAD
     private var nightModeConfiguration = Configuration().isNightModeActive
-
-
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-=======
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +37,7 @@ class MainActivity: FlutterActivity() {
         setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC)
     }
 
->>>>>>> 85e99bd (stage k5)
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL_NAME)
@@ -91,29 +73,8 @@ class MainActivity: FlutterActivity() {
                 }
             }
         }
-=======
-    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-        super.configureFlutterEngine(flutterEngine)
->>>>>>> e9feb00 (Stagek3 데모)
-
-        methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL_NAME)
-        methodChannel!!.setMethodCallHandler { call, result ->
-            if(call.method == "callPressureSensor"){
-                setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_PRESSURE)
-                result.success(1)
-            }
-            if(call.method == "callTemperatureSensor"){
-                setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_AMBIENT_TEMPERATURE)
-                result.success(1)
-            }
-            if(call.method == "callAccelerometerSensor"){
-
-            }
-//            if (call.method == "volumeButtonEvent") {
-//                onVolumeButtonEvent()
-//            }
-        }
     }
+
     private fun onVolumeButtonEvent(arguments: String) {
         MethodChannel(flutterEngine?.dartExecutor?.binaryMessenger!!, METHOD_CHANNEL_NAME)
             .invokeMethod(("volumeButtonEvent$arguments"), null)
@@ -128,22 +89,12 @@ class MainActivity: FlutterActivity() {
         }
         return super.onKeyDown(keyCode, event)
     }
-    private fun setupChannels(context: Context, messenger: BinaryMessenger, SensorType: Int){
-        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        eventChannel = EventChannel(messenger, EVENT_CHANNEL_NAME)
-        sensorStreamHandler = StreamHandler(sensorManager!!, SensorType)
-        eventChannel!!.setStreamHandler(sensorStreamHandler)
 
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun getBatteryLevel(): Int {
         val batteryLevel: Int
         val intent = ContextWrapper(applicationContext).registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-            batteryLevel = intent!!.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1)
+        batteryLevel = intent!!.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1)
         return batteryLevel
     }
 
