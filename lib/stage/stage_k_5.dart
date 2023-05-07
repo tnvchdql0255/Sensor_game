@@ -62,6 +62,9 @@ class _StageK5State extends State<StageK5> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      popUps.showStartMessage(context).then((value) => {});
+    });
     platform.setMethodCallHandler((call) {
       if (call.method == 'volumeButtonEventDown') {
         _onVolumeButtonEvent("다운");

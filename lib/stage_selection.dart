@@ -1,16 +1,19 @@
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sensor_game/stage/stage_L_1.dart';
-import 'package:sensor_game/stage/stage_S_1.dart';
-import 'package:sensor_game/stage/stage_S_2.dart';
-import 'package:sensor_game/stage/stage_S_3.dart';
 import 'package:sensor_game/stage/stage_L_2.dart';
 import 'package:sensor_game/stage/stage_L_3.dart';
 import 'package:sensor_game/stage/stage_L_4.dart';
 import 'package:sensor_game/stage/stage_L_5.dart';
+import 'package:sensor_game/stage/stage_S_1.dart';
+import 'package:sensor_game/stage/stage_S_2.dart';
+import 'package:sensor_game/stage/stage_S_3.dart';
 import 'package:sensor_game/stage/stage_G_1.dart';
 import 'package:sensor_game/stage/stage_G_4.dart';
 import 'package:sensor_game/stage/stage_k_1.dart';
 import 'package:sensor_game/stage/stage_k_2.dart';
+import 'package:sensor_game/stage/stage_k_3.dart';
+import 'package:sensor_game/stage/stage_k_4.dart';
+import 'package:sensor_game/stage/stage_k_5.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -35,6 +38,9 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
     const StageS3(),
     const StageK1(),
     const StageK2(),
+    const StageK3(),
+    const StageK4(),
+    const StageK5(),
   ];
   late final DBHelper dbHelper;
   late Database db;
