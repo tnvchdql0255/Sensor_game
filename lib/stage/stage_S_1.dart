@@ -83,7 +83,7 @@ class _StageS1State extends State<StageS1> {
 
   // 걸음 수를 계산하는 메서드입니다.
   int _calculateSteps(List<double> values) {        //values는 가속도 센서의 x,y,z값을 저장한 리스트
-    double norm = _norm(values);
+    double norm = _norm(values);   //
     if (norm > 18) {                      //조건부의 값을 수정하면 걸음 수의 민감도를 조절할 수 있습니다.
       return _steps + 1;                  //걸음 수를 1 증가시킵니다.
     }

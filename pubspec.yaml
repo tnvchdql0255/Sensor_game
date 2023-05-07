@@ -70,6 +70,8 @@ flutter:
       - assets/images/spoon.png
       - assets/images/big_spoon.png
       - assets/images/photo_frame.png
+      - assets/images/volcano_erupt.png
+      - assets/images/volcano.png
       
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

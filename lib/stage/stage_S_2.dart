@@ -47,10 +47,10 @@ class _StageS2State extends State<StageS2> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            GestureDetector(
+            GestureDetector( // 확대/축소 기능을 위한 GestureDetector 위젯
               onScaleUpdate: (ScaleUpdateDetails details) {
                 setState(() {
-                  scaleFactor = details.scale.clamp(1.0, 2.0); // 확대/축소 비율을 제한하여 설정
+                  scaleFactor = 1.0 + (details.scale - 1.0); // 확대/축소 비율을 제한하여 설정
                 });
               },
               child: Transform.scale(
