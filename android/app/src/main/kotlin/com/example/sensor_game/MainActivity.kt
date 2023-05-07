@@ -33,6 +33,7 @@ class MainActivity: FlutterActivity() {
     private var methodChannel:MethodChannel? = null //메소드 채널용
     private var eventChannel: EventChannel? = null //이벤트 채널용
     private var sensorStreamHandler:StreamHandler? = null //이벤트기반으로 센서데이터를 방송하기위해 필요함
+<<<<<<< HEAD
     private var nightModeConfiguration = Configuration().isNightModeActive
 
 
@@ -72,7 +73,37 @@ class MainActivity: FlutterActivity() {
                 }
             }
         }
+=======
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+>>>>>>> e9feb00 (Stagek3 데모)
 
+
+        methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL_NAME)
+        methodChannel!!.setMethodCallHandler { call, result ->
+            if(call.method == "callPressureSensor"){
+                setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_PRESSURE)
+                result.success(1)
+            }
+            if(call.method == "callTemperatureSensor"){
+                setupChannels(this, flutterEngine.dartExecutor.binaryMessenger, Sensor.TYPE_AMBIENT_TEMPERATURE)
+                result.success(1)
+            }
+            if(call.method == "callAccelerometerSensor"){
+
+            }
+        }
+    }
+    private fun setupChannels(context: Context, messenger: BinaryMessenger, SensorType: Int){
+        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        eventChannel = EventChannel(messenger, EVENT_CHANNEL_NAME)
+        sensorStreamHandler = StreamHandler(sensorManager!!, SensorType)
+        eventChannel!!.setStreamHandler(sensorStreamHandler)
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun getBatteryLevel(): Int {
