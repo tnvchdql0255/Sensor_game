@@ -13,7 +13,8 @@ class StageL1 extends StatefulWidget {
 }
 
 class _Stage1State extends State<StageL1> {
-  PopUps popUps = const PopUps(startMessage: "스테이지 1", quest: "자동차를 충전시켜라!");
+  PopUps popUps = const PopUps(
+      startMessage: "스테이지 1", quest: "자동차를 충전시켜라!", hints: ["1", "2", "3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
   void getDB() async {

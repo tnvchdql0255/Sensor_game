@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_speech/flutter_speech.dart';
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sensor_game/common_ui/start.dart';
@@ -34,14 +35,17 @@ class StageG4 extends StatefulWidget {
 }
 
 class _StageG4State extends State<StageG4> {
-  bool _speechRecognitionAvailable = false; //음성 인식이 가능한지 여부를 체크하는 변수
-  bool _isListening = false; //음성 인식을 시작했는지 여부를 체크하는 변수
+  String _asset = 'assets/images/stage_G_2_1.svg'; //앵무새의 svg를 저장하는 asset 변수 선언
   String transcription = ""; //음성 인식 결과를 저장하는 transcription 변수 선언
   String word = ""; //앵무새가 말하는 단어를 저장하는 word 변수 선언
+  bool _speechRecognitionAvailable = false; //음성 인식이 가능한지 여부를 체크하는 변수
+  bool _isListening = false; //음성 인식을 시작했는지 여부를 체크하는 변수
+  bool _hidingWidget = false; //앵무새가 말하는 단어를 숨기는지 여부를 체크하는 변수
 
   Language selectedLang = languages.first; //설정한 언어를 저장하는 selectedLang 변수 선언
 
-  late Timer checkClearTimer; //1초마다 클리어 상태를 체크하는 타이머를 위한 변수 선언
+  late Timer checkClearTimer; //클리어 상태를 체크하는 타이머를 위한 변수 선언
+  late Timer hidingTimer; //앵무새가 말하는 단어를 숨기는 타이머를 위한 변수 선언
   late SpeechRecognition _speech; //음성 인식을 받아오는 _speech 변수 선언
 
   //앵무새가 말하는 단어 리스트 생성
@@ -104,7 +108,8 @@ class _StageG4State extends State<StageG4> {
       .toList();
 
   //스테이지 시작 시, 스테이지 설명을 출력하는 PopUps 클래스의 인스턴스 생성
-  PopUps popUps = const PopUps(startMessage: "스테이지 4", quest: "앵무새의 말을 따라해라!");
+  PopUps popUps = const PopUps(
+      startMessage: "스테이지 4", quest: "앵무새의 말을 따라해라!", hints: ["1", "2", "3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
 
@@ -226,6 +231,18 @@ class _StageG4State extends State<StageG4> {
       clearStatus();
     });
 
+    //5초마다 위젯을 숨기고 생성하는 타이머 생성
+    hidingTimer = Timer.periodic(const Duration(milliseconds: 5000), (timer) {
+      _hidingWidget = true;
+      _asset = 'assets/images/stage_G_2_1.svg';
+
+      //1.8초 뒤에 위젯을 생성
+      Future.delayed(const Duration(milliseconds: 1800), () {
+        _hidingWidget = false;
+        _asset = 'assets/images/stage_G_2_1.svg';
+      });
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       popUps.showStartMessage(context);
     });
@@ -237,12 +254,18 @@ class _StageG4State extends State<StageG4> {
       if (transcription == word) {
         //클리어 조건을 만족했다면
         checkClearTimer.cancel(); //타이머를 종료
+        hidingTimer.cancel(); //타이머를 종료
+        _hidingWidget = false; //위젯을 생성
+
         popUps.showClearedMessage(context).then((value) {
           //클리어 메시지를 출력
           if (value == 1) {
             //다시하기 버튼 코드
-            cancel();
-            initState();
+            parrotLanguage();
+            checkClearTimer =
+                Timer.periodic(const Duration(milliseconds: 1000), (timer) {
+              clearStatus();
+            });
             setState(() {});
           }
           if (value == 2) {
@@ -268,10 +291,18 @@ class _StageG4State extends State<StageG4> {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.help),
+            onPressed: () {
+              popUps.showHintTabBar(context);
+            }),
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
         appBar: AppBar(
           //상단의 타이틀 부분 설정 (가운데 정렬)
-          title: const Text('앵무새의 말을 따라해라!'),
+          title: const Text('앵무새의 말을 따라해라!',
+              style: TextStyle(color: Colors.black, fontSize: 25)),
           centerTitle: true,
+          backgroundColor: Colors.white, elevation: 0,
 
           //오른쪽에 언어 설정 버튼을 추가
           actions: [
@@ -289,62 +320,80 @@ class _StageG4State extends State<StageG4> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
+                  Expanded(
                       child: Row(children: [
-                    Flexible(
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        margin: const EdgeInsets.only(bottom: 5),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 230, 226, 215),
-                          border: Border.all(
-                              color: Color.fromARGB(255, 178, 176, 161),
-                              width: 4.0),
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(19),
-                            bottomLeft: Radius.circular(19),
-                            bottomRight: Radius.circular(19),
-                          ),
-                        ),
-                        child: Text(
-                          '$word',
-                          style: const TextStyle(
-                              color: Color.fromARGB(255, 0, 0, 0),
-                              fontSize: 18),
-                        ),
-                      ),
+                    Expanded(
+                      child: _hidingWidget == true
+                          ? Container()
+                          : Container(
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 230, 226, 215),
+                                border: Border.all(
+                                    color: Color.fromARGB(255, 178, 176, 161),
+                                    width: 4.0),
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(19),
+                                  bottomLeft: Radius.circular(19),
+                                  bottomRight: Radius.circular(19),
+                                ),
+                              ),
+                              child: Text('$word',
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                      fontSize: 18),
+                                  textAlign: TextAlign.center),
+                            ),
                     ),
-                    Expanded(child: Image.asset('assets/images/parrot.png'))
+                    Expanded(child: SvgPicture.asset(_asset), flex: 2)
                   ])),
                   //Expanded를 사용하여, 음성을 길게 말한 경우 출력 화면을 그만큼 늘린다
-                  Expanded(
-                      child: Container(
-                          //출력 화면의 외부면에는 8 픽셀 만큼의 여백을 주어진다
-                          padding: const EdgeInsets.all(8.0),
-                          color: Colors.grey.shade200, //출력 화면은 밝은 회색으로 설정
-                          child: Text(transcription))), //음성 인식 결과를 텍스트로 지정한다
-                  _buildButton(
-                    //음성 인식이 가능하며, 음성 인식이 시작되지 않은 경우에만 버튼을 활성화
-                    //버튼을 누르면 start 함수를 실행하여 음성 인식을 시작하고 결과를 출력
-                    onPressed: _speechRecognitionAvailable && !_isListening
-                        ? () => start()
-                        : null,
-                    label: _isListening
-                        ? '음성 인식 중...' //음성 인식이 시작될 경우, 텍스트는 '음성 인식 중...'으로 표시
-                        : '(${selectedLang.name}로) 음성 인식 시작하기', //그 외의 경우, 텍스트는 '("선택한 언어"로) 음성 인식 시작하기'로 표시
+                  Container(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      margin:
+                          const EdgeInsets.only(left: 20, right: 20, bottom: 5),
+                      decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 255, 250, 250),
+                          border: Border.all(
+                              color: Color.fromARGB(255, 255, 184, 184),
+                              width: 4.0),
+                          borderRadius: BorderRadius.all(Radius.circular(19))),
+                      child: Text('$transcription',
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontSize: 25),
+                          textAlign: TextAlign.center),
+                    ),
                   ),
-                  _buildButton(
-                    //음성 인식이 시작된 경우에만 버튼을 활성화
-                    //버튼을 누르면 cancel 함수를 실행하여 음성 인식을 초기화 상태로 전환
-                    onPressed: _isListening ? () => cancel() : null,
-                    label: '초기화하기',
-                  ),
-                  _buildButton(
-                    //음성 인식이 시작된 경우에만 버튼을 활성화
-                    //버튼을 누르면 stop 함수를 실행하여 음성 인식을 정지함
-                    onPressed: _isListening ? () => stop() : null,
-                    label: '멈추기',
-                  ),
+                  Container(
+                      child: Row(children: [
+                    _buildButton_1(
+                      //음성 인식이 시작된 경우에만 버튼을 활성화
+                      //버튼을 누르면 cancel 함수를 실행하여 음성 인식을 초기화 상태로 전환
+                      onPressed: _isListening ? () => cancel() : null,
+                      label: '초기화하기',
+                      active: _isListening ? true : false,
+                      active_2: _isListening ? "" : "",
+                    ),
+                    _buildButton_2(
+                      //음성 인식이 가능하며, 음성 인식이 시작되지 않은 경우에만 버튼을 활성화
+                      //버튼을 누르면 start 함수를 실행하여 음성 인식을 시작하고 결과를 출력
+                      onPressed: _speechRecognitionAvailable && !_isListening
+                          ? () => start()
+                          : null,
+                      label: _isListening
+                          ? '음성 인식 중...' //음성 인식이 시작될 경우, 텍스트는 '음성 인식 중...'으로 표시
+                          : '(${selectedLang.name}로) 음성 인식 시작하기', //그 외의 경우, 텍스트는 '("선택한 언어"로) 음성 인식 시작하기'로 표시
+                      active: _isListening ? true : false,
+                    ),
+                    _buildButton_3(
+                      //음성 인식이 시작된 경우에만 버튼을 활성화
+                      //버튼을 누르면 stop 함수를 실행하여 음성 인식을 정지함
+                      onPressed: _isListening ? () => stop() : null,
+                      label: '멈추기',
+                    ),
+                  ])),
                 ],
               ),
             )),
@@ -353,41 +402,85 @@ class _StageG4State extends State<StageG4> {
   }
 
   //화면 내의 버튼 스타일을 지정하기 위한 _buildButton 함수 생성
-  Widget _buildButton({required String label, VoidCallback? onPressed}) =>
-      Padding(
-          padding: EdgeInsets.all(4.0), //버튼의 외부면에는 4픽셀 만큼의 여백을 주어진다
-          child: ElevatedButton(
-            //버튼에 그림자를 넣는다
-            onPressed: onPressed, //버튼을 누르면 onPressed 함수를 실행한다
-            child: Text(
-              label, //버튼의 텍스트가 저장된 label을 지정한다
-              style:
-                  const TextStyle(color: Colors.white), //버튼의 텍스트 색상은 흰색으로 지정한다
+  Widget _buildButton_1(
+          {required String label,
+          required bool active,
+          required String active_2,
+          VoidCallback? onPressed}) =>
+      Expanded(
+          child: TextButton(
+        //버튼에 그림자를 넣는다
+        onPressed: onPressed, //버튼을 누르면 onPressed 함수를 실행한다
+        child: AvatarGlow(
+          glowColor: Color.fromARGB(255, 248, 99, 99),
+          endRadius: 50.0,
+          duration: Duration(milliseconds: 2000),
+          repeat: true,
+          showTwoGlows: true,
+          repeatPauseDuration: Duration(milliseconds: 300),
+          child: Material(
+            // Replace this child with your own
+            elevation: 4.0,
+            shape: CircleBorder(),
+            child: CircleAvatar(
+              backgroundColor: Colors.grey[100],
+              child: Image.asset('assets/images/close.png'),
+              radius: 35.0,
             ),
-          ));
-}
+          ),
+        ),
+      ));
 
-class StackWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
-            margin: EdgeInsets.only(top: 20.0), //바깥쪽 여백을 줌
-            padding: EdgeInsets.fromLTRB(10, 5, 10, 5), //안쪽 여백을 줌
-            decoration: BoxDecoration(
-                //박스의 스타일을 지정
-                color: Color.fromARGB(255, 247, 249, 208),
-                border: Border.all(
-                    color: Color.fromARGB(255, 135, 135, 135), width: 4.0),
-                borderRadius: BorderRadius.horizontal(
-                    left: Radius.circular(20.0), right: Radius.circular(20.0))),
-            //밝기 값을 출력하는 컨테이너
-            child: Text(
-              '밝기 값:',
-              style: TextStyle(fontSize: 20),
-            ))
-      ],
-    );
-  }
+  Widget _buildButton_2(
+          {required String label,
+          VoidCallback? onPressed,
+          required bool active}) =>
+      Expanded(
+          child: TextButton(
+        //버튼에 그림자를 넣는다
+        onPressed: onPressed, //버튼을 누르면 onPressed 함수를 실행한다
+        child: AvatarGlow(
+          glowColor: Color.fromARGB(255, 248, 99, 99),
+          endRadius: 70.0,
+          duration: Duration(milliseconds: 2000),
+          repeat: active,
+          showTwoGlows: true,
+          repeatPauseDuration: Duration(milliseconds: 300),
+          child: Material(
+            // Replace this child with your own
+            elevation: 4.0,
+            shape: CircleBorder(),
+            child: CircleAvatar(
+              backgroundColor: Colors.grey[100],
+              child: Image.asset('assets/images/play.png'),
+              radius: 50.0,
+            ),
+          ),
+        ),
+      ));
+
+  Widget _buildButton_3({required String label, VoidCallback? onPressed}) =>
+      Expanded(
+          child: TextButton(
+        //버튼에 그림자를 넣는다
+        onPressed: onPressed, //버튼을 누르면 onPressed 함수를 실행한다
+        child: AvatarGlow(
+          glowColor: Color.fromARGB(255, 248, 99, 99),
+          endRadius: 50.0,
+          duration: Duration(milliseconds: 2000),
+          repeat: true,
+          showTwoGlows: true,
+          repeatPauseDuration: Duration(milliseconds: 300),
+          child: Material(
+            // Replace this child with your own
+            elevation: 4.0,
+            shape: CircleBorder(),
+            child: CircleAvatar(
+              backgroundColor: Colors.grey[100],
+              child: Image.asset('assets/images/stop.png'),
+              radius: 35.0,
+            ),
+          ),
+        ),
+      ));
 }

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 class PopUps {
   final String startMessage;
   final String quest;
-  const PopUps({required this.startMessage, required this.quest});
+  final List<String> hints;
+  const PopUps(
+      {required this.startMessage, required this.quest, required this.hints});
 
   Future<void> showStartMessage(BuildContext context) {
     return showDialog(
@@ -114,5 +116,53 @@ class PopUps {
   }
 
   ///스테이지 마다 override 해서 사용
-  void resetStage() {}
+  Future<dynamic> showHintTabBar(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            // insetPadding: EdgeInsets.only(
+            //     bottom: MediaQuery.of(context).size.height * 0.5),
+            backgroundColor: Colors.transparent,
+
+            elevation: 0,
+            content: DefaultTabController(
+              initialIndex: 0,
+              length: 3,
+              child: Scaffold(
+                appBar: AppBar(
+                  automaticallyImplyLeading: false,
+                  title: const Text('Hints'),
+                  bottom: const TabBar(
+                    tabs: <Widget>[
+                      Tab(
+                        icon: Icon(Icons.looks_one),
+                      ),
+                      Tab(
+                        icon: Icon(Icons.looks_two),
+                      ),
+                      Tab(
+                        icon: Icon(Icons.looks_3),
+                      ),
+                    ],
+                  ),
+                ),
+                body: TabBarView(
+                  children: <Widget>[
+                    Center(
+                      child: Text(hints[0]),
+                    ),
+                    Center(
+                      child: Text(hints[1]),
+                    ),
+                    Center(
+                      child: Text(hints[2]),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
 }

@@ -23,10 +23,9 @@ class _StageL2State extends State<StageL2> {
   StreamSubscription? pressureSubscription;
   bool bgColorState = false;
   PopUps popUps = const PopUps(
-    startMessage: "스테이지 2",
-    quest: "표시된 층으로 이동해라!",
-    //hints: ["힌트1", "힌트2", "힌트3"]
-  );
+      startMessage: "스테이지 2",
+      quest: "표시된 층으로 이동해라!",
+      hints: ["힌트1", "힌트2", "힌트3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
   void getDB() async {

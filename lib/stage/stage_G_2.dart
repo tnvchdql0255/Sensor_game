@@ -19,10 +19,9 @@ class _StageG2State extends State<StageG2> {
   StreamSubscription? temperatureSubscription;
   DBHelper dbHelper = DBHelper();
   PopUps popUps = const PopUps(
-    startMessage: "스테이지 3",
-    quest: "시원하게 만들어라!",
-    //hints: ["힌트1", "힌트2", "힌트3"]
-  );
+      startMessage: "스테이지 3",
+      quest: "시원하게 만들어라!",
+      hints: ["힌트1", "힌트2", "힌트3"]);
 
   @override
   void initState() {

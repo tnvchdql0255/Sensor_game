@@ -41,6 +41,7 @@ dependencies:
   light: ^2.1.0
   flutter_speech: ^2.0.0
   flutter_svg: ^2.0.4
+  avatar_glow: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -70,13 +71,15 @@ flutter:
     - assets/images/hatch.png
     - assets/images/espionage.png
     - assets/images/run.png
-    - assets/images/parrot.png
     - assets/audios/Peace.ogg
     - assets/images/stage_G_1_1.svg
     - assets/images/stage_G_1_2.svg
     - assets/images/stage_G_1_3.svg
     - assets/images/stage_G_1_4.svg
     - assets/images/stage_G_2_1.svg
+    - assets/images/play.png
+    - assets/images/close.png
+    - assets/images/stop.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

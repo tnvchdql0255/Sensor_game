@@ -22,15 +22,16 @@ class _StageG1State extends State<StageG1> {
       'assets/images/stage_G_1_1.svg'; //졸린 사람의 svg를 저장하는 asset 변수 선언
   bool _isClear = false; //클리어 조건을 만족했는지를 체크하는 _isClear 변수 선언
 
-  late Timer checkLightTimer; //1초마다 밝기 값이 낮은지를 체크하는 타이머를 위한 변수 선언
-  late Timer checkClearTimer; //1초마다 클리어 상태를 체크하는 타이머를 위한 변수 선언
+  late Timer checkLightTimer; //밝기 값이 낮은지를 체크하는 타이머를 위한 변수 선언
+  late Timer checkClearTimer; //클리어 상태를 체크하는 타이머를 위한 변수 선언
   late Light _light; //밝기 값을 읽어들이는 _light 변수 선언
   late StreamSubscription _subscription; //이벤트 처리를 위한 _subscription 변수 선언
 
   List<int> lightList = []; //밝기 값을 저장하는 lightList 생성
 
   //스테이지 시작 시, 스테이지 설명을 출력하는 PopUps 클래스의 인스턴스 생성
-  PopUps popUps = const PopUps(startMessage: "스테이지 1", quest: "눈을 감기게 해줘라!");
+  PopUps popUps = const PopUps(
+      startMessage: "스테이지 1", quest: "눈을 감기게 해줘라!", hints: ["1", "2", "3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
 
@@ -164,10 +165,10 @@ class _StageG1State extends State<StageG1> {
       home: Scaffold(
         backgroundColor: Color.fromARGB(255, _bRGB, _bRGB, _bRGB),
         appBar: AppBar(
-          //상단의 타이틀 부분 설정 (가운데 정렬)
-          title: const Text('눈을 감기게 해줘라!'),
-          centerTitle: true,
-        ),
+            //상단의 타이틀 부분 설정 (가운데 정렬)
+            title: const Text('눈을 감기게 해줘라!'),
+            centerTitle: true,
+            backgroundColor: Color.fromARGB(255, 197, 229, 17)),
         body: SafeArea(
           child: Center(
             //아래의 요소들을 가로로 가운데 정렬
