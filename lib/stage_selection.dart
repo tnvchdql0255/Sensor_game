@@ -1,5 +1,8 @@
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sensor_game/stage/stage_L_1.dart';
+import 'package:sensor_game/stage/stage_S_1.dart';
+import 'package:sensor_game/stage/stage_S_2.dart';
+import 'package:sensor_game/stage/stage_S_3.dart';
 import 'package:flutter/material.dart';
 import 'package:sensor_game/stage/stage_L_2.dart';
 import 'package:sensor_game/stage/stage_L_3.dart';
@@ -20,7 +23,10 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
     const StageL2(),
     const StageL3(),
     const StageL4(),
-    const StageL5()
+    const StageL5(),
+    const StageS1(),
+    const StageS2(),
+    const StageS3(),
   ];
   late final DBHelper dbHelper;
   late Database db;
