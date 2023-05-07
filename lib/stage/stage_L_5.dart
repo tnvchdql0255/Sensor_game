@@ -96,7 +96,8 @@ class _StageL5State extends State<StageL5> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Temp"),
+        centerTitle: true,
+        title: const Text("밤낮을 바꿔라!"),
         elevation: 0,
         backgroundColor: Colors.lightBlue,
       ),
