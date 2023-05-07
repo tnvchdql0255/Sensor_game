@@ -11,18 +11,26 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+<<<<<<< HEAD
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.annotation.RequiresApi
+=======
+import android.os.Bundle
+import android.view.KeyEvent
+>>>>>>> 85e99bd (stage k5)
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
+<<<<<<< HEAD
 import java.util.stream.Stream
 import kotlin.system.exitProcess
+=======
+>>>>>>> 85e99bd (stage k5)
 
 class MainActivity: FlutterActivity() {
     private val EVENT_CHANNEL_NAME = "com.sensorIO.sensor" //이벤트기반 채널통신 주소
@@ -34,10 +42,20 @@ class MainActivity: FlutterActivity() {
     private var eventChannel: EventChannel? = null //이벤트 채널용
     private var sensorStreamHandler:StreamHandler? = null //이벤트기반으로 센서데이터를 방송하기위해 필요함
 <<<<<<< HEAD
+<<<<<<< HEAD
     private var nightModeConfiguration = Configuration().isNightModeActive
 
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+=======
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC)
+    }
+
+>>>>>>> 85e99bd (stage k5)
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL_NAME)
@@ -78,7 +96,6 @@ class MainActivity: FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
 >>>>>>> e9feb00 (Stagek3 데모)
 
-
         methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL_NAME)
         methodChannel!!.setMethodCallHandler { call, result ->
             if(call.method == "callPressureSensor"){
@@ -92,7 +109,24 @@ class MainActivity: FlutterActivity() {
             if(call.method == "callAccelerometerSensor"){
 
             }
+//            if (call.method == "volumeButtonEvent") {
+//                onVolumeButtonEvent()
+//            }
         }
+    }
+    private fun onVolumeButtonEvent(arguments: String) {
+        MethodChannel(flutterEngine?.dartExecutor?.binaryMessenger!!, METHOD_CHANNEL_NAME)
+            .invokeMethod(("volumeButtonEvent$arguments"), null)
+    }
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            onVolumeButtonEvent("Down")
+            return true
+        }
+        if(keyCode == KeyEvent.KEYCODE_VOLUME_UP){
+            onVolumeButtonEvent("Up")
+        }
+        return super.onKeyDown(keyCode, event)
     }
     private fun setupChannels(context: Context, messenger: BinaryMessenger, SensorType: Int){
         sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
