@@ -2,6 +2,7 @@ import 'package:sensor_game/service/db_manager.dart';
 import 'package:sensor_game/stage/stage_L_1.dart';
 import 'package:sensor_game/stage/stage_S_1.dart';
 import 'package:sensor_game/stage/stage_S_2.dart';
+import 'package:sensor_game/stage/stage_S_3.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -13,7 +14,7 @@ class StageSelectionMenu extends StatefulWidget {
 }
 
 class _StageSelectionMenuState extends State<StageSelectionMenu> {
-  List<Widget> stageRoute = [const StageL1(), const StageS1(), const StageS2()];
+  List<Widget> stageRoute = [const StageL1(), const StageS1(), const StageS2(), const StageS3()];
 
   @override
   void initState() {
