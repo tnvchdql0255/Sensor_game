@@ -20,7 +20,7 @@ class _StageK3State extends State<StageK3> {
       hints: ["힌트1", "힌트2", "힌트3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
-  double dx = 150, dy = 250;
+  double dx = 0, dy = 0;
   List<Color> circleColors = [Colors.red, Colors.blue, Colors.green];
   List<Offset> circleOffsets = [
     const Offset(0, 0),
@@ -30,8 +30,10 @@ class _StageK3State extends State<StageK3> {
   late StreamSubscription<GyroscopeEvent> _gyroscopeSubscription;
 
   void initStage() {
+    var appBarHeight = AppBar().preferredSize.height;
+    var screenHeight = MediaQuery.of(context).size.height;
     dx = MediaQuery.of(context).size.width / 2;
-    dy = MediaQuery.of(context).size.height / 2;
+    dy = (screenHeight - appBarHeight) / 2;
   }
 
   void deleteCircle(int index) {
@@ -40,10 +42,11 @@ class _StageK3State extends State<StageK3> {
     });
   }
 
+  //충돌감지 함수
   void checkCollisions() {
     for (int i = 0; i < circleOffsets.length; i++) {
       if (circleColors[i] != Colors.transparent &&
-          distance(circleOffsets[i], Offset(dx, dy)) < 25) {
+          distance(circleOffsets[i], Offset(dx, dy)) < 35) {
         deleteCircle(i);
         break;
       }
@@ -53,6 +56,16 @@ class _StageK3State extends State<StageK3> {
   //모든 원이 사라지면 클리어 함수 호출
   void checkClear() {
     if (circleColors.every((color) => color == Colors.transparent)) {
+      popUps.showClearedMessage(context).then((value) {
+        if (value == 1) {
+          //다시하기 버튼 코드
+          initStage();
+          setState(() {});
+        }
+        if (value == 2) {
+          //메뉴 버튼 코드
+        }
+      });
       print("clear");
     }
   }
@@ -62,16 +75,16 @@ class _StageK3State extends State<StageK3> {
     var height = MediaQuery.of(context).size.height;
 
     if (dx <= 0) {
-      dx = 1;
+      dx = 0;
     }
     if (dx >= width) {
-      dx = width - 1;
+      dx = width;
     }
     if (dy <= 0) {
-      dy = 1;
+      dy = 0;
     }
     if (dy >= height) {
-      dy = height - 1;
+      dy = height;
     }
   }
 
@@ -79,8 +92,10 @@ class _StageK3State extends State<StageK3> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      popUps.showStartMessage(context);
       initStage();
     });
+
     setInitialCircleOffsets();
     _gyroscopeSubscription =
         SensorsPlatform.instance.gyroscopeEvents.listen((event) {
