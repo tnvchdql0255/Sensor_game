@@ -115,7 +115,7 @@ class _MyHomeState extends State<MyHome> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "흔들어서 시작하기",
+                    "스마트폰을 흔들어서 시작하기",
                     style: TextStyle(
                         fontSize: 18,
                         color: Colors.blue.shade200,
