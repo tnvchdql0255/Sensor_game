@@ -21,13 +21,16 @@ class MyHome extends StatefulWidget {
   State<MyHome> createState() => _MyHomeState();
 }
 
+
+
+
 class _MyHomeState extends State<MyHome> {
   @override
   Widget build(BuildContext context) {
     var textStyle = const TextStyle(
         color: Colors.white, fontSize: 40, fontWeight: FontWeight.w600);
     return Scaffold(
-      appBar: AppBar(title: const Text("Temp")),
+      appBar: AppBar(title: const Text("스테이지 선택")),
       backgroundColor: Colors.lightBlue,
       body: Padding(
         padding: const EdgeInsets.all(8.0),

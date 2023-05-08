@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
-
 import '../common_ui/start.dart';
 import '../service/db_manager.dart';
 
@@ -57,6 +56,7 @@ class _StageL2State extends State<StageL2> {
         anchorPressure = pressure; //초기 대기압 값을 현재 상태로 초기화
       }
       bgColorState = getCurrentDifference();
+      print("%%%%%%%%%%%still Listening%%%%%%%%%%%%%%%");
       setState(() {});
     });
   }
@@ -74,9 +74,20 @@ class _StageL2State extends State<StageL2> {
   }
 
   @override
+  void dispose() {
+    print("트리에서 제거됨");
+    pressureSubscription
+        ?.cancel(); //스트림을 해제하지 않고 페이지에서 벗어날시 setState가 스트림채널에 물려 지속적으로 호출되어 에러가 발생한다.
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: bgColorState ? Colors.green : Colors.red,
+        appBar: AppBar(
+          title: const Text("Stage 2"),
+        ),
         body: SafeArea(
           child: Center(
             child: Column(

@@ -45,3 +45,11 @@ app.*.map.json
 
 ios/Podfile
 macos/Podfile
+.vscode/
+ios/Podfile.lock
+macos/Podfile.lock
+
+android/app/gradle/
+android/app/gradlew
+android/app/gradlew.bat
+android/app/local.properties
