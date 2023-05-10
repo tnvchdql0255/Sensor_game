@@ -4,6 +4,8 @@ class PopUps {
   final String startMessage;
   final String quest;
   final List<String> hints;
+  final double roundness = 10.0;
+
   const PopUps(
       {required this.startMessage, required this.quest, required this.hints});
 
@@ -12,8 +14,8 @@ class PopUps {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(roundness)),
           insetPadding:
               EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.5),
           title: Text(startMessage, style: const TextStyle(fontSize: 50)),
@@ -44,7 +46,7 @@ class PopUps {
           return AlertDialog(
             title: const Text("실패.."),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40.0)),
+                borderRadius: BorderRadius.circular(roundness)),
             insetPadding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).size.height * 0.5),
             elevation: 0,
@@ -83,7 +85,7 @@ class PopUps {
           return AlertDialog(
             title: const Text("성공!"),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40.0)),
+                borderRadius: BorderRadius.circular(roundness)),
             insetPadding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).size.height * 0.5),
             elevation: 0,
@@ -96,7 +98,7 @@ class PopUps {
                   },
                   icon: const Icon(
                     Icons.refresh,
-                    size: 30,
+                    size: 50,
                   ),
                 ),
                 IconButton(
@@ -106,7 +108,7 @@ class PopUps {
                   },
                   icon: const Icon(
                     Icons.menu,
-                    size: 30,
+                    size: 50,
                   ),
                 ),
               ],
@@ -121,10 +123,10 @@ class PopUps {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            // insetPadding: EdgeInsets.only(
-            //     bottom: MediaQuery.of(context).size.height * 0.5),
-            backgroundColor: Colors.transparent,
-
+            insetPadding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.5),
+            backgroundColor: Colors.lightBlue,
+            contentPadding: EdgeInsets.zero,
             elevation: 0,
             content: DefaultTabController(
               initialIndex: 0,
@@ -149,15 +151,33 @@ class PopUps {
                 ),
                 body: TabBarView(
                   children: <Widget>[
-                    Center(
-                      child: Text(hints[0]),
-                    ),
-                    Center(
-                      child: Text(hints[1]),
-                    ),
-                    Center(
-                      child: Text(hints[2]),
-                    ),
+                    Container(
+                        padding:
+                            EdgeInsetsDirectional.symmetric(horizontal: 10),
+                        child: Center(
+                          child: Text(
+                            hints[0],
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        )),
+                    Container(
+                        padding:
+                            EdgeInsetsDirectional.symmetric(horizontal: 10),
+                        child: Center(
+                          child: Text(
+                            hints[1],
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        )),
+                    Container(
+                        padding:
+                            EdgeInsetsDirectional.symmetric(horizontal: 10),
+                        child: Center(
+                          child: Text(
+                            hints[2],
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        )),
                   ],
                 ),
               ),

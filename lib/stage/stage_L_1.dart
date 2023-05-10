@@ -101,6 +101,8 @@ class _Stage1State extends State<StageL1> {
     return Scaffold(
       backgroundColor: Colors.lightBlue,
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.lightBlue,
         title: const Text("배터리상태 예제"),
       ),
       body: Row(
@@ -128,6 +130,13 @@ class _Stage1State extends State<StageL1> {
           )
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+          tooltip: "힌트",
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(Icons.question_mark)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
 }

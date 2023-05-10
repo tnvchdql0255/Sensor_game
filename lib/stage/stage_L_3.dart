@@ -76,16 +76,28 @@ class _StageL3State extends State<StageL3> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Stage L3")),
+      appBar: AppBar(
+        title: const Text("Stage L3"),
+        elevation: 0,
         backgroundColor: Color.fromARGB(255, r, 0, b),
-        body: Center(
-          child: Column(children: [
-            TextButton(onPressed: setDefaultState, child: const Text("call?")),
-            Text("currtemp: $temperature",
-                style: const TextStyle(color: Colors.white)),
-            Text("anchorTemp: $anchorTemperature",
-                style: const TextStyle(color: Colors.white)),
-          ]),
-        ));
+      ),
+      backgroundColor: Color.fromARGB(255, r, 0, b),
+      body: Center(
+        child: Column(children: [
+          TextButton(onPressed: setDefaultState, child: const Text("call?")),
+          Text("currtemp: $temperature",
+              style: const TextStyle(color: Colors.white)),
+          Text("anchorTemp: $anchorTemperature",
+              style: const TextStyle(color: Colors.white)),
+        ]),
+      ),
+      floatingActionButton: FloatingActionButton(
+          tooltip: "힌트",
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(Icons.question_mark)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+    );
   }
 }

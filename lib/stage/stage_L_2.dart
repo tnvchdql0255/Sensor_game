@@ -85,43 +85,52 @@ class _StageL2State extends State<StageL2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: bgColorState ? Colors.green : Colors.red,
-        appBar: AppBar(
-          title: const Text("Stage 2"),
+      backgroundColor: bgColorState ? Colors.green : Colors.red,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.lightBlue,
+        title: const Text("Stage 2"),
+      ),
+      body: SafeArea(
+        child: Center(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Text("$pressure"),
+            IconButton(
+              icon: bgColorState
+                  ? const Icon(
+                      Icons.door_sliding_outlined,
+                      color: Colors.blue,
+                      size: 60,
+                    )
+                  : const Icon(
+                      Icons.door_sliding_outlined,
+                      color: Colors.black,
+                      size: 60,
+                    ),
+              onPressed: () {
+                if (bgColorState) {
+                  popUps.showClearedMessage(context).then((value) {
+                    if (value == 1) {
+                      initStage();
+                    }
+                    if (value == 2) {}
+                  });
+                  dbHelper.changeIsAccessible(3, true);
+                  dbHelper.changeIsCleared(2, true);
+                }
+              },
+            ),
+          ]),
         ),
-        body: SafeArea(
-          child: Center(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text("$pressure"),
-                  IconButton(
-                    icon: bgColorState
-                        ? const Icon(
-                            Icons.door_sliding_outlined,
-                            color: Colors.blue,
-                            size: 60,
-                          )
-                        : const Icon(
-                            Icons.door_sliding_outlined,
-                            color: Colors.black,
-                            size: 60,
-                          ),
-                    onPressed: () {
-                      if (bgColorState) {
-                        popUps.showClearedMessage(context).then((value) {
-                          if (value == 1) {
-                            initStage();
-                          }
-                          if (value == 2) {}
-                        });
-                        dbHelper.changeIsAccessible(3, true);
-                        dbHelper.changeIsCleared(2, true);
-                      }
-                    },
-                  ),
-                ]),
-          ),
-        ));
+      ),
+      floatingActionButton: FloatingActionButton(
+          tooltip: "힌트",
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(Icons.question_mark)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+    );
   }
 }

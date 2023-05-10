@@ -77,8 +77,19 @@ class _StageL4State extends State<StageL4> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Stage_L_4")),
+      appBar: AppBar(
+        title: const Text("Stage_L_4"),
+        elevation: 0,
+        backgroundColor: Colors.lightBlue,
+      ),
       body: Center(child: Text("$vector")),
+      floatingActionButton: FloatingActionButton(
+          tooltip: "힌트",
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(Icons.question_mark)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
 }

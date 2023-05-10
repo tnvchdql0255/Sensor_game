@@ -16,7 +16,7 @@ class _StageL5State extends State<StageL5> {
   PopUps popUps = const PopUps(
       startMessage: "스테이지 5",
       quest: "밤, 낮을 바꿔라!",
-      hints: ["시간과 크게 관련은 없습니다", "밝은걸 싫어하는 유저들은 처음에 밤일겁니다", "상태바 어딘가에.."]);
+      hints: ["시간과 크게 관련은 없습니다", "밝은걸 싫어하는 유저들은\n 처음에 밤일겁니다", "상태바 어딘가에.."]);
   DBHelper dbHelper = DBHelper();
   static const methodChannel = MethodChannel("com.sensorIO.method");
   int themeState = 2;
@@ -29,16 +29,16 @@ class _StageL5State extends State<StageL5> {
   @override
   void initState() {
     super.initState();
-    initStage();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       popUps.showStartMessage(context).then((value) async {
+        initStage();
         anchorThemeState = await methodChannel.invokeMethod("getConfigData");
       });
     });
   }
 
   void initStage() {
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       getTest();
     });
   }
