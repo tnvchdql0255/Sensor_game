@@ -44,7 +44,6 @@ class _StageL5State extends State<StageL5> {
   }
 
   void getTest() async {
-    //여기에 테마 상태 자체를 받아와야함 지금은 변경이 있을때만 불러져서..
     themeState = await methodChannel.invokeMethod("getConfigData");
     print(themeState);
     getConfig();

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sensor_game/common_ui/start.dart';
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class StageL1 extends StatefulWidget {
   const StageL1({super.key});
@@ -13,6 +14,8 @@ class StageL1 extends StatefulWidget {
 }
 
 class _Stage1State extends State<StageL1> {
+  static const String carCharging = "assets/images/car_charging.svg";
+  static const String carIdle = "assets/images/car_idle.svg";
   PopUps popUps = const PopUps(
       startMessage: "스테이지 1",
       quest: "자동차를 충전시켜라!",
@@ -23,7 +26,7 @@ class _Stage1State extends State<StageL1> {
     db = await dbHelper.db;
   }
 
-  Icon currentValue = const Icon(Icons.battery_6_bar);
+  SvgPicture currentValue = SvgPicture.asset(carIdle);
   BatteryState? _batteryState;
   final Battery _battery = Battery();
   late Timer timer;
@@ -61,21 +64,21 @@ class _Stage1State extends State<StageL1> {
     setState(() {
       switch (_batteryState) {
         case BatteryState.full:
-          currentValue = const Icon(Icons.battery_charging_full, size: 100);
+          currentValue = SvgPicture.asset(carCharging);
           persentage = persentage + 5;
           break;
         case BatteryState.charging:
-          currentValue = const Icon(Icons.battery_charging_full, size: 100);
+          currentValue = SvgPicture.asset(carCharging);
           persentage = persentage + 5;
           break;
         case BatteryState.discharging:
-          currentValue = const Icon(Icons.battery_0_bar, size: 100);
+          currentValue = SvgPicture.asset(carIdle);
           break;
         case BatteryState.unknown:
-          currentValue = const Icon(Icons.battery_0_bar, size: 100);
+          currentValue = SvgPicture.asset(carIdle);
           break;
         default:
-          currentValue = const Icon(Icons.battery_0_bar, size: 100);
+          currentValue = SvgPicture.asset(carIdle);
           break;
       }
       if (persentage == 100) {
