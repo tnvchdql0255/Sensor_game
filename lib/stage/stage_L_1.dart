@@ -140,31 +140,3 @@ class _Stage1State extends State<StageL1> {
     );
   }
 }
-
-
-// IconButton(
-//               onPressed: () async {
-//                 dbHelper.changeIsCleared(1, true);
-//               },
-//               icon: const Icon(Icons.add)),
-//           IconButton(
-//               onPressed: () async {
-//                 dbHelper.changeIsCleared(1, false);
-//               },
-//               icon: const Icon(Icons.remove)),
-//           IconButton(
-//               onPressed: () async {
-//                 dbHelper.changeIsAccessible(2, true);
-//               },
-//               icon: const Icon(
-//                 Icons.add,
-//                 color: Colors.red,
-//               )),
-//           IconButton(
-//               onPressed: () async {
-//                 dbHelper.changeIsAccessible(2, false);
-//               },
-//               icon: const Icon(
-//                 Icons.remove,
-//                 color: Colors.red,
-//               )),
