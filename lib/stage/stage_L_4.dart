@@ -25,7 +25,7 @@ class _StageL4State extends State<StageL4> {
   bool bgColorState = false;
   PopUps popUps = const PopUps(
       startMessage: "스테이지 4",
-      quest: "못도망가게 해라!",
+      quest: "공을 꺼내라!",
       hints: ["어렵게 생각하면 안됩니다", "없음", "없음"]);
   DBHelper dbHelper = DBHelper();
 
@@ -78,10 +78,17 @@ class _StageL4State extends State<StageL4> {
     ballLocationStateTrue = Matrix4.translationValues(
         0, -MediaQuery.of(context).size.height / 2, 0);
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Stage_L_4"),
+        iconTheme: const IconThemeData(
+          color: Colors.black, //change your color here
+        ),
+        title: const Text(
+          "Stage_L_4",
+          style: TextStyle(color: Colors.black),
+        ),
         elevation: 0,
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: Colors.white,
       ),
       // ignore: sized_box_for_whitespace
       body: Stack(
