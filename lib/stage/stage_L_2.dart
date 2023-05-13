@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:sqflite/sqflite.dart';
 import '../common_ui/start.dart';
 import '../service/db_manager.dart';
@@ -23,14 +24,17 @@ class _StageL2State extends State<StageL2> {
   bool bgColorState = false;
   PopUps popUps = const PopUps(
       startMessage: "스테이지 2",
-      quest: "표시된 층으로 이동해라!",
-      hints: ["힌트1", "힌트2", "힌트3"]);
+      quest: "엘리베이터 문을 열어라!",
+      hints: ["배경이 초록으로 바뀌면 버튼을 눌러 열수 있습니다", "실제로 가보는건 어때요?", "고도와 관련이 있습니다"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
   void getDB() async {
     db = await dbHelper.db;
   }
 
+  static const String elevatorClosed = "assets/images/elevator_closed.svg";
+  static const String elevatorOpened = "assets/images/elevator_opened.svg";
+  String currentElevatorState = elevatorClosed;
   @override
   void initState() {
     super.initState();
@@ -57,7 +61,7 @@ class _StageL2State extends State<StageL2> {
         anchorPressure = pressure; //초기 대기압 값을 현재 상태로 초기화
       }
       bgColorState = getCurrentDifference();
-      print("%%%%%%%%%%%still Listening%%%%%%%%%%%%%%%");
+
       setState(() {});
     });
   }
@@ -88,41 +92,51 @@ class _StageL2State extends State<StageL2> {
       backgroundColor: bgColorState ? Colors.green : Colors.red,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: bgColorState ? Colors.green : Colors.red,
         title: const Text("Stage 2"),
       ),
-      body: SafeArea(
-        child: Center(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Text("$pressure"),
-            IconButton(
-              icon: bgColorState
-                  ? const Icon(
-                      Icons.door_sliding_outlined,
-                      color: Colors.blue,
-                      size: 60,
-                    )
-                  : const Icon(
-                      Icons.door_sliding_outlined,
-                      color: Colors.black,
-                      size: 60,
-                    ),
-              onPressed: () {
-                if (bgColorState) {
-                  popUps.showClearedMessage(context).then((value) {
-                    if (value == 1) {
-                      initStage();
-                    }
-                    if (value == 2) {}
-                  });
-                  dbHelper.changeIsAccessible(3, true);
-                  dbHelper.changeIsCleared(2, true);
-                }
-              },
+      body: Stack(
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width, // 최대 너비
+            child: SvgPicture.asset(
+              currentElevatorState,
+              fit: BoxFit.contain,
             ),
-          ]),
-        ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: bgColorState
+                    ? const Icon(
+                        Icons.door_sliding,
+                        color: Colors.blue,
+                        size: 60,
+                      )
+                    : const Icon(
+                        Icons.door_sliding_outlined,
+                        color: Colors.black,
+                        size: 60,
+                      ),
+                onPressed: () {
+                  if (bgColorState) {
+                    currentElevatorState = elevatorOpened;
+                    setState(() {});
+                    popUps.showClearedMessage(context).then((value) {
+                      if (value == 1) {
+                        initStage();
+                      }
+                      if (value == 2) {}
+                    });
+                    dbHelper.changeIsAccessible(3, true);
+                    dbHelper.changeIsCleared(2, true);
+                  }
+                },
+              ),
+            ],
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
           tooltip: "힌트",
@@ -134,3 +148,43 @@ class _StageL2State extends State<StageL2> {
     );
   }
 }
+
+// Center(
+//         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+//           Expanded(
+//             // ignore: sized_box_for_whitespace
+//             child: Container(
+//                 width: MediaQuery.of(context).size.width, // 최대 너비
+
+//                 child: SvgPicture.asset(
+//                   elevatorClosed,
+//                   fit: BoxFit.contain,
+//                 )),
+//           ),
+//           IconButton(
+//             icon: bgColorState
+//                 ? const Icon(
+//                     Icons.door_sliding,
+//                     color: Colors.blue,
+//                     size: 60,
+//                   )
+//                 : const Icon(
+//                     Icons.door_sliding,
+//                     color: Colors.black,
+//                     size: 60,
+//                   ),
+//             onPressed: () {
+//               if (bgColorState) {
+//                 popUps.showClearedMessage(context).then((value) {
+//                   if (value == 1) {
+//                     initStage();
+//                   }
+//                   if (value == 2) {}
+//                 });
+//                 dbHelper.changeIsAccessible(3, true);
+//                 dbHelper.changeIsCleared(2, true);
+//               }
+//             },
+//           ),
+//         ]),
+//       ),
