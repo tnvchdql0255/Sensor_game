@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:sensor_game/common_ui/start.dart';
 import 'package:sensor_game/service/db_manager.dart';
 
@@ -18,12 +19,15 @@ class _StageL3State extends State<StageL3> {
   late Timer timer;
   int r = 255;
   int b = 0;
+  String currentSoupState = "assets/images/soup_hot.svg";
+  static const String soupHot = "assets/images/soup_hot.svg";
+  static const String soupCooled = "assets/images/soup_cooled.svg";
 
   DBHelper dbHelper = DBHelper();
   PopUps popUps = const PopUps(
       startMessage: "스테이지 3",
       quest: "시원하게 만들어라!",
-      hints: ["힌트1", "힌트2", "힌트3"]);
+      hints: ["온도를 낮추는게 관건 입니다", "어디 시원한 곳으로 가보시겠어요?", "스마트폰 뒷면에 찬물을 묻혀 보세요"]);
 
   @override
   void initState() {
@@ -42,7 +46,6 @@ class _StageL3State extends State<StageL3> {
       if ((temperature - 70) < anchorTemperature) {
         r = r - 25;
         b = b + 25;
-        print('r: $r, b: $b');
         checkIsCooled();
       }
 
@@ -59,12 +62,23 @@ class _StageL3State extends State<StageL3> {
 
   bool checkIsCooled() {
     if (b >= 250) {
-      popUps.showClearedMessage(context);
+      currentSoupState = soupCooled;
+      setState(() {});
+      popUps.showClearedMessage(context).then((value) => resetStage());
       timer.cancel();
       return true;
     } else {
       return false;
     }
+  }
+
+  resetStage() {
+    setState(() {
+      r = 255;
+      b = 0;
+      currentSoupState = soupHot;
+    });
+    startTimer();
   }
 
   @override
@@ -84,11 +98,13 @@ class _StageL3State extends State<StageL3> {
       backgroundColor: Color.fromARGB(255, r, 0, b),
       body: Center(
         child: Column(children: [
-          TextButton(onPressed: setDefaultState, child: const Text("call?")),
-          Text("currtemp: $temperature",
-              style: const TextStyle(color: Colors.white)),
-          Text("anchorTemp: $anchorTemperature",
-              style: const TextStyle(color: Colors.white)),
+          SizedBox(
+            width: MediaQuery.of(context).size.width, // 최대 너비
+            child: SvgPicture.asset(
+              currentSoupState,
+              fit: BoxFit.contain,
+            ),
+          ),
         ]),
       ),
       floatingActionButton: FloatingActionButton(

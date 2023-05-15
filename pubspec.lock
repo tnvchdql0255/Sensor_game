@@ -200,6 +200,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  sensors_plus:
+    dependency: "direct main"
+    description:
+      name: sensors_plus
+      sha256: "11a4205652d7d456071f3c0f42019c3c18c0db8d6d02356a05902de43b906306"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
+  sensors_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: sensors_plus_platform_interface
+      sha256: "95f0cc08791b8bf0c41c5fa99c84be2a7d5bf60a811ddc17e1438b1e68caf0d3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.3"
   sky_engine:
     dependency: transitive
     description: flutter

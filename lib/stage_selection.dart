@@ -34,7 +34,10 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Temp")),
+        appBar: AppBar(
+          title: const Text("Stage Selection"),
+          centerTitle: true,
+        ),
         backgroundColor: Colors.lightBlue,
         body: Column(
           children: [
