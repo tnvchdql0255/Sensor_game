@@ -99,10 +99,11 @@ class _MyHomeState extends State<MyHome> {
   }
 
   void testButton() {
+    pauseMainResource();
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const StageSelectionMenu()),
-    );
+    ).then((value) => resume());
   }
 
   @override
