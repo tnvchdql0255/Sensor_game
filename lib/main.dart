@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:sensor_game/service/audio_manager.dart';
 import 'package:sensor_game/stage_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -7,6 +8,9 @@ import 'package:vibration/vibration.dart';
 void main() {
   runApp(const MyApp());
 }
+
+// AssetsAudioPlayer _assetsAudioPlayer = AssetsAudioPlayer.newPlayer();
+AudioManager audioManager = AudioManager();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -43,28 +47,62 @@ class _MyHomeState extends State<MyHome> {
           Vibration.vibrate(duration: 10); // 0.01초간 진동
           count++;
           if (count == 3) {
+            pauseMainResource();
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => const StageSelectionMenu()),
-            );
-            count = 0;
+            ).then((value) => resume());
           }
         }
       },
     );
   }
 
+  void resume() {
+    startListening();
+    startBGM();
+  }
+
+  void startBGM() {
+    // _assetsAudioPlayer.open(
+    //   Audio("assets/audios/title.mp3"),
+    //   loopMode: LoopMode.single, //반복 여부 (LoopMode.none : 없음)
+    //   autoStart: true, //자동 시작 여부
+    //   showNotification: false, //스마트폰 알림 창에 띄울지 여부
+    // );
+
+    // _assetsAudioPlayer.play(); //재생
+    // _assetsAudioPlayer.pause(); //멈춤
+    // _assetsAudioPlayer.stop(); //정지
+    audioManager.startBGM();
+  }
+
   @override
   void initState() {
-    startListening();
     super.initState();
+    startListening();
+    startBGM();
   }
 
   @override
   void dispose() {
     streamSubscription?.cancel();
+    audioManager.dispose();
     super.dispose();
+  }
+
+  void pauseMainResource() {
+    count = 0;
+    streamSubscription?.cancel();
+    audioManager.pause();
+  }
+
+  void testButton() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const StageSelectionMenu()),
+    );
   }
 
   @override
@@ -123,6 +161,29 @@ class _MyHomeState extends State<MyHome> {
                   ),
                 ],
               ),
+              //ElevatedButton 을 center에 위치시켜줘
+              Row(children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        testButton();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue.shade300,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text(
+                        "테스트 버튼",
+                        style: textStyle,
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
             ],
           ),
         ),

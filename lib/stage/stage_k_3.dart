@@ -135,8 +135,8 @@ class _StageK3State extends State<StageK3> {
         title: const Text('StageK3'),
       ),
       body: SizedBox(
-        height: 800,
-        width: 400,
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
             ...circleOffsets.asMap().entries.map((entry) {

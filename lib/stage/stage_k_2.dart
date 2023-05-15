@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sensor_game/common_ui/start.dart';
+import 'package:sensor_game/service/audio_manager.dart';
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:vibration/vibration.dart';
+
+AudioManager audioManager = AudioManager();
 
 class StageK2 extends StatefulWidget {
   const StageK2({super.key});
@@ -39,6 +42,8 @@ class _StageK2State extends State<StageK2> {
             Vibration.vibrate(duration: 10); // 0.01초간 진동
             _count++;
             if (_count == 5) {
+              audioManager.clearBGM();
+              audioManager.dispose();
               // 흔들림 5번 감지되면 클리어
               _image = Image.asset('assets/icons/drop_apple.png');
               popUps.showClearedMessage(context).then((value) {
