@@ -40,6 +40,7 @@ dependencies:
   path: ^1.8.2
   flutter_svg: ^2.0.5
   sensors_plus: ^3.0.0
+  assets_audio_player: ^3.0.6
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +67,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/audios/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
