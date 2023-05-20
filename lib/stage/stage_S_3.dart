@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import 'package:sensor_game/common_ui/start.dart';
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sqflite/sqflite.dart';
@@ -12,7 +14,10 @@ class StageS3 extends StatefulWidget {
 
 class _StageS3State extends State<StageS3> with SingleTickerProviderStateMixin {
   //스테이지 시작 시, 스테이지 설명을 출력하는 PopUps 클래스의 인스턴스 생성
-  PopUps popUps = const PopUps(startMessage: "스테이지 4", quest: "화산을 터트려라!");
+  PopUps popUps = const PopUps(
+    startMessage: "스테이지 4",
+    quest: "그대로 멈춰라",
+    hints: ["움직이지 안돼!", "터치도 하면 안돼!!", "핸드폰을 그대로 두고 3초간 기다려봐"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
 
@@ -21,75 +26,124 @@ class _StageS3State extends State<StageS3> with SingleTickerProviderStateMixin {
     db = await dbHelper.db;
   }
 
-  late AnimationController _animationController;  //애니메이션을 위한 AnimationController 클래스의 인스턴스 생성
-  late Animation<double> _animation;   //애니메이션을 위한 Animation 클래스의 인스턴스 생성
+  bool _isCleared = false;
+  Timer? _timer;
+  bool _isTilted = false;  
+  bool _isTouchFailed = false;  
+  bool _isGravityFailed = false;
 
-  final double _swipeThreshold = 200.0;  //화면을 터치한 채로 위로 드래그할 때, 터치한 위치의 y좌표와 현재 위치의 y좌표의 차이를 계산하여 일정 거리 이상 드래그하면 애니메이션을 실행
-  double _initialPositionY = 0.0;        //화면을 터치했을 때, 터치한 위치의 y좌표를 저장
+  final double sensitivity = 0.1; // 원하는 감도 값으로 수정해주세요. 숫자를 올리면 감도가 떨어지고, 내리면 감도가 올라갑니다.
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      popUps.showStartMessage(context);
+    });
+    _startTimer();
+    _startListening();
+  }
 
-    _animationController = AnimationController(  //애니메이션 컨트롤러 생성
-      vsync: this,
-      duration: const Duration(milliseconds: 500),  //애니메이션의 지속시간 설정
-    );
+  void _startTimer() {  // 3초 타이머 시작
+    _timer = Timer(const Duration(seconds: 3), () {  //
+      if (_isTilted && !_isGravityFailed) {   
+        setState(() {
+          _isCleared = true;
+        });
+        popUps.showClearedMessage(context).then((value) {
+          if (value == 1) {
+            initStage();
+            //initState();
+          }
+          if (value == 2) {}
+        });
+        dbHelper.changeIsAccessible(4, true);
+        dbHelper.changeIsCleared(5, true);
+      } /*else if (_isTouchFailed && !_isTouchFailed) {
+        popUps.showFailedMessage(context).then((value) {
+          if (value == 1) {
+            initStage();
+          }
+          if (value == 2) {
 
-    _animation = Tween<double>(begin: 1.0, end: 0.0).animate(_animationController)  //Tween 클래스를 이용하여 애니메이션의 시작과 끝을 설정
-      ..addListener(() {
-        setState(() {});
-      });
+          }
+        });
+      }*/
+    });
+  }
+
+  void _startListening() { // 기울기 센서 시작
+    gyroscopeEvents.listen((event) {   //자이로스코프 센서 사용
+      final x = event.x;
+      final y = event.y;
+      final z = event.z;
+
+    // 여기에 허용할 각도 범위를 설정할 수 있습니다.
+    if (x >= -sensitivity && x <= sensitivity &&
+        y >= -sensitivity && y <= sensitivity &&
+        z >= -sensitivity && z <= sensitivity) {
+        _isTilted = true;
+    } else {
+        _isTilted = false;
+      }
+    });
+  }
+
+  void _stopListening() {  // 센서 종료
+    _timer?.cancel();
+    gyroscopeEvents.drain();
+  }
+
+  void initStage() {  //스테이지 초기화
+    _isCleared = false;
+    _isTouchFailed = false;
+    _isGravityFailed = false;
+    _isTilted = false;
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _timer?.cancel();
     super.dispose();
-  }
-
-  void _onVerticalDragStart(DragStartDetails details) {    //화면을 터치했을 때, 터치한 위치의 y좌표를 저장
-    _initialPositionY = details.globalPosition.dy;  //터치한 위치의 y좌표를 저장
-  }
-
-  void _onVerticalDragUpdate(DragUpdateDetails details) {   //화면을 터치한 채로 위로 드래그할 때, 터치한 위치의 y좌표와 현재 위치의 y좌표의 차이를 계산하여 일정 거리 이상 드래그하면 애니메이션을 실행
-    double dy = details.globalPosition.dy;    //현재 위치의 y좌표를 저장
-    double distance = _initialPositionY - dy;  //터치한 위치의 y좌표와 현재 위치의 y좌표의 차이를 계산하여 저장
-    if (distance.abs() > _swipeThreshold) {   //터치한 위치의 y좌표와 현재 위치의 y좌표의 차이가 일정 거리 이상이면 애니메이션을 실행
-      _animationController.forward();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Stage4'),
+        title: const Text('stage4'),
       ),
       body: GestureDetector(
-        onVerticalDragStart: _onVerticalDragStart,  
-        onVerticalDragUpdate: _onVerticalDragUpdate,  
+        onTap: () {
+          setState(() {
+            _isTouchFailed = true;
+            _stopListening();
+          });
+          popUps.showFailedMessage(context).then((value) {
+            if (value == 1) {
+              initStage();
+            }
+            if (value == 2) {
+              
+            }
+          });
+        },
+        behavior: HitTestBehavior.opaque, // 화면 전체 영역에 대한 터치 이벤트 처리
         child: Center(
-          child: Stack(
-            children: [
-              Opacity(
-                opacity: _animation.value,
-                child: Image.asset(
-                  'assets/images/volcano_erupt.png',
-                  width: 300,
-                  height: 300,
-                ),
-              ),
-              Opacity(
-                opacity: 1 - _animation.value,
-                child: Image.asset(
-                  'assets/images/volcano.png',
-                  width: 300,
-                  height: 300,
-                ),
-              ),
-            ],
-          ),
+          child: _isCleared
+              ? const Text(
+                  '성공',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                )
+              : _isTilted
+                  ? const Text(
+                      '스테이지 선택으로 나가!',
+                      style: TextStyle(fontSize: 18),
+                    )
+                  : const Text(
+                      '그대로 유지해!',
+                      style: TextStyle(fontSize: 18),
+                    ),
         ),
       ),
     );

@@ -12,7 +12,10 @@ class StageS2 extends StatefulWidget {
 
 class _StageS2State extends State<StageS2> {
   //스테이지 시작 시, 스테이지 설명을 출력하는 PopUps 클래스의 인스턴스 생성
-  PopUps popUps = const PopUps(startMessage: "스테이지 3", quest: "액자 그림을 맞춰봐!");
+  PopUps popUps = const PopUps(
+    startMessage: "스테이지 3",
+    quest: "액자 그림을 맞춰봐!",
+    hints: ["액자 속에 뭐가 있을 거 같아", "줌 인 ", "정답은 세글자"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
 
@@ -88,13 +91,13 @@ class _StageS2State extends State<StageS2> {
                 // 정답 확인 로직
                 if (answer == '숟가락') {
                   popUps.showClearedMessage(context).then((value) {
-                          if (value == 1) {
-                            initStage();
-                          }
-                          if (value == 2) {}
-                        });
-                        dbHelper.changeIsAccessible(4, true);
-                        dbHelper.changeIsCleared(3, true);
+                    if (value == 1) {
+                      initStage();
+                    }
+                    if (value == 2) {}
+                  });
+                    dbHelper.changeIsAccessible(4, true);
+                    dbHelper.changeIsCleared(3, true);
                 } else {
                   showDialog(
                     context: context,

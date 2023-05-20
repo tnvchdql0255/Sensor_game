@@ -15,7 +15,10 @@ class StageS1 extends StatefulWidget {
 
 class _StageS1State extends State<StageS1> {
   //스테이지 시작 시, 스테이지 설명을 출력하는 PopUps 클래스의 인스턴스 생성
-  PopUps popUps = const PopUps(startMessage: "스테이지 2", quest: "다이어트를 시켜줘!");
+  PopUps popUps = const PopUps(
+    startMessage: "스테이지 2",
+    quest: "다이어트를 시켜줘!",
+    hints: ["다이어트의 기본", "만보기", "핸드폰 잡고 흔들어"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
 
@@ -24,6 +27,7 @@ class _StageS1State extends State<StageS1> {
     db = await dbHelper.db;
   }
 
+  bool _isCleared = false;                // 클리어 상태를 저장할 변수
   int _steps = 0;                                                     //걸음 수를 저장할 변수
   late Image _image;                                                       //이미지를 저장할 변수
   List<double> _accelerometerValues = <double>[0, 0, 0];              //가속도센서 값 저장할 변수
@@ -46,9 +50,10 @@ class _StageS1State extends State<StageS1> {
 
   void initStage() {                                           //스테이지 초기화 메서드
     _steps = 0;                                                //걸음 수를 저장할 변수 초기화
-    _image = Image.asset('assets/images/fat_person.png');     //이미지를 불러옴
-    _accelerometerValues = <double>[0, 0, 0];                  //가속도센서 값 저장할 변수 초기화
-    _streamSubscriptions.clear();                              //이벤트 구독을 초기화
+    _isCleared = false;                                        // 클리어 상태 초기화
+    _image = Image.asset('asetss/images/fat_person.png');     //이미지를 불러옴
+    //_accelerometerValues = <double>[0, 0, 0];                  //가속도센서 값 저장할 변수 초기화
+    //_streamSubscriptions.clear();                              //이벤트 구독을 초기화
   }
 
   void sensorStart() async {                             //센서를 시작하는 메서드
@@ -58,10 +63,12 @@ class _StageS1State extends State<StageS1> {
         setState(() {      
           _accelerometerValues = <double>[event.x, event.y, event.z];         //가속도 센서의 x,y,z값을 리스트에 저장
           _steps = _calculateSteps(_accelerometerValues);                     //걸음 수를 계산하는 메서드를 호출하여 걸음 수를 저장
-        if (_steps == 10) {                                                 //걸음 수가 10이 되면
+        if (_steps == 10 && !_isCleared) {                                                 //걸음 수가 10이 되면
           print("%%%%%%%%%%%%%%%%%%%%%스테이지 걸음 수 다 채움%%%%%%%%%%%%%%%%%%%%%");
           print('걸음 수: $_steps');                                         //걸음 수를 출력
           _image = Image.asset('assets/images/thin_person.png');             //이미지를 불러옴
+          _isCleared = true;                                                 //클리어 상태를 true로 변경
+
           popUps.showClearedMessage(context).then((value) {                 //클리어 메시지를 출력하고
             if (value == 1) {
               print("####################다시하기 버튼 눌림####################");

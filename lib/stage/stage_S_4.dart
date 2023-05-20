@@ -1,0 +1,145 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_compass/flutter_compass.dart';
+import 'package:sensor_game/common_ui/start.dart';
+import 'package:sensor_game/service/db_manager.dart';
+import 'package:sqflite/sqflite.dart';
+
+
+class StageS4 extends StatefulWidget {
+  const StageS4({super.key});
+
+  @override
+  State<StageS4> createState() => _StageS4State();
+}
+
+class _StageS4State extends State<StageS4> {
+  //스테이지 시작 시, 스테이지 설명을 출력하는 PopUps 클래스의 인스턴스 생성
+  PopUps popUps = const PopUps(
+    startMessage: "스테이지 5",
+    quest: "보물이 있는 방향으로 가주세요!!",
+    hints: ["힌트1", "힌트2", "힌트3"]);
+  DBHelper dbHelper = DBHelper();
+  late final Database db;
+
+  //DB를 불러오는 getDB 함수 생성
+  void getDB() async {
+    db = await dbHelper.db;
+  }
+  double _heading = 0.0; // 나침반의 현재 방향
+  bool _isClear = false;
+  int _time = 0;
+  static const int _clearThreshold = 3; // 클리어를 위한 동쪽을 바라보는 시간(초)
+
+  late StreamSubscription<CompassEvent> _compassSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      popUps.showStartMessage(context);
+    });
+    startCompassListener();
+
+  }
+
+  void startCompassListener() {
+    _compassSubscription = FlutterCompass.events!.listen((event) {
+      if (_isClear) {
+        return; 
+      }
+      setState(() {
+        _heading = event.heading ?? 0.0; // 나침반의 현재 방향 업데이트
+
+        if (_heading >= 75 && _heading <= 105) {
+          // 동쪽(0도 기준으로 약간의 여유 범위를 둠)
+          _time++;
+          if (_time >= _clearThreshold && !_isClear) {
+            _isClear = true;
+
+            popUps.showClearedMessage(context).then((value) {
+              if (value == 1) {
+                initStage();
+              }
+              if (value == 2) {}
+            });
+            dbHelper.changeIsAccessible(5, true);
+            dbHelper.changeIsCleared(6, true);
+          }
+        } else {
+          _time = 0; // 동쪽을 바라보지 않으면 시간 초기화
+          _isClear = false; // 클리어 상태 초기화
+        }
+      });
+    });
+  }
+
+  void initStage() {
+    setState(() {
+    _heading = 0.0;
+    _isClear = false;
+    _time = 0;
+    });
+  }
+
+  @override
+  void dispose() {
+    _compassSubscription.cancel();
+    _time = 0; //문제 있으면 지우기
+    super.dispose();
+  }
+
+  /*String getDirectionText() {
+    if (_heading >= 315 || _heading < 45) {
+      return '북쪽';
+    } else if (_heading >= 45 && _heading < 135) {
+      return '동쪽';
+    } else if (_heading >= 135 && _heading < 225) {
+      return '남쪽';
+    } else {
+      return '서쪽';
+    }
+  }
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('stage5'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Transform.rotate(
+              angle: _heading * (3.141592653589793238 / 180), // 각도를 라디안으로 변환하여 적용
+              child: Image.asset(
+                'assets/images/compass.png', // 나침반 이미지 경로
+                width: 200,
+                height: 200,
+              ),
+            ),
+            SizedBox(height: 20),
+            if (_isClear)
+              Image.asset(
+                'assets/images/treasure.png', // 보물 이미지 경로
+                width: 200,
+                height: 200,
+              ),
+            Text(
+              '보물은 동쪽에 있어요!!',
+              style: TextStyle(fontSize: 24),
+            ),
+            SizedBox(height: 20),
+            Text(
+              '클리어 시간: $_time 초',
+              style: TextStyle(fontSize: 20),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
