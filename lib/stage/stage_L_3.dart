@@ -47,8 +47,6 @@ class _StageL3State extends State<StageL3> {
   void startTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       temperature = await methodChannel.invokeMethod("callTemperatureSensor");
-      print("$anchorTemperature is anchor");
-      print("$temperature is current");
       if ((anchorTemperature - temperature) >= 2) {
         r = r - 25;
         b = b + 25;
@@ -115,14 +113,6 @@ class _StageL3State extends State<StageL3> {
                 ),
               ),
             ]),
-          ),
-          Column(
-            children: [
-              Text('$temperature + °C current',
-                  style: const TextStyle(fontSize: 30)),
-              Text('$anchorTemperature + °C anchor',
-                  style: const TextStyle(fontSize: 30))
-            ],
           ),
         ],
       ),
