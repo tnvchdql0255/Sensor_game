@@ -34,6 +34,7 @@ class _StageL2State extends State<StageL2> {
 
   static const String elevatorClosed = "assets/images/elevator_closed.svg";
   static const String elevatorOpened = "assets/images/elevator_opened.svg";
+  static const String elevatorOpenable = "assets/images/elevator_openable.svg";
   String currentElevatorState = elevatorClosed;
   @override
   void initState() {
@@ -68,8 +69,10 @@ class _StageL2State extends State<StageL2> {
 
   bool getCurrentDifference() {
     if (pressure < anchorPressure - 5 || pressure > anchorPressure + 5) {
+      currentElevatorState = elevatorOpenable;
       return true; //앵커값보다 일정범위 이상 작거나 크면?
     } else {
+      currentElevatorState = elevatorClosed;
       return false; //앵커값과 비슷하면?
     }
   }
@@ -95,48 +98,34 @@ class _StageL2State extends State<StageL2> {
         backgroundColor: bgColorState ? Colors.green : Colors.red,
         title: const Text("Stage 2"),
       ),
-      body: Stack(
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width, // 최대 너비
-            child: SvgPicture.asset(
-              currentElevatorState,
-              fit: BoxFit.contain,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: bgColorState
-                    ? const Icon(
-                        Icons.door_sliding,
-                        color: Colors.blue,
-                        size: 60,
-                      )
-                    : const Icon(
-                        Icons.door_sliding_outlined,
-                        color: Colors.black,
-                        size: 60,
-                      ),
-                onPressed: () {
-                  if (bgColorState) {
-                    currentElevatorState = elevatorOpened;
-                    setState(() {});
-                    popUps.showClearedMessage(context).then((value) {
-                      if (value == 1) {
-                        initStage();
-                      }
-                      if (value == 2) {}
-                    });
-                    dbHelper.changeIsAccessible(3, true);
-                    dbHelper.changeIsCleared(2, true);
-                  }
-                },
+      body: GestureDetector(
+        onTap: () {
+          if (bgColorState) {
+            currentElevatorState = elevatorOpened;
+            pressureSubscription?.cancel();
+            setState(() {});
+            popUps.showClearedMessage(context).then((value) {
+              if (value == 1) {
+                initStage();
+                _startReading();
+              }
+              if (value == 2) {}
+            });
+            dbHelper.changeIsAccessible(3, true);
+            dbHelper.changeIsCleared(2, true);
+          }
+        },
+        child: Stack(
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width, // 최대 너비
+              child: SvgPicture.asset(
+                currentElevatorState,
+                fit: BoxFit.contain,
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
           tooltip: "힌트",
