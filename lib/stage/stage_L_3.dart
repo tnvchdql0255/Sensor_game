@@ -13,7 +13,7 @@ class StageL3 extends StatefulWidget {
 }
 
 class _StageL3State extends State<StageL3> {
-  int temperature = 0;
+  int temperature = 1000;
   int anchorTemperature = 0;
   static const methodChannel = MethodChannel("com.sensorIO.method");
   late Timer timer;
@@ -27,12 +27,16 @@ class _StageL3State extends State<StageL3> {
   PopUps popUps = const PopUps(
       startMessage: "스테이지 3",
       quest: "시원하게 만들어라!",
-      hints: ["온도를 낮추는게 관건 입니다", "어디 시원한 곳으로 가보시겠어요?", "스마트폰 뒷면에 찬물을 묻혀 보세요"]);
+      hints: [
+        "온도를 낮추는게 관건 입니다",
+        "스테이지 진입 시점의 스마트폰 온도보다 낮아야 합니다.",
+        "스마트폰 뒷면에 찬물을 묻혀 보세요"
+      ]);
 
   @override
   void initState() {
     super.initState();
-    //setDefaultState();
+    setDefaultState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       popUps.showStartMessage(context).then(
             (value) => startTimer(),
@@ -43,7 +47,9 @@ class _StageL3State extends State<StageL3> {
   void startTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       temperature = await methodChannel.invokeMethod("callTemperatureSensor");
-      if ((temperature - 70) < anchorTemperature) {
+      print("$anchorTemperature is anchor");
+      print("$temperature is current");
+      if ((anchorTemperature - temperature) >= 2) {
         r = r - 25;
         b = b + 25;
         checkIsCooled();
@@ -56,6 +62,7 @@ class _StageL3State extends State<StageL3> {
   void setDefaultState() async {
     r = 255;
     b = 0;
+    temperature = await methodChannel.invokeMethod("callTemperatureSensor");
     anchorTemperature =
         await methodChannel.invokeMethod("callTemperatureSensor");
   }
@@ -96,16 +103,28 @@ class _StageL3State extends State<StageL3> {
         backgroundColor: Color.fromARGB(255, r, 0, b),
       ),
       backgroundColor: Color.fromARGB(255, r, 0, b),
-      body: Center(
-        child: Column(children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width, // 최대 너비
-            child: SvgPicture.asset(
-              currentSoupState,
-              fit: BoxFit.contain,
-            ),
+      body: Stack(
+        children: [
+          Center(
+            child: Column(children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width, // 최대 너비
+                child: SvgPicture.asset(
+                  currentSoupState,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ]),
           ),
-        ]),
+          Column(
+            children: [
+              Text('$temperature + °C current',
+                  style: const TextStyle(fontSize: 30)),
+              Text('$anchorTemperature + °C anchor',
+                  style: const TextStyle(fontSize: 30))
+            ],
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
           tooltip: "힌트",
