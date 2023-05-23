@@ -242,15 +242,26 @@ class _StageG5State extends State<StageG5> {
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
 
       //힌트를 보여주는 탭바를 생성한다
-      floatingActionButton: SizedBox(
-        height: 40.0,
-        width: 40.0,
-        child: FittedBox(
-          child: FloatingActionButton(
-            onPressed: () {
-              popUps.showHintTabBar(context);
-            },
-            child: const Icon(Icons.help_outline),
+      floatingActionButton: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: Color.fromARGB(255, 209, 223, 243),
+                width: 5,
+                style: BorderStyle.solid)),
+        margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+        child: FloatingActionButton(
+          focusColor: Colors.white54,
+          backgroundColor: Color.fromARGB(255, 67, 107, 175),
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(
+            Icons.tips_and_updates,
+            color: Color.fromARGB(255, 240, 240, 240),
+            size: 33,
           ),
         ),
       ),
