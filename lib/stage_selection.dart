@@ -38,24 +38,26 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          //스테이지 선택 화면의 상단바 설정
-          title: const Text('스테이지 목록',
-              style: TextStyle(
-                  color: Color.fromARGB(255, 209, 174, 0),
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  shadows: <Shadow>[
-                    Shadow(
-                      offset: Offset(1.0, 1.0),
-                      blurRadius: 3.0,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
-                  ])),
+          title: const Text(
+            "스테이지 목록",
+            style: TextStyle(
+                color: Color.fromARGB(255, 67, 107, 175),
+                fontSize: 28,
+                fontWeight: FontWeight.normal,
+                shadows: <Shadow>[
+                  Shadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 3.0,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ]),
+          ),
           centerTitle: true,
-          backgroundColor: const Color.fromARGB(255, 233, 218, 156),
+          iconTheme: const IconThemeData(color: Colors.black),
+          backgroundColor: const Color.fromARGB(255, 240, 240, 240),
           elevation: 0,
         ),
-        backgroundColor: const Color.fromARGB(255, 243, 233, 192),
+        backgroundColor: const Color.fromARGB(255, 240, 240, 240),
         body: Column(
           children: [
             Expanded(
@@ -81,6 +83,8 @@ class _RowStageSelectionState extends State<RowStageSelection> {
   late List<bool> isAccessibleList;
   late final DBHelper dbHelper;
   late Database db;
+  static const String stageLocked = "assets/images/stage_selec_1.svg";
+  static const String stageUnLocked = "assets/images/stage_selec_2.svg";
 
   @override
   void initState() {
@@ -97,6 +101,7 @@ class _RowStageSelectionState extends State<RowStageSelection> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      padding: const EdgeInsets.all(15),
       scrollDirection: Axis.horizontal,
       itemCount: 30,
       separatorBuilder: (context, index) => const Divider(
@@ -104,61 +109,68 @@ class _RowStageSelectionState extends State<RowStageSelection> {
       ),
       itemBuilder: (context, index) {
         return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => widget.stageRoute[index]))
-                  .then((value) => setState(() {}));
-            },
-            child: Column(
-              children: [
-                FutureBuilder(
-                  future: getStage(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                                snapshot.data![index]
-                                    ? Icons.lock_open
-                                    : Icons.lock,
-                                color: Colors.black),
-                            Text(
-                              //스테이지를 나타내는 텍스트 설정
-                              "Stage ${index + 1}",
-                              style: const TextStyle(
-                                  color: Color.fromARGB(241, 229, 144, 17),
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                  shadows: <Shadow>[
-                                    Shadow(
-                                      offset: Offset(1.0, 1.0),
-                                      blurRadius: 3.0,
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                    ),
-                                  ]),
-                            ),
-                          ],
+          onTap: () {
+            Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => widget.stageRoute[index]))
+                .then((value) => setState(() {}));
+          },
+          child: FutureBuilder(
+            future: getStage(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child:
+                      Stack(alignment: AlignmentDirectional.center, children: [
+                    Center(
+                      child: SvgPicture.asset(
+                        snapshot.data![index] ? stageUnLocked : stageLocked,
+                        width: MediaQuery.of(context).size.width * 0.75,
+                        height: MediaQuery.of(context).size.height * 0.95,
+                      ),
+                    ),
+                    Container(
+                      width: 150,
+                      height: 60,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 3,
+                              color: Color.fromARGB(255, 159, 163, 163)),
+                          color: Color.fromARGB(255, 93, 107, 114)),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(
+                            snapshot.data![index]
+                                ? Icons.lock_open
+                                : Icons.lock,
+                            size: 33,
+                            color: Colors.yellow),
+                        Text(
+                          " Stage ${index + 1}",
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 205, 167, 0),
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                              shadows: <Shadow>[
+                                Shadow(
+                                  offset: Offset(1.0, 1.0),
+                                  blurRadius: 10.0,
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                ),
+                              ]),
                         ),
-                      );
-                    } else {
-                      return const CircularProgressIndicator();
-                    }
-                  },
-                ),
-                Expanded(
-                    child: Container(
-                        width: 400,
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
-                        //스테이지 선택 화면의 이미지 설정
-                        child: SvgPicture.asset(
-                            'assets/images/stage_selec_2.svg'))),
-              ],
-            ));
+                      ],
+                    )
+                  ]),
+                );
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
+          ),
+        );
       },
     );
   }
