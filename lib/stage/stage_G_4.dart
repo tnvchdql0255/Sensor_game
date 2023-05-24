@@ -302,148 +302,138 @@ class _StageG4State extends State<StageG4> {
   //위젯 설정
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
 
-        //힌트를 보여주는 탭바를 생성한다
-        floatingActionButton: Container(
-          width: 57,
-          height: 57,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                  color: const Color.fromARGB(255, 209, 223, 243),
-                  width: 5,
-                  style: BorderStyle.solid)),
-          margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
-          child: FloatingActionButton(
-            focusColor: Colors.white54,
-            backgroundColor: const Color.fromARGB(255, 67, 107, 175),
-            onPressed: () {
-              popUps.showHintTabBar(context);
-            },
-            child: const Icon(
-              Icons.tips_and_updates,
-              color: Color.fromARGB(255, 240, 240, 240),
-              size: 33,
-            ),
+      //힌트를 보여주는 탭바를 생성한다
+      floatingActionButton: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: const Color.fromARGB(255, 209, 223, 243),
+                width: 5,
+                style: BorderStyle.solid)),
+        margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+        child: FloatingActionButton(
+          focusColor: Colors.white54,
+          backgroundColor: const Color.fromARGB(255, 67, 107, 175),
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(
+            Icons.tips_and_updates,
+            color: Color.fromARGB(255, 240, 240, 240),
+            size: 33,
           ),
         ),
-        //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+      ),
+      //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
 
-        //상단의 타이틀 부분 설정
-        appBar: AppBar(
-          title: const Text('앵무새와 교감을 해라!',
-              style: TextStyle(
-                  color: Color.fromARGB(255, 248, 99, 99),
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  shadows: <Shadow>[
-                    Shadow(
-                      offset: Offset(1.0, 1.0),
-                      blurRadius: 3.0,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
-                  ])),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          elevation: 0,
-        ),
+      //상단의 타이틀 부분 설정
+      appBar: AppBar(
+        title: const Text('앵무새와 교감을 해라!',
+            style: TextStyle(
+                color: Color.fromARGB(255, 248, 99, 99),
+                fontSize: 28,
+                fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
 
-        //화면에 출력되는 요소들을 설정
-        body: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: Column(
-                //아래의 요소들을 수직 및 수평 기준으로 가운데 정렬
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                      flex: 8,
-                      //다음의 요소들은 가로로 나열하여 배치함
-                      child: Row(children: [
-                        Expanded(
-                          //_hidingWidget이 true인 경우, 앵무새의 말풍선을 숨김
-                          child: _hidingWidget == true
-                              ? Container()
-                              : Container(
-                                  padding: const EdgeInsets.all(15),
-                                  margin: const EdgeInsets.only(top: 30),
-                                  decoration: BoxDecoration(
-                                    color: const Color.fromARGB(
-                                        255, 230, 226, 215),
-                                    border: Border.all(
-                                        color: const Color.fromARGB(
-                                            255, 178, 176, 161),
-                                        width: 4.0),
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(19),
-                                      bottomLeft: Radius.circular(19),
-                                      bottomRight: Radius.circular(19),
-                                    ),
-                                  ),
-                                  child: Text(word,
-                                      style: const TextStyle(
-                                          color: Color.fromARGB(255, 0, 0, 0),
-                                          fontSize: 17),
-                                      textAlign: TextAlign.center),
-                                ),
-                        ),
-                        //앵무새의 이미지를 출력
-                        Expanded(flex: 2, child: SvgPicture.asset(_asset)),
-                      ])),
-
-                  //인식한 음성을 말풍선으로 보여주는 위젯
-                  Expanded(
-                      flex: 3,
-                      //만약 어떤 음성도 인식되지 않았다면 말풍선을 숨김
-                      child: transcription == ""
-                          ? Container()
-                          : Container(
-                              alignment: Alignment.center,
-                              margin:
-                                  const EdgeInsets.only(left: 20, right: 20),
-                              decoration: BoxDecoration(
+      //화면에 출력되는 요소들을 설정
+      body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Column(
+              //아래의 요소들을 수직 및 수평 기준으로 가운데 정렬
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                    flex: 8,
+                    //다음의 요소들은 가로로 나열하여 배치함
+                    child: Row(children: [
+                      Expanded(
+                        //_hidingWidget이 true인 경우, 앵무새의 말풍선을 숨김
+                        child: _hidingWidget == true
+                            ? Container()
+                            : Container(
+                                padding: const EdgeInsets.all(15),
+                                margin: const EdgeInsets.only(top: 30),
+                                decoration: BoxDecoration(
                                   color:
-                                      const Color.fromARGB(255, 255, 255, 255),
+                                      const Color.fromARGB(255, 230, 226, 215),
                                   border: Border.all(
                                       color: const Color.fromARGB(
-                                          255, 255, 169, 154),
+                                          255, 178, 176, 161),
                                       width: 4.0),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(19))),
-                              child: Text('$transcription~',
-                                  style: const TextStyle(
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                      fontSize: 25),
-                                  textAlign: TextAlign.center),
-                            )),
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(19),
+                                    bottomLeft: Radius.circular(19),
+                                    bottomRight: Radius.circular(19),
+                                  ),
+                                ),
+                                child: Text(word,
+                                    style: const TextStyle(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        fontSize: 17),
+                                    textAlign: TextAlign.center),
+                              ),
+                      ),
+                      //앵무새의 이미지를 출력
+                      Expanded(flex: 2, child: SvgPicture.asset(_asset)),
+                    ])),
 
-                  //다음의 요소들은 가로로 나열하여 배치함
-                  Row(children: [
-                    _selectLangButton(
-                        //버튼을 누르면 언어를 변경할 수 있는 목록을 출력함
-                        item: _buildLanguagesWidgets),
-                    _activeSpeechButton(
-                      //음성 인식이 가능하며, 음성 인식이 시작되지 않은 경우에만 버튼을 활성화
-                      //버튼을 누르면 start 함수를 실행하여 음성 인식을 수행한다
-                      onPressed: _speechRecognitionAvailable && !_isListening
-                          ? () => start()
-                          : null,
-                    ),
-                    _stopSpeechButton(
-                      //음성 인식이 시작된 경우에만 버튼을 활성화
-                      //버튼을 누르면 stop 함수를 실행하여 활성화된 음성 인식을 정지함
-                      onPressed: _isListening ? () => stop() : null,
-                    ),
-                  ]),
-                ],
-              ),
-            )),
-      ),
+                //인식한 음성을 말풍선으로 보여주는 위젯
+                Expanded(
+                    flex: 3,
+                    //만약 어떤 음성도 인식되지 않았다면 말풍선을 숨김
+                    child: transcription == ""
+                        ? Container()
+                        : Container(
+                            alignment: Alignment.center,
+                            margin: const EdgeInsets.only(left: 20, right: 20),
+                            decoration: BoxDecoration(
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                border: Border.all(
+                                    color: const Color.fromARGB(
+                                        255, 255, 169, 154),
+                                    width: 4.0),
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(19))),
+                            child: Text('$transcription~',
+                                style: const TextStyle(
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 25),
+                                textAlign: TextAlign.center),
+                          )),
+
+                //다음의 요소들은 가로로 나열하여 배치함
+                Row(children: [
+                  _selectLangButton(
+                      //버튼을 누르면 언어를 변경할 수 있는 목록을 출력함
+                      item: _buildLanguagesWidgets),
+                  _activeSpeechButton(
+                    //음성 인식이 가능하며, 음성 인식이 시작되지 않은 경우에만 버튼을 활성화
+                    //버튼을 누르면 start 함수를 실행하여 음성 인식을 수행한다
+                    onPressed: _speechRecognitionAvailable && !_isListening
+                        ? () => start()
+                        : null,
+                  ),
+                  _stopSpeechButton(
+                    //음성 인식이 시작된 경우에만 버튼을 활성화
+                    //버튼을 누르면 stop 함수를 실행하여 활성화된 음성 인식을 정지함
+                    onPressed: _isListening ? () => stop() : null,
+                  ),
+                ]),
+              ],
+            ),
+          )),
     );
   }
 

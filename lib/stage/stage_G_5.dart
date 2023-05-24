@@ -237,8 +237,7 @@ class _StageG5State extends State<StageG5> {
   //위젯 설정
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
+    return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
 
       //힌트를 보여주는 탭바를 생성한다
@@ -283,6 +282,7 @@ class _StageG5State extends State<StageG5> {
                   ),
                 ])),
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
@@ -345,7 +345,7 @@ class _StageG5State extends State<StageG5> {
           ),
         ),
       ),
-    ));
+    );
   }
 
   //변경할 수 있는 언어의 목록을 출력하는 버튼

@@ -43,14 +43,7 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
             style: TextStyle(
                 color: Color.fromARGB(255, 67, 107, 175),
                 fontSize: 28,
-                fontWeight: FontWeight.normal,
-                shadows: <Shadow>[
-                  Shadow(
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 3.0,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ]),
+                fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           iconTheme: const IconThemeData(color: Colors.black),

@@ -157,63 +157,63 @@ class _StageG2State extends State<StageG2> {
   //위젯 설정
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 19, 19, 19),
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 19, 19, 19),
 
-        //힌트를 보여주는 탭바를 생성한다
-        floatingActionButton: Container(
-          width: 57,
-          height: 57,
-          decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                  color: const Color.fromARGB(255, 209, 223, 243),
-                  width: 5,
-                  style: BorderStyle.solid)),
-          margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
-          child: FloatingActionButton(
-            focusColor: Colors.white54,
-            backgroundColor: const Color.fromARGB(255, 67, 107, 175),
-            onPressed: () {
-              popUps.showHintTabBar(context);
-            },
-            child: const Icon(
-              Icons.tips_and_updates,
-              color: Color.fromARGB(255, 240, 240, 240),
-              size: 33,
-            ),
+      //힌트를 보여주는 탭바를 생성한다
+      floatingActionButton: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: const Color.fromARGB(255, 209, 223, 243),
+                width: 5,
+                style: BorderStyle.solid)),
+        margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+        child: FloatingActionButton(
+          focusColor: Colors.white54,
+          backgroundColor: const Color.fromARGB(255, 67, 107, 175),
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(
+            Icons.tips_and_updates,
+            color: Color.fromARGB(255, 240, 240, 240),
+            size: 33,
           ),
         ),
-        //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+      ),
+      //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
 
-        //상단의 타이틀 부분 설정
-        appBar: AppBar(
-          title: const Text('동굴 안의 보물을 찾아라!',
-              style: TextStyle(
-                  color: Color.fromARGB(255, 247, 232, 18),
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  shadows: <Shadow>[
-                    Shadow(
-                      offset: Offset(1.0, 1.0),
-                      blurRadius: 3.0,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                    ),
-                  ])),
-          centerTitle: true,
-          backgroundColor: const Color.fromARGB(255, 19, 19, 19),
-          elevation: 0,
-        ),
+      //상단의 타이틀 부분 설정
+      appBar: AppBar(
+        title: const Text('동굴 안의 보물을 찾아라!',
+            style: TextStyle(
+                color: Color.fromARGB(255, 247, 232, 18),
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                shadows: <Shadow>[
+                  Shadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 3.0,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
+                ])),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: const Color.fromARGB(255, 19, 19, 19),
+        elevation: 0,
+      ),
 
-        //화면에 출력되는 요소들을 설정
-        body: SafeArea(
-          child: Center(
-            child: Column(
-              children: <Widget>[
-                //밝기 값을 출력하는 Container
-                /*
+      //화면에 출력되는 요소들을 설정
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              //밝기 값을 출력하는 Container
+              /*
                 Container(
                     margin: const EdgeInsets.only(top: 20.0),
                     padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -228,10 +228,9 @@ class _StageG2State extends State<StageG2> {
                     child: Text('밝기 값: $_luxint',
                         style: const TextStyle(fontSize: 20))),*/
 
-                //조건에 따라 달라지는 동굴의 이미지를 출력
-                Expanded(flex: 10, child: SvgPicture.asset(_asset))
-              ],
-            ),
+              //조건에 따라 달라지는 동굴의 이미지를 출력
+              Expanded(flex: 10, child: SvgPicture.asset(_asset))
+            ],
           ),
         ),
       ),
