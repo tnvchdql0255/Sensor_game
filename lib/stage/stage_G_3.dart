@@ -138,8 +138,8 @@ class _StageG3State extends State<StageG3> {
               _isClear = false; //메뉴로 돌아갈 시, isClear 변수를 false로 재설정
             });
           }
-          dbHelper.changeIsAccessible(3, true); //스테이지 2를 이용 가능한 것으로 설정
-          dbHelper.changeIsCleared(2, true); //스테이지 1을 클리어한 것으로 설정
+          dbHelper.changeIsAccessible(4, true); //스테이지 2를 이용 가능한 것으로 설정
+          dbHelper.changeIsCleared(3, true); //스테이지 1을 클리어한 것으로 설정
         });
       }
     });

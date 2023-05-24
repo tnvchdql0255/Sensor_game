@@ -135,8 +135,8 @@ class _RowStageSelectionState extends State<RowStageSelection> {
                       decoration: BoxDecoration(
                           border: Border.all(
                               width: 3,
-                              color: Color.fromARGB(255, 159, 163, 163)),
-                          color: Color.fromARGB(255, 93, 107, 114)),
+                              color: const Color.fromARGB(255, 159, 163, 163)),
+                          color: const Color.fromARGB(255, 93, 107, 114)),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

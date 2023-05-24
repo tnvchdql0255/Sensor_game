@@ -168,13 +168,13 @@ class _StageG2State extends State<StageG2> {
           decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                  color: Color.fromARGB(255, 209, 223, 243),
+                  color: const Color.fromARGB(255, 209, 223, 243),
                   width: 5,
                   style: BorderStyle.solid)),
           margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
           child: FloatingActionButton(
             focusColor: Colors.white54,
-            backgroundColor: Color.fromARGB(255, 67, 107, 175),
+            backgroundColor: const Color.fromARGB(255, 67, 107, 175),
             onPressed: () {
               popUps.showHintTabBar(context);
             },
