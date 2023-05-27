@@ -60,7 +60,6 @@ class MainActivity: FlutterActivity() {
                     result.success(1)
                 }
                 "getConfigData" -> {
-
                     if(nightModeConfiguration){
                         result.success(0)
                     }
@@ -68,9 +67,13 @@ class MainActivity: FlutterActivity() {
                         result.success(1)
                     }
                 }
+                "getTheme" -> {
+                    result.success(nightModeFlag(context))
+                }
                 else -> {
                     result.success(-1)
                 }
+
             }
         }
     }
@@ -97,7 +100,14 @@ class MainActivity: FlutterActivity() {
         batteryLevel = intent!!.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1)
         return batteryLevel
     }
-
+    private fun nightModeFlag(context: Context):Int{
+        when(context.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)){
+            Configuration.UI_MODE_NIGHT_YES -> {return 1}
+            Configuration.UI_MODE_NIGHT_NO -> {return 0}
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> {return -1}
+        }
+        return -1
+    }
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         nightModeConfiguration = newConfig.isNightModeActive
@@ -109,12 +119,7 @@ class MainActivity: FlutterActivity() {
         eventChannel!!.setStreamHandler(sensorStreamHandler)
 
     }
-//    private fun setUpBatteryChannel(context: Context, messenger: BinaryMessenger){
-//        eventChannel = EventChannel(messenger, EVENT_CHANNEL_NAME)
-//        batteryStreamHandler = BatteryStreamHandler(context)
-//        eventChannel!!.setStreamHandler(batteryStreamHandler)
-//
-//    }
+
 
     override fun onDestroy() {
         super.onDestroy()

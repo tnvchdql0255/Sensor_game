@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sensor_game/common_ui/start.dart';
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class StageL1 extends StatefulWidget {
   const StageL1({super.key});
@@ -13,6 +14,9 @@ class StageL1 extends StatefulWidget {
 }
 
 class _Stage1State extends State<StageL1> {
+  static const String carCharging = "assets/images/car_charging.svg";
+  static const String carIdle = "assets/images/car_idle.svg";
+
   PopUps popUps = const PopUps(
       startMessage: "스테이지 1",
       quest: "자동차를 충전시켜라!",
@@ -23,7 +27,21 @@ class _Stage1State extends State<StageL1> {
     db = await dbHelper.db;
   }
 
-  Icon currentValue = const Icon(Icons.battery_6_bar);
+  SvgPicture currentValue = SvgPicture.asset(
+    carIdle,
+    height: 300,
+    width: 300,
+  );
+  SvgPicture carIdleSvg = SvgPicture.asset(
+    carIdle,
+    height: 300,
+    width: 300,
+  );
+  SvgPicture carChargingSvg = SvgPicture.asset(
+    carCharging,
+    height: 300,
+    width: 300,
+  );
   BatteryState? _batteryState;
   final Battery _battery = Battery();
   late Timer timer;
@@ -61,21 +79,21 @@ class _Stage1State extends State<StageL1> {
     setState(() {
       switch (_batteryState) {
         case BatteryState.full:
-          currentValue = const Icon(Icons.battery_charging_full, size: 100);
+          currentValue = carChargingSvg;
           persentage = persentage + 5;
           break;
         case BatteryState.charging:
-          currentValue = const Icon(Icons.battery_charging_full, size: 100);
+          currentValue = carChargingSvg;
           persentage = persentage + 5;
           break;
         case BatteryState.discharging:
-          currentValue = const Icon(Icons.battery_0_bar, size: 100);
+          currentValue = carIdleSvg;
           break;
         case BatteryState.unknown:
-          currentValue = const Icon(Icons.battery_0_bar, size: 100);
+          currentValue = carIdleSvg;
           break;
         default:
-          currentValue = const Icon(Icons.battery_0_bar, size: 100);
+          currentValue = carIdleSvg;
           break;
       }
       if (persentage == 100) {
@@ -101,61 +119,43 @@ class _Stage1State extends State<StageL1> {
     return Scaffold(
       backgroundColor: Colors.lightBlue,
       appBar: AppBar(
-        title: const Text("배터리상태 예제"),
+        elevation: 0,
+        backgroundColor: Colors.lightBlue,
+        title: const Text("자동차를 충전시켜라!"),
       ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              currentValue,
-              Text(
-                "$persentage %",
-                style: const TextStyle(fontSize: 100),
-              ),
-              IconButton(
-                  onPressed: () async {
-                    dbHelper.changeIsAccessible(2, false);
-                  },
-                  icon: const Icon(Icons.remove, color: Colors.red)),
-              IconButton(
-                  onPressed: () {
-                    popUps.showHintTabBar(context);
-                  },
-                  icon: const Icon(Icons.question_mark))
-            ],
-          )
-        ],
+      body: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                currentValue,
+                Text(
+                  "$persentage %",
+                  style: const TextStyle(fontSize: 100),
+                ),
+                SizedBox(
+                  height: 20,
+                  width: MediaQuery.of(context).size.width - 20,
+                  child: LinearProgressIndicator(
+                    value: persentage / 100,
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
+      floatingActionButton: FloatingActionButton(
+          tooltip: "힌트",
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(Icons.question_mark)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
 }
-
-
-// IconButton(
-//               onPressed: () async {
-//                 dbHelper.changeIsCleared(1, true);
-//               },
-//               icon: const Icon(Icons.add)),
-//           IconButton(
-//               onPressed: () async {
-//                 dbHelper.changeIsCleared(1, false);
-//               },
-//               icon: const Icon(Icons.remove)),
-//           IconButton(
-//               onPressed: () async {
-//                 dbHelper.changeIsAccessible(2, true);
-//               },
-//               icon: const Icon(
-//                 Icons.add,
-//                 color: Colors.red,
-//               )),
-//           IconButton(
-//               onPressed: () async {
-//                 dbHelper.changeIsAccessible(2, false);
-//               },
-//               icon: const Icon(
-//                 Icons.remove,
-//                 color: Colors.red,
-//               )),

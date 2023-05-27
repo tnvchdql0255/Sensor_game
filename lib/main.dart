@@ -1,4 +1,4 @@
-import 'package:sensor_game/stage_selection.dart';
+import 'package:sensor_game/stage_selection_svg.dart';
 import 'package:flutter/material.dart';
 
 void main() {

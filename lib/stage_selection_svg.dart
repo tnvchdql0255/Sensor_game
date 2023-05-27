@@ -1,20 +1,12 @@
+import 'package:flutter_svg/svg.dart';
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sensor_game/stage/stage_L_1.dart';
+import 'package:flutter/material.dart';
 import 'package:sensor_game/stage/stage_L_2.dart';
 import 'package:sensor_game/stage/stage_L_3.dart';
 import 'package:sensor_game/stage/stage_L_4.dart';
 import 'package:sensor_game/stage/stage_L_5.dart';
-import 'package:sensor_game/stage/stage_S_1.dart';
-import 'package:sensor_game/stage/stage_S_2.dart';
-import 'package:sensor_game/stage/stage_S_3.dart';
-import 'package:sensor_game/stage/stage_G_1.dart';
-import 'package:sensor_game/stage/stage_G_4.dart';
-import 'package:sensor_game/stage/stage_k_1.dart';
-import 'package:sensor_game/stage/stage_k_2.dart';
-import 'package:sensor_game/stage/stage_k_3.dart';
-import 'package:sensor_game/stage/stage_k_4.dart';
-import 'package:sensor_game/stage/stage_k_5.dart';
-import 'package:flutter/material.dart';
+
 import 'package:sqflite/sqflite.dart';
 
 class StageSelectionMenu extends StatefulWidget {
@@ -26,21 +18,11 @@ class StageSelectionMenu extends StatefulWidget {
 
 class _StageSelectionMenuState extends State<StageSelectionMenu> {
   List<Widget> stageRoute = [
-    const StageG1(),
-    const StageG4(),
     const StageL1(),
     const StageL2(),
     const StageL3(),
     const StageL4(),
     const StageL5(),
-    const StageS1(),
-    const StageS2(),
-    const StageS3(),
-    const StageK1(),
-    const StageK2(),
-    const StageK3(),
-    const StageK4(),
-    const StageK5(),
   ];
   late final DBHelper dbHelper;
   late Database db;
@@ -53,8 +35,17 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Temp")),
-        backgroundColor: Colors.lightBlue,
+        appBar: AppBar(
+          title: const Text(
+            "스테이지 선택",
+            style: TextStyle(color: Colors.black),
+          ),
+          iconTheme: const IconThemeData(color: Colors.black),
+          centerTitle: true,
+          backgroundColor: const Color.fromARGB(255, 243, 233, 192),
+          elevation: 0,
+        ),
+        backgroundColor: const Color.fromARGB(255, 243, 233, 192),
         body: Column(
           children: [
             Expanded(
@@ -80,6 +71,8 @@ class _RowStageSelectionState extends State<RowStageSelection> {
   late List<bool> isAccessibleList;
   late final DBHelper dbHelper;
   late Database db;
+  static const String stageLocked = "assets/images/stage_selec_locked.svg";
+  static const String stageUnLocked = "assets/images/stage_selec_unlocked.svg";
 
   @override
   void initState() {
@@ -109,35 +102,27 @@ class _RowStageSelectionState extends State<RowStageSelection> {
                     MaterialPageRoute(builder: (_) => widget.stageRoute[index]))
                 .then((value) => setState(() {}));
           },
-          child: Container(
-            height: 50,
-            width: 200,
-            margin: const EdgeInsets.all(10),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-              color: Colors.blue.shade200,
-            ),
-            child: FutureBuilder(
-              future: getStage(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+          child: FutureBuilder(
+            future: getStage(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child:
+                      Stack(alignment: AlignmentDirectional.center, children: [
+                    Center(
+                      child: SvgPicture.asset(
+                        snapshot.data![index] ? stageUnLocked : stageLocked,
+                        width: MediaQuery.of(context).size.width * 0.75,
+                        height: MediaQuery.of(context).size.height * 0.9,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Icon(
-                              snapshot.data![index]
-                                  ? Icons.lock_open
-                                  : Icons.lock,
-                              color: Colors.white,
-                            )
-                          ],
+                        Icon(
+                          snapshot.data![index] ? Icons.lock_open : Icons.lock,
+                          color: Colors.white,
                         ),
                         Text(
                           "Stage ${index + 1}",
@@ -145,13 +130,13 @@ class _RowStageSelectionState extends State<RowStageSelection> {
                               fontSize: 30, color: Colors.white),
                         ),
                       ],
-                    ),
-                  );
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              },
-            ),
+                    )
+                  ]),
+                );
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
           ),
         );
       },
