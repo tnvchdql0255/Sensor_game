@@ -8,20 +8,16 @@ import 'package:sensor_game/service/db_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
 //StatefulWidget을 사용하는 StageG1 클래스 생성
-class StageG1 extends StatefulWidget {
-  const StageG1({super.key});
+class StageG2 extends StatefulWidget {
+  const StageG2({super.key});
 
   @override
-  State<StageG1> createState() => _StageG1State();
+  State<StageG2> createState() => _StageG2State();
 }
 
-class _StageG1State extends State<StageG1> {
+class _StageG2State extends State<StageG2> {
   int _luxint = 0; //밝기의 값을 저장하는 _luxint 변수 선언
-  int _bRGB = 255; //배경 화면의 RGB 값을 저장하는 _bRGB 변수 선언
-  String _personAsset =
-      'assets/images/stage_G_1_1.svg'; //사람의 svg를 저장하는 asset 변수 선언
-  String _lampAsset =
-      'assets/images/stage_G_1_5.svg'; //전등의 svg를 저장하는 asset 변수 선언
+  String _asset = 'assets/images/stage_G_2_1.svg'; //동굴의 svg를 저장하는 asset 변수 선언
   bool _isClear = false; //클리어 조건을 만족했는지를 체크하는 _isClear 변수 선언
 
   late Timer checkLightTimer; //밝기 값이 낮은지를 체크하는 타이머
@@ -33,10 +29,10 @@ class _StageG1State extends State<StageG1> {
 
   //스테이지 시작 시, 스테이지 설명을 출력하는 PopUps 클래스의 인스턴스 생성
   PopUps popUps =
-      const PopUps(startMessage: "스테이지 1", quest: "눈을 감기게 해줘라!", hints: [
-    "아마 전등의 빛이 너무 밝아서 잠을 못 자는 것이 아닐까요?",
-    "전등의 빛을 낮추기 위해서 어떻게 해야할까요?",
-    "전등을 손바닥으로 가려보는 것은 어떨까요?"
+      const PopUps(startMessage: "스테이지 2", quest: "동굴 안의 보물을 찾아라!", hints: [
+    "현재 동굴 안이 어두워서 잘 보이지가 않네요..",
+    "동굴 안을 들여다 볼 수 있는 방법이 없을까요?",
+    "동굴 안을 밝게 비추면 안을 볼 수 있을 것 같네요!"
   ]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
@@ -72,27 +68,21 @@ class _StageG1State extends State<StageG1> {
     //1초마다 클리어 조건을 만족하는지 확인하는 타이머 생성
     checkLightTimer =
         Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      //만약 읽어들인 밝기 값이 18 이하라면
-      if (_luxint <= 45) {
+      //만약 읽어들인 밝기 값이 200 이상이라면
+      if (_luxint >= 1500) {
         setState(() {
           lightList.add(_luxint); //읽어들인 밝기 값을 lightList에 추가
-          _bRGB -= 28; //배경 화면의 RGB 값을 28씩 감소
 
-          //만약 4초 동안 읽어들인 밝기 값이 45 이하라면
-          if (lightList.length > 2 && lightList.length <= 5) {
-            _personAsset = 'assets/images/stage_G_1_2.svg'; //svg를 변경
-          } else if (lightList.length > 5 && lightList.length <= 7) {
-            _personAsset = 'assets/images/stage_G_1_3.svg'; //svg를 변경
-          } else if (lightList.length >= 8 &&
-              lightList.every((element) => element <= 45)) {
+          //만약 2.5초 동안 읽어들인 밝기 값이 1500 이상이라면
+          if (lightList.length >= 5 &&
+              lightList.every((element) => element >= 1500)) {
             checkLightTimer.cancel(); //타이머를 종료
             _isClear = true; //클리어 조건을 만족했으므로 isClear 변수를 true로 설정
           }
         });
       } else {
         //그 외의 경우에는
-        _bRGB = 255; //배경 화면의 RGB 값을 255로 설정
-        _personAsset = 'assets/images/stage_G_1_1.svg'; //svg를 초기화
+        _asset = 'assets/images/stage_G_2_1.svg'; //svg를 초기화
         lightList.clear(); //lightList를 비움
       }
     });
@@ -129,9 +119,7 @@ class _StageG1State extends State<StageG1> {
         stopListening(); //밝기 값을 읽어들이는 것을 중지
 
         lightList.clear(); //lightList를 비움
-        _bRGB = 0; //배경 화면의 RGB 값을 0으로 설정
-        _personAsset = 'assets/images/stage_G_1_4.svg'; //svg를 자는 사람으로 변경
-        _lampAsset = 'assets/images/stage_G_1_6.svg'; //svg를 꺼진 전등으로 변경
+        _asset = 'assets/images/stage_G_2_2.svg'; //svg를 동굴이 열린 사진으로 변경
 
         popUps.showClearedMessage(context).then((value) {
           //클리어 메시지를 출력
@@ -140,9 +128,7 @@ class _StageG1State extends State<StageG1> {
             initPlatformState(); //다시 시작할 시, 밝기 값을 읽어들이는 상태로 재설정
             setState(() {
               //그 외의 요소들을 다시 초기화
-              _bRGB = 255;
-              _personAsset = 'assets/images/stage_G_1_1.svg';
-              _lampAsset = 'assets/images/stage_G_1_5.svg';
+              _asset = 'assets/images/stage_G_2_1.svg';
               _isClear = false;
             });
           }
@@ -152,8 +138,8 @@ class _StageG1State extends State<StageG1> {
               _isClear = false;
             });
           }
-          dbHelper.changeIsAccessible(7, true); //스테이지 7을 이용 가능한 것으로 설정
-          dbHelper.changeIsCleared(6, true); //스테이지 6을 클리어한 것으로 설정
+          dbHelper.changeIsAccessible(8, true); //스테이지 8를 이용 가능한 것으로 설정
+          dbHelper.changeIsCleared(7, true); //스테이지 7을 클리어한 것으로 설정
         });
       }
     });
@@ -162,6 +148,8 @@ class _StageG1State extends State<StageG1> {
   @override
   void dispose() {
     //스테이지가 종료될 때
+    checkLightTimer.cancel(); //밝기 값이 낮은지를 확인하는 타이머를 종료
+    checkClearTimer.cancel(); //클리어 조건을 만족하는지 확인하는 타이머를 종료
     stopListening(); //밝기 값을 읽어들이는 것을 중지
     super.dispose();
   }
@@ -170,7 +158,7 @@ class _StageG1State extends State<StageG1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, _bRGB, _bRGB, _bRGB),
+      backgroundColor: const Color.fromARGB(255, 19, 19, 19),
 
       //힌트를 보여주는 탭바를 생성한다
       floatingActionButton: Container(
@@ -201,14 +189,14 @@ class _StageG1State extends State<StageG1> {
 
       //상단의 타이틀 부분 설정
       appBar: AppBar(
-        title: const Text('눈을 감기게 해줘라!',
+        title: const Text('동굴 안의 보물을 찾아라!',
             style: TextStyle(
-                color: Color.fromARGB(255, 197, 229, 17),
+                color: Color.fromARGB(255, 247, 232, 18),
                 fontSize: 28,
                 fontWeight: FontWeight.bold)),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.black),
-        backgroundColor: Color.fromARGB(255, _bRGB, _bRGB, _bRGB),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: const Color.fromARGB(255, 19, 19, 19),
         elevation: 0,
       ),
 
@@ -217,10 +205,8 @@ class _StageG1State extends State<StageG1> {
         child: Center(
           child: Column(
             children: <Widget>[
-              //조건에 따라 달라지는 전등의 이미지를 출력
-              Expanded(flex: 2, child: SvgPicture.asset(_lampAsset)),
-              //조건에 따라 달라지는 사람의 이미지를 출력
-              Expanded(flex: 10, child: SvgPicture.asset(_personAsset))
+              //조건에 따라 달라지는 동굴의 이미지를 출력
+              Expanded(flex: 10, child: SvgPicture.asset(_asset))
             ],
           ),
         ),

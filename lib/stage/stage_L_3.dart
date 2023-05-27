@@ -52,10 +52,6 @@ class _StageL3State extends State<StageL3> {
         b = b + 25;
         checkIsCooled();
       }
-      r = r - 25;
-      b = b + 25;
-      checkIsCooled();
-
       setState(() {});
     });
   }
