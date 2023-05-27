@@ -69,7 +69,7 @@ class _StageG2State extends State<StageG2> {
     checkLightTimer =
         Timer.periodic(const Duration(milliseconds: 500), (timer) {
       //만약 읽어들인 밝기 값이 200 이상이라면
-      if (_luxint >= 200) {
+      if (_luxint >= 1500) {
         setState(() {
           lightList.add(_luxint); //읽어들인 밝기 값을 lightList에 추가
 
@@ -135,7 +135,7 @@ class _StageG2State extends State<StageG2> {
           if (value == 2) {
             //메뉴 버튼 코드
             setState(() {
-              _isClear = false; //메뉴로 돌아갈 시, isClear 변수를 false로 재설정
+              _isClear = false;
             });
           }
           dbHelper.changeIsAccessible(3, true); //스테이지 2를 이용 가능한 것으로 설정
@@ -148,10 +148,10 @@ class _StageG2State extends State<StageG2> {
   @override
   void dispose() {
     //스테이지가 종료될 때
-    super.dispose();
     checkLightTimer.cancel(); //밝기 값이 낮은지를 확인하는 타이머를 종료
     checkClearTimer.cancel(); //클리어 조건을 만족하는지 확인하는 타이머를 종료
     stopListening(); //밝기 값을 읽어들이는 것을 중지
+    super.dispose();
   }
 
   //위젯 설정
@@ -193,14 +193,7 @@ class _StageG2State extends State<StageG2> {
             style: TextStyle(
                 color: Color.fromARGB(255, 247, 232, 18),
                 fontSize: 28,
-                fontWeight: FontWeight.bold,
-                shadows: <Shadow>[
-                  Shadow(
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 3.0,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                ])),
+                fontWeight: FontWeight.bold)),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color.fromARGB(255, 19, 19, 19),

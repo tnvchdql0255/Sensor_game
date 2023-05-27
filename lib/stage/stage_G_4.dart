@@ -294,9 +294,9 @@ class _StageG4State extends State<StageG4> {
   @override
   void dispose() {
     //스테이지가 종료될 때
-    super.dispose();
     checkClearTimer.cancel(); //타이머를 종료
     hidingTimer.cancel(); //타이머를 종료
+    super.dispose();
   }
 
   //위젯 설정
