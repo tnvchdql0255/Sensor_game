@@ -84,7 +84,7 @@ class _StageL4State extends State<StageL4> {
           color: Colors.black, //change your color here
         ),
         title: const Text(
-          "Stage_L_4",
+          "공을 꺼내라!",
           style: TextStyle(color: Colors.black),
         ),
         elevation: 0,

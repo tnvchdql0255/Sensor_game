@@ -121,7 +121,7 @@ class _Stage1State extends State<StageL1> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.lightBlue,
-        title: const Text("배터리상태 예제"),
+        title: const Text("자동차를 충전시켜라!"),
       ),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,

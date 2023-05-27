@@ -96,7 +96,7 @@ class _StageL2State extends State<StageL2> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: bgColorState ? Colors.green : Colors.red,
-        title: const Text("Stage 2"),
+        title: const Text("엘리베이터 문을 열어라!"),
       ),
       body: GestureDetector(
         onTap: () {

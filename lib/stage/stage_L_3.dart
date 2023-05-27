@@ -51,6 +51,10 @@ class _StageL3State extends State<StageL3> {
         r = r - 25;
         b = b + 25;
         checkIsCooled();
+      } else {
+        r = r - 25;
+        b = b + 25;
+        checkIsCooled();
       }
 
       setState(() {});
@@ -96,7 +100,7 @@ class _StageL3State extends State<StageL3> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Stage L3"),
+        title: const Text("시원하게 만들어라!"),
         elevation: 0,
         backgroundColor: Color.fromARGB(255, r, 0, b),
       ),
