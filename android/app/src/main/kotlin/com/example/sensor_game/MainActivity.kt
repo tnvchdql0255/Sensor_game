@@ -5,9 +5,6 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
-import android.hardware.camera2.CameraAccessException
-import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -19,7 +16,6 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import android.view.KeyEvent
 import android.os.Bundle
@@ -29,17 +25,15 @@ class MainActivity: FlutterActivity() {
     private val METHOD_CHANNEL_NAME = "com.sensorIO.method"// 메소드 인보크 기반 주소
 
     private lateinit var sensorManager: SensorManager //센서 데이터를 불러오기위해 필요함
-    private lateinit var cameraManager: CameraManager
-
 
     private var methodChannel:MethodChannel? = null //메소드 채널용
     private var eventChannel: EventChannel? = null //이벤트 채널용
     private var sensorStreamHandler:StreamHandler? = null //이벤트기반으로 센서데이터를 방송하기위해 필요함
     private var nightModeConfiguration = Configuration().isNightModeActive
-    private var flashlightStatus = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC)
     }
 
@@ -47,7 +41,6 @@ class MainActivity: FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL_NAME)
-        cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
 
         methodChannel!!.setMethodCallHandler { call, result ->
             when(call.method){
@@ -73,15 +66,6 @@ class MainActivity: FlutterActivity() {
                     }
                     else{
                         result.success(1)
-                    }
-                }
-                "getFlashlightStatus" -> {
-                    val flashlightStatus = getFlashlightStatus()
-                    if (flashlightStatus >= 0) {
-                        result.success(flashlightStatus)
-                    } else {
-                        result.error("FLASHLIGHT_ERROR", "Failed to get flashlight status", null)
-                        println("Flashlight status error: Failed to get flashlight status")
                     }
                 }
                 else -> {
@@ -117,7 +101,6 @@ class MainActivity: FlutterActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         nightModeConfiguration = newConfig.isNightModeActive
-
     }
     private fun setupChannels(context: Context, messenger: BinaryMessenger, SensorType: Int){
         sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -126,45 +109,18 @@ class MainActivity: FlutterActivity() {
         eventChannel!!.setStreamHandler(sensorStreamHandler)
 
     }
-    //    private fun setUpBatteryChannel(context: Context, messenger: BinaryMessenger){
+//    private fun setUpBatteryChannel(context: Context, messenger: BinaryMessenger){
 //        eventChannel = EventChannel(messenger, EVENT_CHANNEL_NAME)
 //        batteryStreamHandler = BatteryStreamHandler(context)
 //        eventChannel!!.setStreamHandler(batteryStreamHandler)
 //
 //    }
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun getFlashlightStatus(): Int {
-        var cameraId: String? = null
 
-        try {
-            for (id in cameraManager.cameraIdList) {
-                val characteristics = cameraManager.getCameraCharacteristics(id)
-                val flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE)
-                val lensFacing = characteristics.get(CameraCharacteristics.LENS_FACING)
-
-                if (flashAvailable != null && lensFacing != null &&
-                    flashAvailable && lensFacing == CameraCharacteristics.LENS_FACING_BACK) {
-                    cameraId = id
-                    break
-                }
-            }
-
-            if (cameraId != null) {
-                val torchState = cameraManager.getCameraCharacteristics(cameraId)
-                    .get(CameraCharacteristics.FLASH_INFO_AVAILABLE) as Int?
-
-                return if (torchState == CameraCharacteristics.FLASH_MODE_TORCH) {
-                    0 // 0이면 꺼진상태
-                } else {
-                    1 // 1이면 켜진상태
-                }
-            }
-        } catch (e: CameraAccessException) {
-            e.printStackTrace()
-        }
-        return -1
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }
+
 
 class StreamHandler(private val sensorManager: SensorManager, sensorType: Int,
                     private var interval: Int = SensorManager.SENSOR_DELAY_NORMAL ):EventChannel.StreamHandler, SensorEventListener {

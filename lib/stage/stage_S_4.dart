@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sensor_game/common_ui/start.dart';
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sqflite/sqflite.dart';
@@ -18,8 +18,8 @@ class _StageS4State extends State<StageS4> {
   //스테이지 시작 시, 스테이지 설명을 출력하는 PopUps 클래스의 인스턴스 생성
   PopUps popUps = const PopUps(
     startMessage: "스테이지 5",
-    quest: "보물이 있는 방향으로 가주세요!!",
-    hints: ["힌트1", "힌트2", "힌트3"]);
+    quest: "보물이 있는 방향은?!",
+    hints: ["나침반을 활용해보세요", "천천히 움직이세요", "동쪽을 바라보고 기다리세요"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
 
@@ -90,52 +90,41 @@ class _StageS4State extends State<StageS4> {
     super.dispose();
   }
 
-  /*String getDirectionText() {
-    if (_heading >= 315 || _heading < 45) {
-      return '북쪽';
-    } else if (_heading >= 45 && _heading < 135) {
-      return '동쪽';
-    } else if (_heading >= 135 && _heading < 225) {
-      return '남쪽';
-    } else {
-      return '서쪽';
-    }
-  }
-  */
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('stage5'),
+        title: const Text('보물이 있는 방향은?!'),
+        centerTitle: true,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Transform.rotate(
-              angle: _heading * (3.141592653589793238 / 180), // 각도를 라디안으로 변환하여 적용
-              child: Image.asset(
-                'assets/images/compass.png', // 나침반 이미지 경로
-                width: 200,
-                height: 200,
+            if(!_isClear)
+              Transform.rotate(
+                angle: _heading * (3.141592653589793238 / 180), // 각도를 라디안으로 변환하여 적용
+                child: SvgPicture.asset(
+                  'assets/images/compass.svg', // 나침반 이미지 경로
+                width: 400,
+                height: 400,
               ),
             ),
-            SizedBox(height: 20),
-            if (_isClear)
-              Image.asset(
-                'assets/images/treasure.png', // 보물 이미지 경로
-                width: 200,
-                height: 200,
+            if(_isClear)
+              SvgPicture.asset(
+                'assets/images/treasure.svg', // 나침반 이미지 경로
+                width: 400,
+                height: 400,
               ),
+             const SizedBox(height: 20),
             Text(
-              '보물은 동쪽에 있어요!!',
-              style: TextStyle(fontSize: 24),
+              _isClear ? '보물을 찾았어요!!' : '보물은 동쪽에 있어요!!',
+              style: const TextStyle(fontSize: 24),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               '클리어 시간: $_time 초',
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             ),
           ],
         ),

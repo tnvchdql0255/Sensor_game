@@ -4,7 +4,7 @@ import 'package:sensor_game/stage/stage_S_1.dart';
 import 'package:sensor_game/stage/stage_S_2.dart';
 import 'package:sensor_game/stage/stage_S_3.dart';
 import 'package:sensor_game/stage/stage_S_4.dart';
-//import 'package:sensor_game/stage/stage_S_5.dart';
+import 'package:sensor_game/stage/stage_S_5.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -21,7 +21,8 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
                              const StageS2(),
                              const StageS3(),
                              const StageS4(),
-                             /*const StageS5()*/];
+                             const StageS5()
+                             ];
 
   @override
   void initState() {
