@@ -49,7 +49,7 @@ class _StageK2State extends State<StageK2> {
               audioManager.clearBGM();
               audioManager.dispose();
               // 흔들림 5번 감지되면 클리어
-              _image = 'assets/icons/drop_apple.png';
+              _image = 'assets/images/clear_apple.svg';
               popUps.showClearedMessage(context).then((value) {
                 if (value == 1) {
                   //다시하기 버튼 코드

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:sensor_game/service/audio_manager.dart';
 import 'package:sensor_game/stage_selection_svg.dart';
-
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:vibration/vibration.dart';

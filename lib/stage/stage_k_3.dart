@@ -20,7 +20,7 @@ class _StageK3State extends State<StageK3> {
       hints: ["힌트1", "힌트2", "힌트3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
-  double dx = 0, dy = 0;
+  double dx = 180, dy = 400;
   bool isCleared = false;
   List<Color> circleColors = [Colors.red, Colors.blue, Colors.green];
   List<Offset> circleOffsets = [

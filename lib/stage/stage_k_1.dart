@@ -1,3 +1,4 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:noise_meter/noise_meter.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -26,7 +27,7 @@ class _StageK1State extends State<StageK1> {
   late NoiseMeter _noiseMeter;
   double _decibel = 0.0;
   late NoiseReading noiseReading;
-  late Image _image;
+  late String _image;
 
   void getDB() async {
     db = await dbHelper.db;
@@ -35,7 +36,7 @@ class _StageK1State extends State<StageK1> {
   @override
   void initState() {
     super.initState();
-    _image = Image.asset('assets/icons/sleeping.png');
+    _image = 'assets/images/sleep.svg';
     _noiseMeter = NoiseMeter(onError);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       popUps.showStartMessage(context).then((value) => {start()});
@@ -50,7 +51,7 @@ class _StageK1State extends State<StageK1> {
       _count++;
       if (_count >= 3) {
         stop();
-        _image = Image.asset('assets/icons/get-up.png');
+        _image = 'assets/images/get_up.svg';
         popUps.showClearedMessage(context).then((value) {
           if (value == 1) {
             //다시하기 버튼 코드
@@ -71,7 +72,7 @@ class _StageK1State extends State<StageK1> {
   void initStage() {
     _count = 0;
     setState(() {
-      _image = Image.asset('assets/icons/sleeping.png');
+      _image = 'assets/images/sleep.svg';
     });
     start();
   }
@@ -140,7 +141,7 @@ class _StageK1State extends State<StageK1> {
     return Scaffold(
       appBar: AppBar(title: const Text('Stage 2')),
       body: Center(
-        child: _image,
+        child: SvgPicture.asset(_image),
       ),
       // Text(
       //   'Decibel: ${_decibel.toStringAsFixed(2)} dB',
