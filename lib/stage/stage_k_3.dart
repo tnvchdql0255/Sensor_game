@@ -21,6 +21,7 @@ class _StageK3State extends State<StageK3> {
   DBHelper dbHelper = DBHelper();
   late final Database db;
   double dx = 0, dy = 0;
+  bool isCleared = false;
   List<Color> circleColors = [Colors.red, Colors.blue, Colors.green];
   List<Offset> circleOffsets = [
     const Offset(0, 0),
@@ -30,10 +31,17 @@ class _StageK3State extends State<StageK3> {
   late StreamSubscription<GyroscopeEvent> _gyroscopeSubscription;
 
   void initStage() {
+    isCleared = false;
     var appBarHeight = AppBar().preferredSize.height;
     var screenHeight = MediaQuery.of(context).size.height;
     dx = MediaQuery.of(context).size.width / 2;
     dy = (screenHeight - appBarHeight) / 2;
+
+    setInitialCircleOffsets();
+
+    setState(() {
+      circleColors = [Colors.red, Colors.blue, Colors.green];
+    });
   }
 
   void deleteCircle(int index) {
@@ -50,6 +58,23 @@ class _StageK3State extends State<StageK3> {
         deleteCircle(i);
         break;
       }
+    }
+    //원이 전부 없어지면 클리어
+    if (circleColors.every((color) => color == Colors.transparent) &&
+        !isCleared) {
+      isCleared = true;
+      popUps.showClearedMessage(context).then((value) {
+        if (value == 1) {
+          //다시하기 버튼 코드
+          initStage();
+          setState(() {});
+        }
+        if (value == 2) {
+          //메뉴 버튼 코드
+        }
+      });
+      dbHelper.changeIsAccessible(14, true);
+      dbHelper.changeIsCleared(13, true);
     }
   }
 
@@ -77,8 +102,9 @@ class _StageK3State extends State<StageK3> {
     if (dx <= 0) {
       dx = 0;
     }
-    if (dx >= width) {
-      dx = width;
+    if (dx >= width - 25) {
+      // 원의 너비(50)를 고려하여 제한
+      dx = width - 25;
     }
     if (dy <= 0) {
       dy = 0;
@@ -95,8 +121,6 @@ class _StageK3State extends State<StageK3> {
       popUps.showStartMessage(context);
       initStage();
     });
-
-    setInitialCircleOffsets();
     _gyroscopeSubscription =
         SensorsPlatform.instance.gyroscopeEvents.listen((event) {
       setState(() {

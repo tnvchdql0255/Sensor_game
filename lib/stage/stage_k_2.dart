@@ -6,6 +6,8 @@ import 'package:sensor_game/service/db_manager.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:vibration/vibration.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:video_player/video_player.dart';
 
 AudioManager audioManager = AudioManager();
 
@@ -24,9 +26,11 @@ class _StageK2State extends State<StageK2> {
   DBHelper dbHelper = DBHelper();
   late final Database db;
   late int _count;
-  late Image _image;
+  late String _image;
   AccelerometerEvent? _event;
   StreamSubscription<AccelerometerEvent>? _streamSubscription;
+  late VideoPlayerController _controller;
+  late Future<void> _initializedController;
 
   void getDB() async {
     db = await dbHelper.db;
@@ -45,7 +49,7 @@ class _StageK2State extends State<StageK2> {
               audioManager.clearBGM();
               audioManager.dispose();
               // 흔들림 5번 감지되면 클리어
-              _image = Image.asset('assets/icons/drop_apple.png');
+              _image = 'assets/icons/drop_apple.png';
               popUps.showClearedMessage(context).then((value) {
                 if (value == 1) {
                   //다시하기 버튼 코드
@@ -73,6 +77,7 @@ class _StageK2State extends State<StageK2> {
   @override
   void initState() {
     super.initState();
+
     initStage();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       popUps.showStartMessage(context).then((value) => {});
@@ -82,7 +87,7 @@ class _StageK2State extends State<StageK2> {
 
   void initStage() {
     _count = 0;
-    _image = Image.asset('assets/icons/apple.png');
+    _image = 'assets/images/apple.svg';
   }
 
   bool _isShaking(AccelerometerEvent event) {
@@ -105,18 +110,17 @@ class _StageK2State extends State<StageK2> {
       appBar: AppBar(
         title: const Text('Stage 3'),
       ),
-      body: Center(
-        child: _image,
-        // child: Text(
-        //   // "$_count",
-        //   // style: const TextStyle(fontSize: 100),
-        // ),
-        // child: Text(
-        //   _event != null
-        //       ? 'Accelerometer: ${_event!.x.toStringAsFixed(2)}, ${_event!.y.toStringAsFixed(2)}, ${_event!.z.toStringAsFixed(2)}'
-        //       : 'Accelerometer not available',
-        // ),
-      ),
+      body: Center(child: SvgPicture.asset(_image)
+          // child: Text(
+          //   // "$_count",
+          //   // style: const TextStyle(fontSize: 100),
+          // ),
+          // child: Text(
+          //   _event != null
+          //       ? 'Accelerometer: ${_event!.x.toStringAsFixed(2)}, ${_event!.y.toStringAsFixed(2)}, ${_event!.z.toStringAsFixed(2)}'
+          //       : 'Accelerometer not available',
+          // ),
+          ),
     );
   }
 }

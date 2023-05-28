@@ -55,7 +55,7 @@ class _StageG1State extends State<StageG1> {
 
   //밝기 값을 읽어들이는 startListening 함수 생성
   void startListening() {
-    _light = new Light();
+    _light = Light();
     try {
       _subscription = _light.lightSensorStream.listen(onData);
     } on LightException catch (exception) {
@@ -64,7 +64,8 @@ class _StageG1State extends State<StageG1> {
     }
 
     //1초마다 클리어 조건을 만족하는지 확인하는 타이머 생성
-    checkLightTimer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+    checkLightTimer =
+        Timer.periodic(const Duration(milliseconds: 500), (timer) {
       //만약 읽어들인 밝기 값이 15 이하라면
       if (_luxint <= 15) {
         setState(() {
@@ -168,27 +169,27 @@ class _StageG1State extends State<StageG1> {
             //상단의 타이틀 부분 설정 (가운데 정렬)
             title: const Text('눈을 감기게 해줘라!'),
             centerTitle: true,
-            backgroundColor: Color.fromARGB(255, 197, 229, 17)),
+            backgroundColor: const Color.fromARGB(255, 197, 229, 17)),
         body: SafeArea(
           child: Center(
             //아래의 요소들을 가로로 가운데 정렬
             child: Column(
               children: <Widget>[
                 Container(
-                    margin: EdgeInsets.only(top: 20.0), //바깥쪽 여백을 줌
-                    padding: EdgeInsets.fromLTRB(10, 5, 10, 5), //안쪽 여백을 줌
+                    margin: const EdgeInsets.only(top: 20.0), //바깥쪽 여백을 줌
+                    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5), //안쪽 여백을 줌
                     decoration: BoxDecoration(
                         //박스의 스타일을 지정
-                        color: Color.fromARGB(255, 247, 249, 208),
+                        color: const Color.fromARGB(255, 247, 249, 208),
                         border: Border.all(
-                            color: Color.fromARGB(255, 135, 135, 135),
+                            color: const Color.fromARGB(255, 135, 135, 135),
                             width: 4.0),
-                        borderRadius: BorderRadius.horizontal(
+                        borderRadius: const BorderRadius.horizontal(
                             left: Radius.circular(20.0),
                             right: Radius.circular(20.0))),
                     //밝기 값을 출력하는 컨테이너
-                    child:
-                        Text('밝기 값: $_luxint', style: TextStyle(fontSize: 20))),
+                    child: Text('밝기 값: $_luxint',
+                        style: const TextStyle(fontSize: 20))),
                 Expanded(
                     //이미지를 출력하는 컨테이너
                     //클리어 조건을 만족 시 자는 이미지를 출력하고, 그렇지 않으면 졸린 이미지를 출력

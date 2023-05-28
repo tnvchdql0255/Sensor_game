@@ -48,6 +48,7 @@ dependencies:
   flutter_svg: ^2.0.4
   avatar_glow: ^2.0.2
   assets_audio_player: ^3.0.6
+  video_player: ^2.6.1
 
 dev_dependencies:
   flutter_test:
@@ -72,31 +73,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/icons/sleeping.png
-    - assets/icons/get-up.png
-    - assets/icons/apple.png
-    - assets/icons/drop_apple.png
-    - assets/images/fat_person.png
-    - assets/images/thin_person.png
-    - assets/images/spoon.png
-    - assets/images/big_spoon.png
-    - assets/images/photo_frame.png
-    - assets/images/volcano_erupt.png
-    - assets/images/volcano.png
-    - assets/images/egg.png
-    - assets/images/hatch.png
-    - assets/images/espionage.png
-    - assets/images/run.png
-    - assets/images/stage_G_1_1.svg
-    - assets/images/stage_G_1_2.svg
-    - assets/images/stage_G_1_3.svg
-    - assets/images/stage_G_1_4.svg
-    - assets/images/stage_G_2_1.svg
-    - assets/images/play.png
-    - assets/images/close.png
-    - assets/images/stop.png
-    - assets/audios/title.mp3
-    - assets/audios/Clear.wav
+    - assets/images/
+    - assets/videos/
 
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

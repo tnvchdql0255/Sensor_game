@@ -39,7 +39,9 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
     const StageK1(),
     const StageK2(),
     const StageK3(),
-    const StageK4(),
+    const StageK4(
+      videoUrl: '',
+    ),
     const StageK5(),
   ];
   late final DBHelper dbHelper;

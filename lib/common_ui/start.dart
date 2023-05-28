@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sensor_game/service/audio_manager.dart';
+
+final AudioManager audioManager = AudioManager();
 
 class PopUps {
   final String startMessage;
@@ -80,6 +83,8 @@ class PopUps {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
+          audioManager.clearBGM();
+          audioManager.dispose();
           return AlertDialog(
             title: const Text("성공!"),
             shape: RoundedRectangleBorder(
