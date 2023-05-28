@@ -22,15 +22,12 @@ class _StageK5State extends State<StageK5> {
   int count = 0;
 
   void _onVolumeButtonEvent(String event) {
-    print('볼륨 $event 감지');
     if (event == "다운") {
       setState(() {
         count = count > 0 ? count - 1 : count;
-        print(count);
       });
     } else if (event == "업") {
       count = count < 5 ? count + 1 : count;
-      print(count);
       if (count == 5) {
         popUps.showClearedMessage(context).then((value) {
           if (value == 1) {
@@ -41,8 +38,8 @@ class _StageK5State extends State<StageK5> {
             //메뉴 버튼 코드
           }
         });
-        dbHelper.changeIsAccessible(8, true);
-        dbHelper.changeIsCleared(7, true);
+        dbHelper.changeIsAccessible(16, true);
+        dbHelper.changeIsCleared(15, true);
 
         initStage();
       }

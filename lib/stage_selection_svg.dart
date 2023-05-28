@@ -10,7 +10,11 @@ import 'package:sensor_game/stage/stage_G_1.dart';
 import 'package:sensor_game/stage/stage_G_2.dart';
 import 'package:sensor_game/stage/stage_G_3.dart';
 import 'package:sensor_game/stage/stage_G_4.dart';
-
+import 'package:sensor_game/stage/stage_k_1.dart';
+import 'package:sensor_game/stage/stage_k_2.dart';
+import 'package:sensor_game/stage/stage_k_3.dart';
+import 'package:sensor_game/stage/stage_k_4.dart';
+import 'package:sensor_game/stage/stage_k_5.dart';
 import 'package:sqflite/sqflite.dart';
 
 class StageSelectionMenu extends StatefulWidget {
@@ -31,6 +35,11 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
     const StageG2(),
     const StageG3(),
     const StageG4(),
+    const StageK1(),
+    const StageK2(),
+    const StageK3(),
+    const StageK4(),
+    const StageK5(),
   ];
   late final DBHelper dbHelper;
   late Database db;
@@ -103,9 +112,11 @@ class _RowStageSelectionState extends State<RowStageSelection> {
       padding: const EdgeInsets.all(15),
       scrollDirection: Axis.horizontal,
       itemCount: 30,
-      separatorBuilder: (context, index) => const Divider(
-        height: 20,
-      ),
+      separatorBuilder: (context, index) {
+        return const Divider(
+          height: 20,
+        );
+      },
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {

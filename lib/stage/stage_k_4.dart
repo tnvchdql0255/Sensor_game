@@ -4,6 +4,7 @@ import 'package:sensor_game/common_ui/start.dart';
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:video_player/video_player.dart';
 
 class StageK4 extends StatefulWidget {
   const StageK4({Key? key}) : super(key: key);
@@ -19,16 +20,19 @@ class _StageK4State extends State<StageK4> {
       hints: ["힌트1", "힌트2", "힌트3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
-  String _direction = '';
   String _prevDirection = '';
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
+  late VideoPlayerController _videoController;
+  late Future<void> _initializedController;
 
   @override
   void initState() {
     super.initState();
+    initStage();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       popUps.showStartMessage(context).then((value) => {});
     });
+
     _accelerometerSubscription =
         accelerometerEvents.listen((AccelerometerEvent event) {
       setState(() {
@@ -39,13 +43,7 @@ class _StageK4State extends State<StageK4> {
 
         // 현재 방향을 결정
         String direction = '';
-        if (x.abs() > y.abs() && x.abs() > z.abs()) {
-          if (x > g / 2) {
-            direction = '왼쪽으로 누움';
-          } else if (x < -g / 2) {
-            direction = '오른쪽으로 누움';
-          }
-        } else if (y.abs() > x.abs() && y.abs() > z.abs()) {
+        if (y.abs() > x.abs() && y.abs() > z.abs()) {
           if (y > g / 2) {
             direction = '세로로 서있음';
           } else if (y < -g / 2) {
@@ -63,29 +61,37 @@ class _StageK4State extends State<StageK4> {
         if (_prevDirection == '세로로 서있음' &&
             direction != '세로로 서있음' &&
             (direction == '화면을 위로 두었음' || direction == '화면을 아래로 두었음')) {
-          _direction = '클리어';
-          popUps.showClearedMessage(context).then((value) {
-            if (value == 1) {
-              //다시하기 버튼 코드
-              setState(() {});
-            }
-            if (value == 2) {
-              //메뉴 버튼 코드
-            }
+          _videoController.play();
+
+          Future.delayed(const Duration(milliseconds: 5000), () {
+            popUps.showClearedMessage(context).then((value) {
+              if (value == 1) {
+                _videoController.seekTo(Duration.zero);
+                setState(() {});
+              }
+              if (value == 2) {
+                //메뉴 버튼 코드
+              }
+            });
           });
-          dbHelper.changeIsAccessible(7, true);
-          dbHelper.changeIsCleared(6, true);
-        } else {
-          _direction = direction;
+          dbHelper.changeIsAccessible(14, true);
+          dbHelper.changeIsCleared(13, true);
         }
         _prevDirection = direction;
       });
     });
   }
 
+  void initStage() {
+    _prevDirection = '';
+    _videoController = VideoPlayerController.asset('assets/videos/domino.mp4');
+    _initializedController = _videoController.initialize();
+  }
+
   @override
   void dispose() {
     super.dispose();
+    _videoController.dispose();
     accelerometerEvents.drain();
     _accelerometerSubscription?.cancel();
   }
@@ -93,24 +99,24 @@ class _StageK4State extends State<StageK4> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 171, 171, 171),
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 171, 171, 171),
+        elevation: 0,
         title: const Text('Stage K4'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.screen_rotation,
-              size: 100,
-            ),
-            const SizedBox(height: 30),
-            Text(
-              _direction,
-              style: const TextStyle(fontSize: 30),
-            ),
-          ],
-        ),
+      body: FutureBuilder(
+        future: _initializedController,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return AspectRatio(
+              aspectRatio: _videoController.value.aspectRatio,
+              child: VideoPlayer(_videoController),
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
