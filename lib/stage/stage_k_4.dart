@@ -99,6 +99,31 @@ class _StageK4State extends State<StageK4> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: const Color.fromARGB(255, 209, 223, 243),
+                width: 5,
+                style: BorderStyle.solid)),
+        margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+        child: FloatingActionButton(
+          focusColor: Colors.white54,
+          backgroundColor: const Color.fromARGB(255, 67, 107, 175),
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(
+            Icons.tips_and_updates,
+            color: Color.fromARGB(255, 240, 240, 240),
+            size: 33,
+          ),
+        ),
+      ),
+      //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       backgroundColor: const Color.fromARGB(255, 171, 171, 171),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 171, 171, 171),

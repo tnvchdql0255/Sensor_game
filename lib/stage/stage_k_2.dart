@@ -49,7 +49,7 @@ class _StageK2State extends State<StageK2> {
               audioManager.clearBGM();
               audioManager.dispose();
               // 흔들림 5번 감지되면 클리어
-              _image = 'assets/icons/drop_apple.png';
+              _image = 'assets/images/clear_apple.svg';
               popUps.showClearedMessage(context).then((value) {
                 if (value == 1) {
                   //다시하기 버튼 코드
@@ -107,6 +107,31 @@ class _StageK2State extends State<StageK2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: const Color.fromARGB(255, 209, 223, 243),
+                width: 5,
+                style: BorderStyle.solid)),
+        margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+        child: FloatingActionButton(
+          focusColor: Colors.white54,
+          backgroundColor: const Color.fromARGB(255, 67, 107, 175),
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(
+            Icons.tips_and_updates,
+            color: Color.fromARGB(255, 240, 240, 240),
+            size: 33,
+          ),
+        ),
+      ),
+      //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       appBar: AppBar(
         title: const Text('Stage 3'),
       ),

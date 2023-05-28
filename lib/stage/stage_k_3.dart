@@ -20,7 +20,7 @@ class _StageK3State extends State<StageK3> {
       hints: ["힌트1", "힌트2", "힌트3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
-  double dx = 0, dy = 0;
+  double dx = 180, dy = 400;
   bool isCleared = false;
   List<Color> circleColors = [Colors.red, Colors.blue, Colors.green];
   List<Offset> circleOffsets = [
@@ -155,6 +155,31 @@ class _StageK3State extends State<StageK3> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: const Color.fromARGB(255, 209, 223, 243),
+                width: 5,
+                style: BorderStyle.solid)),
+        margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+        child: FloatingActionButton(
+          focusColor: Colors.white54,
+          backgroundColor: const Color.fromARGB(255, 67, 107, 175),
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(
+            Icons.tips_and_updates,
+            color: Color.fromARGB(255, 240, 240, 240),
+            size: 33,
+          ),
+        ),
+      ),
+      //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       appBar: AppBar(
         title: const Text('StageK3'),
       ),
