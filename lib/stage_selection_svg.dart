@@ -1,15 +1,6 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:sensor_game/stage/stage_L_1.dart';
-import 'package:sensor_game/stage/stage_L_2.dart';
-import 'package:sensor_game/stage/stage_L_3.dart';
-import 'package:sensor_game/stage/stage_L_4.dart';
-import 'package:sensor_game/stage/stage_L_5.dart';
-import 'package:sensor_game/stage/stage_G_1.dart';
-import 'package:sensor_game/stage/stage_G_2.dart';
-import 'package:sensor_game/stage/stage_G_3.dart';
-import 'package:sensor_game/stage/stage_G_4.dart';
 import 'package:sensor_game/stage/stage_k_1.dart';
 import 'package:sensor_game/stage/stage_k_2.dart';
 import 'package:sensor_game/stage/stage_k_3.dart';
@@ -26,15 +17,6 @@ class StageSelectionMenu extends StatefulWidget {
 
 class _StageSelectionMenuState extends State<StageSelectionMenu> {
   List<Widget> stageRoute = [
-    const StageL1(),
-    const StageL2(),
-    const StageL3(),
-    const StageL4(),
-    const StageL5(),
-    const StageG1(),
-    const StageG2(),
-    const StageG3(),
-    const StageG4(),
     const StageK1(),
     const StageK2(),
     const StageK3(),
