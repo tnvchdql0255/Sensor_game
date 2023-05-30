@@ -49,6 +49,12 @@ dependencies:
   sensors_plus: ^3.0.0
   assets_audio_player: ^3.0.6
   video_player: ^2.6.1
+  volume_controller: ^2.0.6
+  flutter_compass: ^0.7.0
+  torch_controller: ^2.0.1
+  
+  
+  
 
 dev_dependencies:
   flutter_test:

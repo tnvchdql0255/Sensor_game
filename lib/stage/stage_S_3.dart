@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import 'package:sensor_game/common_ui/start.dart';
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sqflite/sqflite.dart';
@@ -10,9 +13,13 @@ class StageS3 extends StatefulWidget {
   State<StageS3> createState() => _StageS3State();
 }
 
-class _StageS3State extends State<StageS3> with SingleTickerProviderStateMixin {
+class _StageS3State extends State<StageS3> {
   //스테이지 시작 시, 스테이지 설명을 출력하는 PopUps 클래스의 인스턴스 생성
-  PopUps popUps = const PopUps(startMessage: "스테이지 4", quest: "화산을 터트려라!", hints: ["힌트1", "힌트2", "힌트3"]);
+  PopUps popUps = const PopUps(
+    startMessage: "스테이지 4",
+    quest: "그대로 멈춰라",
+    hints: ["움직이지 않아야 합니다!", "터치도 하면 안돼요!!", "핸드폰을 그대로 두고 5초간 기다려보세요."],
+  );
   DBHelper dbHelper = DBHelper();
   late final Database db;
 
@@ -21,77 +28,146 @@ class _StageS3State extends State<StageS3> with SingleTickerProviderStateMixin {
     db = await dbHelper.db;
   }
 
-  late AnimationController _animationController;  //애니메이션을 위한 AnimationController 클래스의 인스턴스 생성
-  late Animation<double> _animation;   //애니메이션을 위한 Animation 클래스의 인스턴스 생성
+  bool _isFailed = false;
+  Timer? _timer;
+  bool _isTilted = false;
+  bool _isGravityFailed = false;
 
-  final double _swipeThreshold = 200.0;  //화면을 터치한 채로 위로 드래그할 때, 터치한 위치의 y좌표와 현재 위치의 y좌표의 차이를 계산하여 일정 거리 이상 드래그하면 애니메이션을 실행
-  double _initialPositionY = 0.0;        //화면을 터치했을 때, 터치한 위치의 y좌표를 저장
+  final double sensitivity = 0.1;                           //원하는 감도 값. 숫자를 올리면 감도가 떨어짐
 
   @override
   void initState() {
     super.initState();
+    //해당 스테이지가 처음 시작되면, 스테이지 설명을 출력
+    WidgetsBinding.instance.addPostFrameCallback((_) {    
+      popUps.showStartMessage(context);
+    });
+    _startTimer();
+    _startListening();
+  }
 
-    _animationController = AnimationController(  //애니메이션 컨트롤러 생성
-      vsync: this,
-      duration: const Duration(milliseconds: 500),  //애니메이션의 지속시간 설정
-    );
+  void _startTimer() {
+    _timer = Timer(const Duration(seconds: 5), _startTimerCallback);    //5초 후에 _startTimerCallback 함수 실행
+  }
 
-    _animation = Tween<double>(begin: 1.0, end: 0.0).animate(_animationController)  //Tween 클래스를 이용하여 애니메이션의 시작과 끝을 설정
-      ..addListener(() {
-        setState(() {});
+  void _startTimerCallback() {
+    if (_isTilted && !_isGravityFailed) {
+      setState(() {
+        _isFailed = true;                                               //5초 후에 기울임이 감지되면 실패
       });
+      popUps.showfailedMessage(context).then((value) {
+        if (value == 1) {
+          initStage();
+        }
+        if (value == 2) {}
+      });
+    } else if (!_isTilted && !_isGravityFailed) {                       //5초 후에 기울임이 감지되지 않으면 성공
+      popUps.showClearedMessage(context).then((value) {
+        if (value == 1) {
+          initStage();
+        }
+        if (value == 2) {}
+      });
+      dbHelper.changeIsAccessible(18, true);
+      dbHelper.changeIsCleared(17, true);
+    }
+  }
+
+  void _startListening() {
+    gyroscopeEvents.listen((event) {
+      final x = event.x;
+      final y = event.y;
+      final z = event.z;
+
+      if (x >= -sensitivity &&
+          x <= sensitivity &&
+          y >= -sensitivity &&
+          y <= sensitivity &&
+          z >= -sensitivity &&
+          z <= sensitivity) {
+        _isTilted = false;   //
+      } else {
+        _isTilted = true;
+      }
+    });
+  }
+
+  void _stopListening() {
+    _timer?.cancel();
+    gyroscopeEvents.drain();
+  }
+
+  void initStage() {
+    setState(() {
+      _isFailed = false;
+      _isGravityFailed = false;
+      _isTilted = false;
+    });
+    _startListening();
+    _startTimer();
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _timer?.cancel();
     super.dispose();
-  }
-
-  void _onVerticalDragStart(DragStartDetails details) {    //화면을 터치했을 때, 터치한 위치의 y좌표를 저장
-    _initialPositionY = details.globalPosition.dy;  //터치한 위치의 y좌표를 저장
-  }
-
-  void _onVerticalDragUpdate(DragUpdateDetails details) {   //화면을 터치한 채로 위로 드래그할 때, 터치한 위치의 y좌표와 현재 위치의 y좌표의 차이를 계산하여 일정 거리 이상 드래그하면 애니메이션을 실행
-    double dy = details.globalPosition.dy;    //현재 위치의 y좌표를 저장
-    double distance = _initialPositionY - dy;  //터치한 위치의 y좌표와 현재 위치의 y좌표의 차이를 계산하여 저장
-    if (distance.abs() > _swipeThreshold) {   //터치한 위치의 y좌표와 현재 위치의 y좌표의 차이가 일정 거리 이상이면 애니메이션을 실행
-      _animationController.forward();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: const Color.fromARGB(255, 209, 223, 243),
+                width: 5,
+                style: BorderStyle.solid)),
+        margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+        child: FloatingActionButton(
+          focusColor: Colors.white54,
+          backgroundColor: const Color.fromARGB(255, 67, 107, 175),
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(
+            Icons.tips_and_updates,
+            color: Color.fromARGB(255, 240, 240, 240),
+            size: 33,
+          ),
+        ),
+      ),
+      //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       appBar: AppBar(
-        title: const Text('Stage4'),
+        title: const Text('그대로 멈춰라!'),
+        centerTitle: true,
       ),
       body: GestureDetector(
-        onVerticalDragStart: _onVerticalDragStart,  
-        onVerticalDragUpdate: _onVerticalDragUpdate,  
+        onTap: () {
+          setState(() {
+            _isGravityFailed = true;
+            _stopListening();
+          });
+          popUps.showfailedMessage(context).then((value) {
+            if (value == 1) {
+              initStage();
+            }
+            if (value == 2) {}
+          });
+        },
+        behavior: HitTestBehavior.opaque,
         child: Center(
-          child: Stack(
-            children: [
-              Opacity(
-                opacity: _animation.value,
-                child: Image.asset(
-                  'assets/images/volcano_erupt.png',
-                  width: 300,
-                  height: 300,
-                ),
-              ),
-              Opacity(
-                opacity: 1 - _animation.value,
-                child: Image.asset(
-                  'assets/images/volcano.png',
-                  width: 300,
-                  height: 300,
-                ),
-              ),
-            ],
-          ),
+          child: SvgPicture.asset(
+            'assets/images/button.svg',
+              width: 500,
+              height: 500,
+          )
         ),
       ),
     );
   }
 }
+

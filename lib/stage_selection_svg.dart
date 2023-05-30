@@ -15,6 +15,11 @@ import 'package:sensor_game/stage/stage_k_2.dart';
 import 'package:sensor_game/stage/stage_k_3.dart';
 import 'package:sensor_game/stage/stage_k_4.dart';
 import 'package:sensor_game/stage/stage_k_5.dart';
+import 'package:sensor_game/stage/stage_S_1.dart';
+import 'package:sensor_game/stage/stage_S_2.dart';
+import 'package:sensor_game/stage/stage_S_3.dart';
+import 'package:sensor_game/stage/stage_S_4.dart';
+import 'package:sensor_game/stage/stage_S_5.dart';
 import 'package:sqflite/sqflite.dart';
 
 class StageSelectionMenu extends StatefulWidget {
@@ -40,6 +45,11 @@ class _StageSelectionMenuState extends State<StageSelectionMenu> {
     const StageK3(),
     const StageK4(),
     const StageK5(),
+    const StageS1(),
+    const StageS2(),
+    const StageS3(),
+    const StageS4(),
+    const StageS5(),
   ];
   late final DBHelper dbHelper;
   late Database db;

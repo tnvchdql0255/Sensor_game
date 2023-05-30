@@ -47,8 +47,8 @@ class _StageK5State extends State<StageK5> {
               }
             });
           });
-          dbHelper.changeIsAccessible(16, true);
-          dbHelper.changeIsCleared(15, true);
+          dbHelper.changeIsAccessible(15, true);
+          dbHelper.changeIsCleared(14, true);
         }
       });
     }
