@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:sensor_game/service/audio_manager.dart';
-import 'package:sensor_game/stage_selection.dart';
+import 'package:sensor_game/stage_selection_svg.dart';
+
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:vibration/vibration.dart';
@@ -31,6 +32,8 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> {
   StreamSubscription<AccelerometerEvent>? streamSubscription;
   int count = 0;
+  bool isShaked = false;
+  Timer? shakeTimer; // Flag to control shake animation
 
   bool isShaking(AccelerometerEvent event) {
     const double shakeThreshold = 15.0; // 흔들림 감지 임계값
@@ -39,12 +42,33 @@ class _MyHomeState extends State<MyHome> {
         event.z.abs() > shakeThreshold);
   }
 
+  void startShakeTimer() {
+    shakeTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+      setState(() {
+        isShaked = true; // Enable shake animation
+      });
+      Future.delayed(const Duration(milliseconds: 200), () {
+        setState(() {
+          isShaked = false; // Disable shake animation after 0.2 seconds
+        });
+      });
+    });
+  }
+
   //흔들림을 감지하면 StageselectionMenu로 이동
   void startListening() {
     streamSubscription = accelerometerEvents.listen(
       (AccelerometerEvent event) {
         if (isShaking(event)) {
-          Vibration.vibrate(duration: 10); // 0.01초간 진동
+          Vibration.vibrate(duration: 10);
+          setState(() {
+            isShaked = true;
+          }); // 0.01초간 진동
+          Future.delayed(const Duration(milliseconds: 200), () {
+            setState(() {
+              isShaked = false;
+            });
+          });
           count++;
           if (count == 3) {
             pauseMainResource();
@@ -83,12 +107,14 @@ class _MyHomeState extends State<MyHome> {
     super.initState();
     startListening();
     startBGM();
+    startShakeTimer();
   }
 
   @override
   void dispose() {
     streamSubscription?.cancel();
     audioManager.dispose();
+    shakeTimer?.cancel();
     super.dispose();
   }
 
@@ -124,12 +150,21 @@ class _MyHomeState extends State<MyHome> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "Sensor IO",
-                    style: TextStyle(
-                        fontSize: 70,
-                        color: Colors.blue.shade400,
-                        fontWeight: FontWeight.bold),
+                  Align(
+                    alignment: Alignment.center,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 100),
+                      transform: isShaked
+                          ? Matrix4.translationValues(0, 10, 0)
+                          : Matrix4.identity(),
+                      child: Text(
+                        "Sensor IO",
+                        style: TextStyle(
+                            fontSize: 70,
+                            color: Colors.blue.shade400,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -140,10 +175,18 @@ class _MyHomeState extends State<MyHome> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.door_back_door_rounded,
-                    size: 150,
-                    color: Colors.blue.shade300,
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 100),
+                    transform:
+                        isShaked ? Matrix4.rotationZ(-0.2) : Matrix4.identity(),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.door_back_door_rounded,
+                        size: 150,
+                        color: Colors.blue.shade300,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -153,12 +196,17 @@ class _MyHomeState extends State<MyHome> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "스마트폰을 흔들어서 시작하기",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.blue.shade200,
-                        fontWeight: FontWeight.bold),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 100),
+                    transform:
+                        isShaked ? Matrix4.rotationZ(0.2) : Matrix4.identity(),
+                    child: Text(
+                      "스마트폰을 흔들어서 시작하기",
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.blue.shade200,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
