@@ -1,3 +1,4 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:noise_meter/noise_meter.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -26,7 +27,7 @@ class _StageK1State extends State<StageK1> {
   late NoiseMeter _noiseMeter;
   double _decibel = 0.0;
   late NoiseReading noiseReading;
-  late Image _image;
+  late String _image;
 
   void getDB() async {
     db = await dbHelper.db;
@@ -35,7 +36,7 @@ class _StageK1State extends State<StageK1> {
   @override
   void initState() {
     super.initState();
-    _image = Image.asset('assets/icons/sleeping.png');
+    _image = 'assets/images/sleep.svg';
     _noiseMeter = NoiseMeter(onError);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       popUps.showStartMessage(context).then((value) => {start()});
@@ -50,7 +51,7 @@ class _StageK1State extends State<StageK1> {
       _count++;
       if (_count >= 3) {
         stop();
-        _image = Image.asset('assets/icons/get-up.png');
+        _image = 'assets/images/get_up.svg';
         popUps.showClearedMessage(context).then((value) {
           if (value == 1) {
             //다시하기 버튼 코드
@@ -60,8 +61,8 @@ class _StageK1State extends State<StageK1> {
             //메뉴 버튼 코드
           }
         });
-        dbHelper.changeIsAccessible(4, true);
-        dbHelper.changeIsCleared(3, true);
+        dbHelper.changeIsAccessible(11, true);
+        dbHelper.changeIsCleared(10, true);
       }
     } else {
       _count = 0;
@@ -71,7 +72,7 @@ class _StageK1State extends State<StageK1> {
   void initStage() {
     _count = 0;
     setState(() {
-      _image = Image.asset('assets/icons/sleeping.png');
+      _image = 'assets/images/sleep.svg';
     });
     start();
   }
@@ -138,9 +139,34 @@ class _StageK1State extends State<StageK1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: const Color.fromARGB(255, 209, 223, 243),
+                width: 5,
+                style: BorderStyle.solid)),
+        margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+        child: FloatingActionButton(
+          focusColor: Colors.white54,
+          backgroundColor: const Color.fromARGB(255, 67, 107, 175),
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(
+            Icons.tips_and_updates,
+            color: Color.fromARGB(255, 240, 240, 240),
+            size: 33,
+          ),
+        ),
+      ),
+      //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       appBar: AppBar(title: const Text('Stage 2')),
       body: Center(
-        child: _image,
+        child: SvgPicture.asset(_image),
       ),
       // Text(
       //   'Decibel: ${_decibel.toStringAsFixed(2)} dB',

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sensor_game/service/audio_manager.dart';
+
+final AudioManager audioManager = AudioManager();
 
 class PopUps {
   final String startMessage;
@@ -107,6 +110,8 @@ class PopUps {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
+          audioManager.clearBGM();
+          audioManager.dispose();
           return AlertDialog(
               title: const Text("클리어!",
                   style: TextStyle(

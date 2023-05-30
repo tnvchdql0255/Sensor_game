@@ -20,7 +20,8 @@ class _StageK3State extends State<StageK3> {
       hints: ["힌트1", "힌트2", "힌트3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
-  double dx = 150, dy = 250;
+  double dx = 180, dy = 400;
+  bool isCleared = false;
   List<Color> circleColors = [Colors.red, Colors.blue, Colors.green];
   List<Offset> circleOffsets = [
     const Offset(0, 0),
@@ -30,8 +31,17 @@ class _StageK3State extends State<StageK3> {
   late StreamSubscription<GyroscopeEvent> _gyroscopeSubscription;
 
   void initStage() {
+    isCleared = false;
+    var appBarHeight = AppBar().preferredSize.height;
+    var screenHeight = MediaQuery.of(context).size.height;
     dx = MediaQuery.of(context).size.width / 2;
-    dy = MediaQuery.of(context).size.height / 2;
+    dy = (screenHeight - appBarHeight) / 2;
+
+    setInitialCircleOffsets();
+
+    setState(() {
+      circleColors = [Colors.red, Colors.blue, Colors.green];
+    });
   }
 
   void deleteCircle(int index) {
@@ -40,19 +50,47 @@ class _StageK3State extends State<StageK3> {
     });
   }
 
+  //충돌감지 함수
   void checkCollisions() {
     for (int i = 0; i < circleOffsets.length; i++) {
       if (circleColors[i] != Colors.transparent &&
-          distance(circleOffsets[i], Offset(dx, dy)) < 25) {
+          distance(circleOffsets[i], Offset(dx, dy)) < 35) {
         deleteCircle(i);
         break;
       }
+    }
+    //원이 전부 없어지면 클리어
+    if (circleColors.every((color) => color == Colors.transparent) &&
+        !isCleared) {
+      isCleared = true;
+      popUps.showClearedMessage(context).then((value) {
+        if (value == 1) {
+          //다시하기 버튼 코드
+          initStage();
+          setState(() {});
+        }
+        if (value == 2) {
+          //메뉴 버튼 코드
+        }
+      });
+      dbHelper.changeIsAccessible(13, true);
+      dbHelper.changeIsCleared(12, true);
     }
   }
 
   //모든 원이 사라지면 클리어 함수 호출
   void checkClear() {
     if (circleColors.every((color) => color == Colors.transparent)) {
+      popUps.showClearedMessage(context).then((value) {
+        if (value == 1) {
+          //다시하기 버튼 코드
+          initStage();
+          setState(() {});
+        }
+        if (value == 2) {
+          //메뉴 버튼 코드
+        }
+      });
       print("clear");
     }
   }
@@ -62,16 +100,17 @@ class _StageK3State extends State<StageK3> {
     var height = MediaQuery.of(context).size.height;
 
     if (dx <= 0) {
-      dx = 1;
+      dx = 0;
     }
-    if (dx >= width) {
-      dx = width - 1;
+    if (dx >= width - 25) {
+      // 원의 너비(50)를 고려하여 제한
+      dx = width - 25;
     }
     if (dy <= 0) {
-      dy = 1;
+      dy = 0;
     }
     if (dy >= height) {
-      dy = height - 1;
+      dy = height;
     }
   }
 
@@ -79,9 +118,9 @@ class _StageK3State extends State<StageK3> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      popUps.showStartMessage(context);
       initStage();
     });
-    setInitialCircleOffsets();
     _gyroscopeSubscription =
         SensorsPlatform.instance.gyroscopeEvents.listen((event) {
       setState(() {
@@ -116,12 +155,37 @@ class _StageK3State extends State<StageK3> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: const Color.fromARGB(255, 209, 223, 243),
+                width: 5,
+                style: BorderStyle.solid)),
+        margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+        child: FloatingActionButton(
+          focusColor: Colors.white54,
+          backgroundColor: const Color.fromARGB(255, 67, 107, 175),
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(
+            Icons.tips_and_updates,
+            color: Color.fromARGB(255, 240, 240, 240),
+            size: 33,
+          ),
+        ),
+      ),
+      //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       appBar: AppBar(
         title: const Text('StageK3'),
       ),
       body: SizedBox(
-        height: 800,
-        width: 400,
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
             ...circleOffsets.asMap().entries.map((entry) {
