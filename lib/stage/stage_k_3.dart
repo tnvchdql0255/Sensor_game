@@ -15,8 +15,8 @@ class StageK3 extends StatefulWidget {
 
 class _StageK3State extends State<StageK3> {
   PopUps popUps = const PopUps(
-      startMessage: "스테이지 3",
-      quest: "바닥의 쓰레기를 치워라!",
+      startMessage: "스테이지 12",
+      quest: "3개의 원을 없애라!",
       hints: ["힌트1", "힌트2", "힌트3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
@@ -181,7 +181,16 @@ class _StageK3State extends State<StageK3> {
       //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       appBar: AppBar(
-        title: const Text('StageK3'),
+        title: const Text(
+          '3개의 원을 없애라!',
+          style: TextStyle(
+              color: Color.fromARGB(255, 67, 107, 175),
+              fontSize: 28,
+              fontWeight: FontWeight.bold),
+        ),
+        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: const Color(0xfffafafa),
+        elevation: 0.0,
       ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,

@@ -15,7 +15,7 @@ class StageK4 extends StatefulWidget {
 
 class _StageK4State extends State<StageK4> {
   PopUps popUps = const PopUps(
-      startMessage: "스테이지 4",
+      startMessage: "스테이지 13",
       quest: "도미노를 쓰러뜨려라!",
       hints: ["힌트1", "힌트2", "힌트3"]);
   DBHelper dbHelper = DBHelper();
@@ -126,9 +126,16 @@ class _StageK4State extends State<StageK4> {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       backgroundColor: const Color.fromARGB(255, 171, 171, 171),
       appBar: AppBar(
+        title: const Text(
+          '도미노를 쓰러뜨려라!',
+          style: TextStyle(
+              color: Color.fromARGB(255, 67, 107, 175),
+              fontSize: 28,
+              fontWeight: FontWeight.bold),
+        ),
+        iconTheme: const IconThemeData(color: Colors.black),
         backgroundColor: const Color.fromARGB(255, 171, 171, 171),
-        elevation: 0,
-        title: const Text('Stage K4'),
+        elevation: 0.0,
       ),
       body: FutureBuilder(
         future: _initializedController,

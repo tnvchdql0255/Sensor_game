@@ -15,9 +15,9 @@ class StageK1 extends StatefulWidget {
 
 class _StageK1State extends State<StageK1> {
   PopUps popUps = const PopUps(
-      startMessage: "스테이지 2",
+      startMessage: "스테이지 10",
       quest: "자고 있는 사람을 깨워라!",
-      hints: ["큰 소리가 나면 일어날 것 같아요", "소리가", "힌트3"]);
+      hints: ["말을 걸어 보세요", "큰 소리가 나면 일어날 것 같아요", "일어나라고 소리쳐 보세요"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
   late Timer _timer;
@@ -164,7 +164,18 @@ class _StageK1State extends State<StageK1> {
       ),
       //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
-      appBar: AppBar(title: const Text('Stage 2')),
+      appBar: AppBar(
+        title: const Text(
+          '자고 있는 사람을 깨워라!',
+          style: TextStyle(
+              color: Color.fromARGB(255, 67, 107, 175),
+              fontSize: 28,
+              fontWeight: FontWeight.bold),
+        ),
+        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: const Color(0xfffafafa),
+        elevation: 0.0,
+      ),
       body: Center(
         child: SvgPicture.asset(_image),
       ),

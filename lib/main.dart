@@ -138,7 +138,7 @@ class _MyHomeState extends State<MyHome> {
     var textStyle = const TextStyle(
         color: Colors.white, fontSize: 20, fontWeight: FontWeight.w300);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xfffafafa),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(top: 110),
