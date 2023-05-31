@@ -17,7 +17,7 @@ class _StageK1State extends State<StageK1> {
   PopUps popUps = const PopUps(
       startMessage: "스테이지 2",
       quest: "자고 있는 사람을 깨워라!",
-      hints: ["힌트1", "힌트2", "힌트3"]);
+      hints: ["큰 소리가 나면 일어날 것 같아요", "소리가", "힌트3"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
   late Timer _timer;

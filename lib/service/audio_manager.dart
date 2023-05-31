@@ -6,8 +6,8 @@ class AudioManager {
   void startBGM() {
     _assetsAudioPlayer.open(
       Audio("assets/audios/title.mp3"),
-      loopMode: LoopMode.single,
-      // autoStart: true,
+      loopMode: LoopMode.none,
+      autoStart: true,
       showNotification: false,
     );
     _assetsAudioPlayer.play();
@@ -16,8 +16,8 @@ class AudioManager {
   void clearBGM() {
     _assetsAudioPlayer.open(
       Audio("assets/audios/Clear.wav"),
-      loopMode: LoopMode.single,
-      // autoStart: true,
+      loopMode: LoopMode.none,
+      autoStart: true,
       showNotification: false,
     );
     _assetsAudioPlayer.play();

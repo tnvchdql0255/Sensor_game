@@ -33,6 +33,7 @@ class _StageK5State extends State<StageK5> {
       setState(() {
         if (count == 5) {
           imageTimer?.cancel();
+          platform.setMethodCallHandler(null);
           _playerImage = 'assets/images/clear_player.svg';
 
           Future.delayed(const Duration(milliseconds: 500), () {
@@ -65,6 +66,15 @@ class _StageK5State extends State<StageK5> {
     count = 0;
     _playerImage = 'assets/images/initial_player.svg';
     startImageTimer();
+    platform.setMethodCallHandler((call) {
+      if (call.method == 'volumeButtonEventDown') {
+        _onVolumeButtonEvent("다운");
+      }
+      if (call.method == 'volumeButtonEventUp') {
+        _onVolumeButtonEvent("업");
+      }
+      return Future.value(null);
+    });
   }
 
   void startImageTimer() {
@@ -87,15 +97,6 @@ class _StageK5State extends State<StageK5> {
     initStage();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       popUps.showStartMessage(context).then((value) => {});
-    });
-    platform.setMethodCallHandler((call) {
-      if (call.method == 'volumeButtonEventDown') {
-        _onVolumeButtonEvent("다운");
-      }
-      if (call.method == 'volumeButtonEventUp') {
-        _onVolumeButtonEvent("업");
-      }
-      return Future.value(null);
     });
   }
 

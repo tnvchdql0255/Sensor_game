@@ -107,11 +107,10 @@ class PopUps {
   }
 
   Future<dynamic> showClearedMessage(BuildContext context) {
+    audioManager.clearBGM();
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          audioManager.clearBGM();
-          audioManager.dispose();
           return AlertDialog(
               title: const Text("클리어!",
                   style: TextStyle(

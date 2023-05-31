@@ -57,6 +57,8 @@ class _StageG1State extends State<StageG1> {
   //밝기 값을 그만 읽을 때 사용하는 stopListening 함수 생성
   void stopListening() {
     _subscription.cancel();
+    checkLightTimer.cancel();
+    checkClearTimer.cancel();
   }
 
   //밝기 값을 읽어들이는 startListening 함수 생성
