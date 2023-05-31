@@ -80,11 +80,11 @@ class _Stage1State extends State<StageL1> {
       switch (_batteryState) {
         case BatteryState.full:
           currentValue = carChargingSvg;
-          persentage = persentage + 5;
+          persentage = persentage + 10;
           break;
         case BatteryState.charging:
           currentValue = carChargingSvg;
-          persentage = persentage + 5;
+          persentage = persentage + 10;
           break;
         case BatteryState.discharging:
           currentValue = carIdleSvg;
@@ -98,17 +98,19 @@ class _Stage1State extends State<StageL1> {
       }
       if (persentage == 100) {
         timer.cancel();
-        popUps.showClearedMessage(context).then((value) {
-          if (value == 1) {
-            //다시하기 버튼 코드
-            initStage();
-            setState(() {});
-          }
-          if (value == 2) {
-            //메뉴 버튼 코드
-          }
-          dbHelper.changeIsAccessible(2, true);
-          dbHelper.changeIsCleared(1, true);
+        Future.delayed(const Duration(seconds: 1), () {
+          popUps.showClearedMessage(context).then((value) {
+            if (value == 1) {
+              //다시하기 버튼 코드
+              initStage();
+              setState(() {});
+            }
+            if (value == 2) {
+              //메뉴 버튼 코드
+            }
+            dbHelper.changeIsAccessible(2, true);
+            dbHelper.changeIsCleared(1, true);
+          });
         });
       }
     });

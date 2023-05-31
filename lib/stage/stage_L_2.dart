@@ -102,13 +102,16 @@ class _StageL2State extends State<StageL2> {
             currentElevatorState = elevatorOpened;
             pressureSubscription?.cancel();
             setState(() {});
-            popUps.showClearedMessage(context).then((value) {
-              if (value == 1) {
-                initStage();
-                _startReading();
-              }
-              if (value == 2) {}
+            Future.delayed(const Duration(milliseconds: 1700), () {
+              popUps.showClearedMessage(context).then((value) {
+                if (value == 1) {
+                  initStage();
+                  _startReading();
+                }
+                if (value == 2) {}
+              });
             });
+
             dbHelper.changeIsAccessible(3, true);
             dbHelper.changeIsCleared(2, true);
           }
