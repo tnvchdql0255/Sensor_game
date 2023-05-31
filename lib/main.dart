@@ -36,7 +36,7 @@ class _MyHomeState extends State<MyHome> {
   Timer? shakeTimer; // Flag to control shake animation
 
   bool isShaking(AccelerometerEvent event) {
-    const double shakeThreshold = 15.0; // 흔들림 감지 임계값
+    const double shakeThreshold = 10.0; // 흔들림 감지 임계값
     return (event.x.abs() > shakeThreshold ||
         event.y.abs() > shakeThreshold ||
         event.z.abs() > shakeThreshold);
