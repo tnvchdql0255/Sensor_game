@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   viewBox="0 0 316.25 316.25"
+   id="svg1163"
+   sodipodi:docname="compass.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1167" />
+  <sodipodi:namedview
+     id="namedview1165"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="2.4505929"
+     inkscape:cx="147.31129"
+     inkscape:cy="158.125"
+     inkscape:window-width="1920"
+     inkscape:window-height="991"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1163" />
+  <g
+     transform="translate(2.125,2.125)"
+     id="g1161">
+    <g
+       stroke="#000"
+       stroke-width=".25"
+       id="g1115">
+      <path
+         d="m228 156a72 72 0 1 1 -144 0 72 72 0 1 1 144 0z"
+         fill="none"
+         id="path1109" />
+      <path
+         d="m252 156a96 96 0 1 1 -192 0 96 96 0 1 1 192 0z"
+         fill="none"
+         id="path1111" />
+      <path
+         d="m156 60c-53.019 0-96 42.981-96 96s42.981 96 96 96 96-42.981 96-96-42.981-96-96-96zm0 24c39.764 0 72 32.236 72 72s-32.236 72-72 72-72-32.236-72-72 32.236-72 72-72z"
+         fill="#848484"
+         id="path1113" />
+    </g>
+    <g
+       id="g1137">
+      <g
+         fill="#fff"
+         stroke="#000"
+         stroke-width=".25"
+         id="g1125">
+        <path
+           d="m156 156 48-48-48 23"
+           id="path1117" />
+        <path
+           d="m156 156 48 48-23-48"
+           id="path1119" />
+        <path
+           d="m156 156-48 48 48-23"
+           id="path1121" />
+        <path
+           d="m156 156-48-48 23 48"
+           id="path1123" />
+      </g>
+      <g
+         id="g1135">
+        <path
+           d="m156 156 48-48-23 48"
+           id="path1127" />
+        <path
+           d="m156 156 48 48-48-23"
+           id="path1129" />
+        <path
+           d="m156 156-48 48 23-48"
+           id="path1131" />
+        <path
+           d="m156 156-48-48 48 23"
+           id="path1133" />
+      </g>
+    </g>
+    <g
+       id="g1159">
+      <g
+         fill="#fff"
+         stroke="#000"
+         stroke-width=".25"
+         id="g1147">
+        <path
+           d="m156 156-24-24 24-132"
+           id="path1139" />
+        <path
+           d="m156 156 24-24 132 24"
+           id="path1141" />
+        <path
+           d="m156 156 24 24-24 132"
+           id="path1143" />
+        <path
+           d="m156 156-24 24-132-24"
+           id="path1145" />
+      </g>
+      <g
+         id="g1157">
+        <path
+           d="m156 156 24-24-24-132"
+           id="path1149" />
+        <path
+           d="m156 156 24 24 132-24"
+           id="path1151" />
+        <path
+           d="m156 156-24 24 24 132"
+           id="path1153" />
+        <path
+           d="m156 156-24-24-132 24"
+           id="path1155" />
+      </g>
+    </g>
+  </g>
+</svg>

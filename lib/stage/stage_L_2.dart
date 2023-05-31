@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:sqflite/sqflite.dart';
 import '../common_ui/start.dart';
 import '../service/db_manager.dart';
@@ -23,14 +24,18 @@ class _StageL2State extends State<StageL2> {
   bool bgColorState = false;
   PopUps popUps = const PopUps(
       startMessage: "스테이지 2",
-      quest: "표시된 층으로 이동해라!",
-      hints: ["힌트1", "힌트2", "힌트3"]);
+      quest: "엘리베이터 문을 열어라!",
+      hints: ["배경이 초록으로 바뀌면 버튼을 눌러 열수 있습니다", "실제로 가보는건 어때요?", "고도와 관련이 있습니다"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
   void getDB() async {
     db = await dbHelper.db;
   }
 
+  static const String elevatorClosed = "assets/images/elevator_closed.svg";
+  static const String elevatorOpened = "assets/images/elevator_opened.svg";
+  static const String elevatorOpenable = "assets/images/elevator_openable.svg";
+  String currentElevatorState = elevatorClosed;
   @override
   void initState() {
     super.initState();
@@ -56,15 +61,17 @@ class _StageL2State extends State<StageL2> {
         anchorPressure = pressure; //초기 대기압 값을 현재 상태로 초기화
       }
       bgColorState = getCurrentDifference();
-      print("%%%%%%%%%%%still Listening%%%%%%%%%%%%%%%");
+
       setState(() {});
     });
   }
 
   bool getCurrentDifference() {
     if (pressure < anchorPressure - 5 || pressure > anchorPressure + 5) {
+      currentElevatorState = elevatorOpenable;
       return true; //앵커값보다 일정범위 이상 작거나 크면?
     } else {
+      currentElevatorState = elevatorClosed;
       return false; //앵커값과 비슷하면?
     }
   }
@@ -75,7 +82,6 @@ class _StageL2State extends State<StageL2> {
 
   @override
   void dispose() {
-    print("트리에서 제거됨");
     pressureSubscription
         ?.cancel(); //스트림을 해제하지 않고 페이지에서 벗어날시 setState가 스트림채널에 물려 지속적으로 호출되어 에러가 발생한다.
     super.dispose();
@@ -84,43 +90,48 @@ class _StageL2State extends State<StageL2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgColorState ? Colors.green : Colors.red,
+      appBar: AppBar(
+        elevation: 0,
         backgroundColor: bgColorState ? Colors.green : Colors.red,
-        appBar: AppBar(
-          title: const Text("Stage 2"),
+        title: const Text("엘리베이터 문을 열어라!"),
+      ),
+      body: GestureDetector(
+        onTap: () {
+          if (bgColorState) {
+            currentElevatorState = elevatorOpened;
+            pressureSubscription?.cancel();
+            setState(() {});
+            popUps.showClearedMessage(context).then((value) {
+              if (value == 1) {
+                initStage();
+                _startReading();
+              }
+              if (value == 2) {}
+            });
+            dbHelper.changeIsAccessible(3, true);
+            dbHelper.changeIsCleared(2, true);
+          }
+        },
+        child: Stack(
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width, // 최대 너비
+              child: SvgPicture.asset(
+                currentElevatorState,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ],
         ),
-        body: SafeArea(
-          child: Center(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text("$pressure"),
-                  IconButton(
-                    icon: bgColorState
-                        ? const Icon(
-                            Icons.door_sliding_outlined,
-                            color: Colors.blue,
-                            size: 60,
-                          )
-                        : const Icon(
-                            Icons.door_sliding_outlined,
-                            color: Colors.black,
-                            size: 60,
-                          ),
-                    onPressed: () {
-                      if (bgColorState) {
-                        popUps.showClearedMessage(context).then((value) {
-                          if (value == 1) {
-                            initStage();
-                          }
-                          if (value == 2) {}
-                        });
-                        dbHelper.changeIsAccessible(3, true);
-                        dbHelper.changeIsCleared(2, true);
-                      }
-                    },
-                  ),
-                ]),
-          ),
-        ));
+      ),
+      floatingActionButton: FloatingActionButton(
+          tooltip: "힌트",
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(Icons.question_mark)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+    );
   }
 }

@@ -1,8 +1,6 @@
 //패키지 불러오기
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_speech/flutter_speech.dart';
-import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sensor_game/common_ui/start.dart';
@@ -10,13 +8,13 @@ import 'package:sensor_game/service/db_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
 //음성 인식을 특정 언어의 텍스트로 변환할 수 있는 언어 리스트 설정
-const languages = const [
-  const Language('한국어', 'ko_KOR'), //한국어
-  const Language('English', 'en_US'), //영어
-  const Language('Francais', 'fr_FR'), //프랑스어
-  const Language('Pусский', 'ru_RU'), //러시아어
-  const Language('Italiano', 'it_IT'), //이탈리아어
-  const Language('Español', 'es_ES') //스페인어
+const languages = [
+  Language('한국어', 'ko_KOR'), //한국어
+  Language('English', 'en_US'), //영어
+  Language('Francais', 'fr_FR'), //프랑스어
+  Language('Pусский', 'ru_RU'), //러시아어
+  Language('Italiano', 'it_IT'), //이탈리아어
+  Language('Español', 'es_ES') //스페인어
 ];
 
 //언어 설정을 위한 Language 클래스 생성
@@ -26,7 +24,7 @@ class Language {
   const Language(this.name, this.code); //설정한 name과 code를 받아와 저장함
 }
 
-//StatefulWidget을 사용하는 StageG4 클래스 생성
+//StatefulWidget을 사용하는 StageG5 클래스 생성
 class StageG4 extends StatefulWidget {
   const StageG4({super.key});
 
@@ -35,70 +33,26 @@ class StageG4 extends StatefulWidget {
 }
 
 class _StageG4State extends State<StageG4> {
-  String _asset = 'assets/images/stage_G_2_1.svg'; //앵무새의 svg를 저장하는 asset 변수 선언
-  String transcription = ""; //음성 인식 결과를 저장하는 transcription 변수 선언
-  String word = ""; //앵무새가 말하는 단어를 저장하는 word 변수 선언
+  String _asset = 'assets/images/stage_G_5_1.svg'; //동굴의 svg를 저장하는 asset 변수 선언
+  String transcription = ""; //인식한 음성 내용을 저장하는 transcription 변수 선언
+  String word = ""; //동굴을 여는 주문을 저장하는 word 변수 선언
   bool _speechRecognitionAvailable = false; //음성 인식이 가능한지 여부를 체크하는 변수
   bool _isListening = false; //음성 인식을 시작했는지 여부를 체크하는 변수
-  bool _hidingWidget = false; //앵무새가 말하는 단어를 숨기는지 여부를 체크하는 변수
 
-  Language selectedLang = languages.first; //설정한 언어를 저장하는 selectedLang 변수 선언
+  Language selectedLang = languages.first; //언어 설정을 위한 selectedLang 변수 선언
 
-  late Timer checkClearTimer; //클리어 상태를 체크하는 타이머를 위한 변수 선언
-  late Timer hidingTimer; //앵무새가 말하는 단어를 숨기는 타이머를 위한 변수 선언
-  late SpeechRecognition _speech; //음성 인식을 받아오는 _speech 변수 선언
+  late Timer checkClearTimer; //클리어 상태를 체크하는 타이머
+  late SpeechRecognition _speech; //음성 인식을 수행하는 _speech 변수 선언
 
-  //앵무새가 말하는 단어 리스트 생성
-  List<String> _Kor_parrot = [
-    "안녕하세요",
-    "반가워요",
-    "사랑해요",
-    "잘 자요",
-    "행복해요",
-    "안아 주세요"
-  ];
-  List<String> _Eng_parrot = [
-    "hello",
-    "hi",
-    "i love you",
-    "goodbye",
-    "happy",
-    "hug me"
-  ];
-  List<String> _Fr_parrot = [
-    "bonjour", //봉쥬르
-    "enchanté ", //앙샹떼
-    "je t'aime", //쥬뗌므
-    "dors bien", //도르비앙
-    "Je suis heureuse",
-    "Fais-moi un câlin"
-  ];
-  List<String> _Ru_parrot = [
-    "Здравствуйте",
-    "Рад познакомиться",
-    "Люблю",
-    "Спокойной ночи",
-    "Я счастлив",
-    "Обнимите"
-  ];
-  List<String> _It_parrot = [
-    "Salve",
-    "Piacere di conoscerti",
-    "Ti amo",
-    "Buonanotte",
-    "Sono felice",
-    "Abbracciami"
-  ];
-  List<String> _Es_parrot = [
-    "Hola",
-    "Encantada",
-    "Te quiero",
-    "Buenas noches",
-    "Soy feliz",
-    "Dame un abrazo"
-  ];
+  //앵무새의 말 리스트 생성
+  List<String> korSpell = ["열려라 참깨"];
+  List<String> engSpell = ["open sesame"];
+  List<String> frSpell = ["sésame ouvre-toi"];
+  List<String> ruSpell = ["cим-сим откройся"];
+  List<String> itSpell = ["Apriti sesamo"];
+  List<String> esSpell = ["ábrete sésamo"];
 
-  //설정이 가능한 언어들을 리스트로 만들어서 반환하는 _buildLanguagesWidgets 함수 생성
+  //설정 가능한 언어들을 리스트로 만들어서 반환하는 _buildLanguagesWidgets 함수 생성
   List<CheckedPopupMenuItem<Language>> get _buildLanguagesWidgets => languages
       .map((l) => CheckedPopupMenuItem<Language>(
             value: l,
@@ -108,8 +62,12 @@ class _StageG4State extends State<StageG4> {
       .toList();
 
   //스테이지 시작 시, 스테이지 설명을 출력하는 PopUps 클래스의 인스턴스 생성
-  PopUps popUps = const PopUps(
-      startMessage: "스테이지 4", quest: "앵무새의 말을 따라해라!", hints: ["1", "2", "3"]);
+  PopUps popUps =
+      const PopUps(startMessage: "스테이지 5", quest: "동굴 안의 보물을 얻어라!", hints: [
+    "동굴의 문을 열어야만 보물을 얻을 수 있을것 같네요!",
+    "동굴의 문이 꿈쩍도 안 하는 것을 보니 뭔가 특수한 주문을 외쳐야 할 것 같은데요?",
+    "혹시 '알리바바와 40인의 도둑'이라는 이야기를 아시나요?"
+  ]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
 
@@ -120,9 +78,8 @@ class _StageG4State extends State<StageG4> {
 
   //음성 인식이 활성화 될 때 실행되는 activateSpeechRecognizer 함수 생성
   void activateSpeechRecognizer() {
-    //음성 인식이 시작되면 음성을 기록하고, 해당 값을 출력한다
+    //음성을 인식하고, 해당 값을 출력한다
     //출력된 음성은 에러를 확인하고, 에러가 없다면 한국어로 변환한다
-    print('_MyAppState.activateSpeechRecognizer... ');
     _speech = SpeechRecognition();
     _speech.setAvailabilityHandler(onSpeechAvailability);
     _speech.setRecognitionStartedHandler(onRecognitionStarted);
@@ -134,35 +91,35 @@ class _StageG4State extends State<StageG4> {
     });
   }
 
-  //선택한 언어로 설정을 변경하는 _selectLangHandler 함수 생성
+  //언어를 변경할 수 있는 _selectLangHandler 함수 생성
   void _selectLangHandler(Language lang) {
     setState(() => selectedLang = lang);
-    parrotLanguage();
+    spellLanguage(); //언어가 변경될 때마다, 앵무새의 언어 또한 변경
   }
 
-  //언어가 변경될 때마다, 앵무새의 언어 또한 변경하는 parrotLanguage 함수 생성
-  void parrotLanguage() {
+  //언어가 변경될 때마다, 동굴의 주문 또한 변경하는 spellLanguage 함수 생성
+  void spellLanguage() {
     switch (selectedLang.name) {
       case '한국어':
-        word = (_Kor_parrot.toList()..shuffle()).first;
+        word = korSpell.toList().first;
         break;
       case 'English':
-        word = (_Eng_parrot.toList()..shuffle()).first;
+        word = engSpell.toList().first;
         break;
       case 'Francais':
-        word = (_Fr_parrot.toList()..shuffle()).first;
+        word = frSpell.toList().first;
         break;
       case 'Pусский':
-        word = (_Ru_parrot.toList()..shuffle()).first;
+        word = ruSpell.toList().first;
         break;
       case 'Italiano':
-        word = (_It_parrot.toList()..shuffle()).first;
+        word = itSpell.toList().first;
         break;
       case 'Español':
-        word = (_Es_parrot.toList()..shuffle()).first;
+        word = esSpell.toList().first;
         break;
       default:
-        word = (_Kor_parrot.toList()..shuffle()).first;
+        word = korSpell.toList().first;
         break;
     }
   }
@@ -171,7 +128,6 @@ class _StageG4State extends State<StageG4> {
   void start() => _speech.activate(selectedLang.code).then((_) {
         //음성 인식이 시작되면 음성을 기록하고, 해당 값을 출력한다
         return _speech.listen().then((result) {
-          print('_MyAppState.start => result $result');
           setState(() {
             _isListening = result;
           });
@@ -193,7 +149,6 @@ class _StageG4State extends State<StageG4> {
 
   //언어를 선택하게 되면, 음성 인식에 사용되는 언어 코드는 해당 언어의 코드로 바뀜
   void onCurrentLocale(String locale) {
-    print('_MyAppState.onCurrentLocale... $locale');
     setState(
         () => selectedLang = languages.firstWhere((l) => l.code == locale));
   }
@@ -203,15 +158,13 @@ class _StageG4State extends State<StageG4> {
     setState(() => _isListening = true);
   }
 
-  //음성 인식을 한 뒤의 결과는 transcription에 저장됨
+  //음성 인식을 한 뒤의 결과는 transcription 변수에 저장됨
   void onRecognitionResult(String text) {
-    print('_MyAppState.onRecognitionResult... $text');
     setState(() => transcription = text);
   }
 
   //음성 인식 과정이 전부 완료되면 이를 알리고, 음성 인식을 중지
   void onRecognitionComplete(String text) {
-    print('_MyAppState.onRecognitionComplete... $text');
     setState(() => _isListening = false);
   }
 
@@ -223,7 +176,7 @@ class _StageG4State extends State<StageG4> {
   initState() {
     super.initState();
     activateSpeechRecognizer(); //스테이지가 시작될 때, 음성 인식을 활성화
-    parrotLanguage(); //스테이지가 시작될 때, 앵무새의 언어를 설정
+    spellLanguage(); //스테이지가 시작될 때, 주문의 언어를 설정
 
     //1초마다 클리어 상태를 확인하는 타이머 생성
     checkClearTimer =
@@ -231,18 +184,7 @@ class _StageG4State extends State<StageG4> {
       clearStatus();
     });
 
-    //5초마다 위젯을 숨기고 생성하는 타이머 생성
-    hidingTimer = Timer.periodic(const Duration(milliseconds: 5000), (timer) {
-      _hidingWidget = true;
-      _asset = 'assets/images/stage_G_2_1.svg';
-
-      //1.8초 뒤에 위젯을 생성
-      Future.delayed(const Duration(milliseconds: 1800), () {
-        _hidingWidget = false;
-        _asset = 'assets/images/stage_G_2_1.svg';
-      });
-    });
-
+    //스테이지가 시작될 때, 스테이지 설명을 출력
     WidgetsBinding.instance.addPostFrameCallback((_) {
       popUps.showStartMessage(context);
     });
@@ -254,26 +196,32 @@ class _StageG4State extends State<StageG4> {
       if (transcription == word) {
         //클리어 조건을 만족했다면
         checkClearTimer.cancel(); //타이머를 종료
-        hidingTimer.cancel(); //타이머를 종료
-        _hidingWidget = false; //위젯을 생성
+        _asset = 'assets/images/stage_G_5_2.svg'; //동굴이 열리는 그림으로 변경
 
         popUps.showClearedMessage(context).then((value) {
           //클리어 메시지를 출력
           if (value == 1) {
             //다시하기 버튼 코드
-            parrotLanguage();
+            spellLanguage(); //주문의 언어를 다시 설정
+
+            //클리어 여부를 체크하는 타이머를 다시 가동
             checkClearTimer =
                 Timer.periodic(const Duration(milliseconds: 1000), (timer) {
               clearStatus();
             });
-            setState(() {});
+
+            setState(() {
+              //그 외의 요소들을 다시 초기화
+              _asset = 'assets/images/stage_G_5_1.svg';
+              transcription = '';
+            });
           }
           if (value == 2) {
             //메뉴 버튼 코드
             setState(() {});
           }
-          dbHelper.changeIsAccessible(2, true); //스테이지 2를 이용 가능한 것으로 설정
-          dbHelper.changeIsCleared(1, true); //스테이지 1을 클리어한 것으로 설정
+          dbHelper.changeIsAccessible(10, true); //스테이지 10을 이용 가능한 것으로 설정
+          dbHelper.changeIsCleared(9, true); //스테이지 9를 클리어한 것으로 설정
         });
       }
     });
@@ -281,206 +229,179 @@ class _StageG4State extends State<StageG4> {
 
   @override
   void dispose() {
-    super.dispose();
+    //스테이지가 종료될 때
     checkClearTimer.cancel(); //타이머를 종료
+    super.dispose();
   }
 
   //위젯 설정
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.help),
-            onPressed: () {
-              popUps.showHintTabBar(context);
-            }),
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
-        appBar: AppBar(
-          //상단의 타이틀 부분 설정 (가운데 정렬)
-          title: const Text('앵무새의 말을 따라해라!',
-              style: TextStyle(color: Colors.black, fontSize: 25)),
-          centerTitle: true,
-          backgroundColor: Colors.white, elevation: 0,
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
 
-          //오른쪽에 언어 설정 버튼을 추가
-          actions: [
-            PopupMenuButton<Language>(
-              onSelected: _selectLangHandler,
-              itemBuilder: (BuildContext context) => _buildLanguagesWidgets,
-            )
-          ],
+      //힌트를 보여주는 탭바를 생성한다
+      floatingActionButton: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: const Color.fromARGB(255, 209, 223, 243),
+                width: 5,
+                style: BorderStyle.solid)),
+        margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+        child: FloatingActionButton(
+          focusColor: Colors.white54,
+          backgroundColor: const Color.fromARGB(255, 67, 107, 175),
+          onPressed: () {
+            popUps.showHintTabBar(context);
+          },
+          child: const Icon(
+            Icons.tips_and_updates,
+            color: Color.fromARGB(255, 240, 240, 240),
+            size: 33,
+          ),
         ),
-        body: Padding(
-            padding: EdgeInsets.all(8.0), //외부면에는 8 픽셀 만큼의 여백을 주어진다
-            child: Center(
-              //아래의 요소들을 가로로 가운데 정렬
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                      child: Row(children: [
-                    Expanded(
-                      child: _hidingWidget == true
-                          ? Container()
-                          : Container(
-                              padding: const EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 230, 226, 215),
-                                border: Border.all(
-                                    color: Color.fromARGB(255, 178, 176, 161),
-                                    width: 4.0),
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(19),
-                                  bottomLeft: Radius.circular(19),
-                                  bottomRight: Radius.circular(19),
-                                ),
-                              ),
-                              child: Text('$word',
-                                  style: const TextStyle(
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                      fontSize: 18),
-                                  textAlign: TextAlign.center),
-                            ),
-                    ),
-                    Expanded(child: SvgPicture.asset(_asset), flex: 2)
-                  ])),
-                  //Expanded를 사용하여, 음성을 길게 말한 경우 출력 화면을 그만큼 늘린다
-                  Container(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      margin:
-                          const EdgeInsets.only(left: 20, right: 20, bottom: 5),
-                      decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 255, 250, 250),
-                          border: Border.all(
-                              color: Color.fromARGB(255, 255, 184, 184),
-                              width: 4.0),
-                          borderRadius: BorderRadius.all(Radius.circular(19))),
-                      child: Text('$transcription',
-                          style: const TextStyle(
-                              color: Color.fromARGB(255, 0, 0, 0),
-                              fontSize: 25),
-                          textAlign: TextAlign.center),
-                    ),
+      ),
+      //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+
+      //상단의 타이틀 부분 설정
+      appBar: AppBar(
+        title: const Text('동굴 안의 보물을 얻어라!',
+            style: TextStyle(
+                color: Color.fromARGB(255, 163, 137, 122),
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                shadows: <Shadow>[
+                  Shadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 3.0,
+                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
-                  Container(
-                      child: Row(children: [
-                    _buildButton_1(
-                      //음성 인식이 시작된 경우에만 버튼을 활성화
-                      //버튼을 누르면 cancel 함수를 실행하여 음성 인식을 초기화 상태로 전환
-                      onPressed: _isListening ? () => cancel() : null,
-                      label: '초기화하기',
-                      active: _isListening ? true : false,
-                      active_2: _isListening ? "" : "",
-                    ),
-                    _buildButton_2(
-                      //음성 인식이 가능하며, 음성 인식이 시작되지 않은 경우에만 버튼을 활성화
-                      //버튼을 누르면 start 함수를 실행하여 음성 인식을 시작하고 결과를 출력
-                      onPressed: _speechRecognitionAvailable && !_isListening
-                          ? () => start()
-                          : null,
-                      label: _isListening
-                          ? '음성 인식 중...' //음성 인식이 시작될 경우, 텍스트는 '음성 인식 중...'으로 표시
-                          : '(${selectedLang.name}로) 음성 인식 시작하기', //그 외의 경우, 텍스트는 '("선택한 언어"로) 음성 인식 시작하기'로 표시
-                      active: _isListening ? true : false,
-                    ),
-                    _buildButton_3(
-                      //음성 인식이 시작된 경우에만 버튼을 활성화
-                      //버튼을 누르면 stop 함수를 실행하여 음성 인식을 정지함
-                      onPressed: _isListening ? () => stop() : null,
-                      label: '멈추기',
-                    ),
-                  ])),
+                ])),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+
+      //화면에 출력되는 요소들을 설정
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              //동굴의 이미지를 출력
+              Expanded(flex: 4, child: SvgPicture.asset(_asset)),
+
+              //인식한 음성을 말풍선으로 보여주는 위젯
+              Expanded(
+                  flex: 1,
+                  child: transcription == ""
+                      ? Container()
+                      : Container(
+                          alignment: Alignment.center,
+                          margin: const EdgeInsets.only(left: 20, right: 20),
+                          decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              border: Border.all(
+                                  color:
+                                      const Color.fromARGB(255, 163, 137, 122),
+                                  width: 4.0),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(19))),
+                          child: Text('$transcription!',
+                              style: const TextStyle(
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                  fontSize: 25),
+                              textAlign: TextAlign.center),
+                        )),
+
+              //다음의 요소들은 가로로 나열하여 배치함
+              Row(
+                children: [
+                  _selectLangButton(
+                      //버튼을 누르면 언어를 변경할 수 있는 목록을 출력함
+                      item: _buildLanguagesWidgets),
+                  _activeSpeechButton(
+                    //음성 인식이 가능하며, 음성 인식이 시작되지 않은 경우에만 버튼을 활성화
+                    //버튼을 누르면 start 함수를 실행하여 음성 인식을 수행한다
+                    onPressed: _speechRecognitionAvailable && !_isListening
+                        ? () => start()
+                        : null,
+                  ),
+                  _stopSpeechButton(
+                    //음성 인식이 시작된 경우에만 버튼을 활성화
+                    //버튼을 누르면 stop 함수를 실행하여 활성화된 음성 인식을 정지함
+                    onPressed: _isListening ? () => stop() : null,
+                  ),
                 ],
-              ),
-            )),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  //화면 내의 버튼 스타일을 지정하기 위한 _buildButton 함수 생성
-  Widget _buildButton_1(
-          {required String label,
-          required bool active,
-          required String active_2,
-          VoidCallback? onPressed}) =>
-      Expanded(
-          child: TextButton(
-        //버튼에 그림자를 넣는다
-        onPressed: onPressed, //버튼을 누르면 onPressed 함수를 실행한다
-        child: AvatarGlow(
-          glowColor: Color.fromARGB(255, 248, 99, 99),
-          endRadius: 50.0,
-          duration: Duration(milliseconds: 2000),
-          repeat: true,
-          showTwoGlows: true,
-          repeatPauseDuration: Duration(milliseconds: 300),
-          child: Material(
-            // Replace this child with your own
-            elevation: 4.0,
-            shape: CircleBorder(),
-            child: CircleAvatar(
-              backgroundColor: Colors.grey[100],
-              child: Image.asset('assets/images/close.png'),
-              radius: 35.0,
-            ),
+  //변경할 수 있는 언어의 목록을 출력하는 버튼
+  Widget _selectLangButton({required item}) => Expanded(
+          child: PopupMenuButton<Language>(
+        onSelected: _selectLangHandler,
+        itemBuilder: (BuildContext context) => item,
+        child: Ink(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            border: Border.all(
+                width: 5, color: const Color.fromARGB(255, 163, 137, 122)),
+            color: Colors.white,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.g_translate,
+            color: Color.fromARGB(255, 163, 137, 122),
+            size: 50,
           ),
         ),
       ));
 
-  Widget _buildButton_2(
-          {required String label,
-          VoidCallback? onPressed,
-          required bool active}) =>
-      Expanded(
-          child: TextButton(
-        //버튼에 그림자를 넣는다
-        onPressed: onPressed, //버튼을 누르면 onPressed 함수를 실행한다
-        child: AvatarGlow(
-          glowColor: Color.fromARGB(255, 248, 99, 99),
-          endRadius: 70.0,
-          duration: Duration(milliseconds: 2000),
-          repeat: active,
-          showTwoGlows: true,
-          repeatPauseDuration: Duration(milliseconds: 300),
-          child: Material(
-            // Replace this child with your own
-            elevation: 4.0,
-            shape: CircleBorder(),
-            child: CircleAvatar(
-              backgroundColor: Colors.grey[100],
-              child: Image.asset('assets/images/play.png'),
-              radius: 50.0,
-            ),
-          ),
+  //음성 인식을 활성화하는 버튼
+  Widget _activeSpeechButton({VoidCallback? onPressed}) => Padding(
+      padding: const EdgeInsets.only(top: 40, bottom: 40),
+      child: Ink(
+        decoration: BoxDecoration(
+          border: Border.all(
+              width: 5, color: const Color.fromARGB(255, 163, 137, 122)),
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+        child: IconButton(
+          icon: const Icon(Icons.mic),
+          iconSize: 85,
+          color: const Color.fromARGB(255, 163, 137, 122),
+          onPressed: onPressed,
         ),
       ));
 
-  Widget _buildButton_3({required String label, VoidCallback? onPressed}) =>
-      Expanded(
-          child: TextButton(
-        //버튼에 그림자를 넣는다
-        onPressed: onPressed, //버튼을 누르면 onPressed 함수를 실행한다
-        child: AvatarGlow(
-          glowColor: Color.fromARGB(255, 248, 99, 99),
-          endRadius: 50.0,
-          duration: Duration(milliseconds: 2000),
-          repeat: true,
-          showTwoGlows: true,
-          repeatPauseDuration: Duration(milliseconds: 300),
-          child: Material(
-            // Replace this child with your own
-            elevation: 4.0,
-            shape: CircleBorder(),
-            child: CircleAvatar(
-              backgroundColor: Colors.grey[100],
-              child: Image.asset('assets/images/stop.png'),
-              radius: 35.0,
-            ),
-          ),
+  //활성화된 음성 인식을 정지하는 버튼
+  Widget _stopSpeechButton({VoidCallback? onPressed}) => Expanded(
+          child: Ink(
+        decoration: BoxDecoration(
+          border: Border.all(
+              width: 5, color: const Color.fromARGB(255, 163, 137, 122)),
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+        child: IconButton(
+          icon: const Icon(Icons.stop),
+          iconSize: 55,
+          color: const Color.fromARGB(255, 163, 137, 122),
+          onPressed: onPressed,
         ),
       ));
 }
