@@ -61,6 +61,7 @@ class _MyHomeState extends State<MyHome> {
       (AccelerometerEvent event) {
         if (isShaking(event)) {
           Vibration.vibrate(duration: 10);
+          print("흔들림 감지");
           setState(() {
             isShaked = true;
           }); // 0.01초간 진동

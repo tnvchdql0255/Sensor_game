@@ -103,12 +103,29 @@ class _StageL5State extends State<StageL5> {
       body: Center(
         child: themeIcon,
       ),
-      floatingActionButton: FloatingActionButton(
-          tooltip: "힌트",
+      floatingActionButton: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: const Color.fromARGB(255, 209, 223, 243),
+                width: 5,
+                style: BorderStyle.solid)),
+        margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
+        child: FloatingActionButton(
+          focusColor: Colors.white54,
+          backgroundColor: const Color.fromARGB(255, 67, 107, 175),
           onPressed: () {
             popUps.showHintTabBar(context);
           },
-          child: const Icon(Icons.question_mark)),
+          child: const Icon(
+            Icons.tips_and_updates,
+            color: Color.fromARGB(255, 240, 240, 240),
+            size: 33,
+          ),
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     );
   }
