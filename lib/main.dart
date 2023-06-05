@@ -107,7 +107,7 @@ class _MyHomeState extends State<MyHome> {
   void initState() {
     super.initState();
     startListening();
-    startBGM();
+    //startBGM();
     startShakeTimer();
   }
 

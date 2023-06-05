@@ -121,23 +121,34 @@ class _RowStageSelectionState extends State<RowStageSelection> {
     return ListView.separated(
       padding: const EdgeInsets.all(15),
       scrollDirection: Axis.horizontal,
-      itemCount: 30,
+      itemCount: 19,
       separatorBuilder: (context, index) {
         return const Divider(
           height: 20,
         );
       },
       itemBuilder: (context, index) {
+        bool accessible = false;
         return GestureDetector(
           onTap: () {
-            Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => widget.stageRoute[index]))
-                .then((value) => setState(() {}));
+            if (accessible) {
+              Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => widget.stageRoute[index]))
+                  .then((value) => setState(() {}));
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("해당 스테이지는 아직 잠겨있습니다."),
+                duration: Duration(seconds: 1),
+              ));
+            }
           },
           child: FutureBuilder(
             future: getStage(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+                accessible = snapshot.data![index];
                 return Padding(
                   padding: const EdgeInsets.all(10.0),
                   child:
