@@ -17,7 +17,11 @@ class _StageK4State extends State<StageK4> {
   PopUps popUps = const PopUps(
       startMessage: "스테이지 13",
       quest: "도미노를 쓰러뜨려라!",
-      hints: ["힌트1", "힌트2", "힌트3"]);
+      hints: [
+        "실제로 도미노를 쓰러뜨리세요",
+        "주변에 도미노같이 생긴 물체를 찾으세요",
+        "스마트폰이 도미노라고 생각해보세요"
+      ]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
   String _prevDirection = '';
@@ -82,6 +86,7 @@ class _StageK4State extends State<StageK4> {
     });
   }
 
+  // 스테이지 초기화 함수
   void initStage() {
     _prevDirection = '';
     _videoController = VideoPlayerController.asset('assets/videos/domino.mp4');

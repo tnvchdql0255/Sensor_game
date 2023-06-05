@@ -7,7 +7,7 @@ import 'package:sensor_game/service/db_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
 class StageK1 extends StatefulWidget {
-  const StageK1({super.key});
+  const StageK1({Key? key}) : super(key: key);
 
   @override
   State<StageK1> createState() => _StageK1State();
@@ -29,6 +29,7 @@ class _StageK1State extends State<StageK1> {
   late NoiseReading noiseReading;
   late String _image;
 
+  // 데이터베이스 가져오기
   void getDB() async {
     db = await dbHelper.db;
   }
@@ -46,20 +47,23 @@ class _StageK1State extends State<StageK1> {
     });
   }
 
+  // 데시벨 체크 함수
   void checkDecibel() {
     if (_decibel >= 50) {
       _count++;
       if (_count >= 3) {
         stop();
         _image = 'assets/images/get_up.svg';
-        popUps.showClearedMessage(context).then((value) {
-          if (value == 1) {
-            //다시하기 버튼 코드
-            initStage();
-          }
-          if (value == 2) {
-            //메뉴 버튼 코드
-          }
+        Future.delayed(const Duration(milliseconds: 500), () {
+          popUps.showClearedMessage(context).then((value) {
+            if (value == 1) {
+              //다시하기 버튼 코드
+              initStage();
+            }
+            if (value == 2) {
+              //메뉴 버튼 코드
+            }
+          });
         });
         dbHelper.changeIsAccessible(11, true);
         dbHelper.changeIsCleared(10, true);
@@ -69,6 +73,7 @@ class _StageK1State extends State<StageK1> {
     }
   }
 
+  // 스테이지 초기화 함수
   void initStage() {
     _count = 0;
     setState(() {
@@ -83,6 +88,7 @@ class _StageK1State extends State<StageK1> {
     super.dispose();
   }
 
+  // 노이즈 데이터 수신 시 호출되는 콜백 함수
   void onData(NoiseReading noiseReading) {
     setState(() {
       if (!_isRecording) {
@@ -93,11 +99,13 @@ class _StageK1State extends State<StageK1> {
     // print(noiseReading.toString());
   }
 
+  // 녹음 중 에러가 발생했을 때 호출되는 콜백 함수
   void onError(Object error) {
     // print(error.toString());
     _isRecording = false;
   }
 
+  // 녹음 시작 함수
   void start() async {
     try {
       _noiseSubscription = _noiseMeter.noiseStream.listen(onData);
@@ -106,6 +114,7 @@ class _StageK1State extends State<StageK1> {
     }
   }
 
+  // 녹음 정지 함수
   void stop() async {
     try {
       if (_noiseSubscription != null) {
@@ -120,21 +129,6 @@ class _StageK1State extends State<StageK1> {
       // print('stopRecorder error: $err');
     }
   }
-
-  // List<Widget> getContent() => <Widget>[
-  //       Container(
-  //         margin: const EdgeInsets.all(25),
-  //         child: Column(
-  //           children: [
-  //             Container(
-  //               margin: const EdgeInsets.only(top: 20),
-  //               child: Text(_isRecording ? "Mic: ON" : "Mic: OFF",
-  //                   style: const TextStyle(fontSize: 25, color: Colors.blue)),
-  //             )
-  //           ],
-  //         ),
-  //       ),
-  //     ];
 
   @override
   Widget build(BuildContext context) {
@@ -179,16 +173,6 @@ class _StageK1State extends State<StageK1> {
       body: Center(
         child: SvgPicture.asset(_image),
       ),
-      // Text(
-      //   'Decibel: ${_decibel.toStringAsFixed(2)} dB',
-      //   style: const TextStyle(fontSize: 36),
-      // ),
-
-      // floatingActionButton: FloatingActionButton(
-      //     backgroundColor: _isRecording ? Colors.red : Colors.green,
-      //     onPressed: _isRecording ? stop : start,
-      //     child:
-      //         _isRecording ? const Icon(Icons.stop) : const Icon(Icons.mic)),
     );
   }
 }

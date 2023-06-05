@@ -17,7 +17,7 @@ class _StageK5State extends State<StageK5> {
   PopUps popUps = const PopUps(
       startMessage: "스테이지 14",
       quest: "소리가 너무 작아!",
-      hints: ["힌트1", "힌트2", "힌트3"]);
+      hints: ["소리를 키우는 버튼을 찾아보세요", "실제 버튼을 찾아보세요", "없음"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
   static const platform = MethodChannel('com.sensorIO.method');
@@ -25,6 +25,7 @@ class _StageK5State extends State<StageK5> {
   late String _playerImage;
   Timer? imageTimer;
 
+  // 볼륨 버튼 이벤트 처리 함수
   void _onVolumeButtonEvent(String event) {
     if (event == "다운") {
       count = count > 0 ? count - 1 : count;
@@ -62,6 +63,7 @@ class _StageK5State extends State<StageK5> {
     platform.setMethodCallHandler(null);
   }
 
+  // 스테이지 초기화 함수
   void initStage() {
     count = 0;
     _playerImage = 'assets/images/initial_player.svg';
@@ -77,6 +79,7 @@ class _StageK5State extends State<StageK5> {
     });
   }
 
+  // 이미지 변경 타이머 시작 함수
   void startImageTimer() {
     const duration = Duration(seconds: 1);
     bool isInitialPlayer = true;

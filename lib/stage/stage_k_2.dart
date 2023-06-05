@@ -1,15 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sensor_game/common_ui/start.dart';
-import 'package:sensor_game/service/audio_manager.dart';
 import 'package:sensor_game/service/db_manager.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:vibration/vibration.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:video_player/video_player.dart';
-
-AudioManager audioManager = AudioManager();
 
 class StageK2 extends StatefulWidget {
   const StageK2({super.key});
@@ -22,7 +19,7 @@ class _StageK2State extends State<StageK2> {
   PopUps popUps = const PopUps(
       startMessage: "스테이지 11",
       quest: "나무의 사과를 떨어뜨려라!",
-      hints: ["힌트1", "힌트2", "힌트3"]);
+      hints: ["나무를 흔들어보세요", "스마트폰의 나무를 흔드려면 어떡해야 할까요", "없음"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
   late int _count;
@@ -36,6 +33,32 @@ class _StageK2State extends State<StageK2> {
     db = await dbHelper.db;
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    initStage();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      popUps.showStartMessage(context).then((value) => {});
+    });
+    startListening();
+  }
+
+  // 스테이지 초기화 함수
+  void initStage() {
+    _count = 0;
+    _image = 'assets/images/apple.svg';
+  }
+
+  // 가속도계 이벤트를 수신하여 흔들림을 감지하는 함수
+  bool _isShaking(AccelerometerEvent event) {
+    const double shakeThreshold = 15.0; // 흔들림 감지 임계값
+    return (event.x.abs() > shakeThreshold ||
+        event.y.abs() > shakeThreshold ||
+        event.z.abs() > shakeThreshold);
+  }
+
+  // 가속도계 이벤트 수신을 시작하는 함수
   void startListening() {
     _streamSubscription = accelerometerEvents.listen(
       (AccelerometerEvent event) {
@@ -50,15 +73,17 @@ class _StageK2State extends State<StageK2> {
               audioManager.dispose();
               // 흔들림 5번 감지되면 클리어
               _image = 'assets/images/clear_apple.svg';
-              popUps.showClearedMessage(context).then((value) {
-                if (value == 1) {
-                  //다시하기 버튼 코드
-                  initStage();
-                  setState(() {});
-                }
-                if (value == 2) {
-                  //메뉴 버튼 코드
-                }
+              Future.delayed(const Duration(milliseconds: 500), () {
+                popUps.showClearedMessage(context).then((value) {
+                  if (value == 1) {
+                    //다시하기 버튼 코드
+                    initStage();
+                    setState(() {});
+                  }
+                  if (value == 2) {
+                    //메뉴 버튼 코드
+                  }
+                });
               });
               dbHelper.changeIsAccessible(12, true);
               dbHelper.changeIsCleared(11, true);
@@ -69,32 +94,10 @@ class _StageK2State extends State<StageK2> {
     );
   }
 
+  // 가속도계 이벤트 수신을 중지하는 함수
   void stopListening() {
     _streamSubscription?.cancel();
     _streamSubscription = null;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    initStage();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      popUps.showStartMessage(context).then((value) => {});
-    });
-    startListening();
-  }
-
-  void initStage() {
-    _count = 0;
-    _image = 'assets/images/apple.svg';
-  }
-
-  bool _isShaking(AccelerometerEvent event) {
-    const double shakeThreshold = 15.0; // 흔들림 감지 임계값
-    return (event.x.abs() > shakeThreshold ||
-        event.y.abs() > shakeThreshold ||
-        event.z.abs() > shakeThreshold);
   }
 
   @override

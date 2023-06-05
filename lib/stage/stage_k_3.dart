@@ -17,27 +17,31 @@ class _StageK3State extends State<StageK3> {
   PopUps popUps = const PopUps(
       startMessage: "스테이지 12",
       quest: "3개의 원을 없애라!",
-      hints: ["힌트1", "힌트2", "힌트3"]);
+      hints: ["검은 원으로 다른 원과 부딪혀보세요", "없음", "없음"]);
   DBHelper dbHelper = DBHelper();
   late final Database db;
   double dx = 180, dy = 400;
   bool isCleared = false;
-  List<Color> circleColors = [Colors.red, Colors.blue, Colors.green];
+  List<Color> circleColors = [
+    Colors.red,
+    Colors.blue,
+    Colors.green
+  ]; // 원의 색상 목록
   List<Offset> circleOffsets = [
     const Offset(0, 0),
     const Offset(0, 0),
     const Offset(0, 0)
-  ];
+  ]; // 원의 오프셋 목록
   late StreamSubscription<GyroscopeEvent> _gyroscopeSubscription;
 
   void initStage() {
     isCleared = false;
     var appBarHeight = AppBar().preferredSize.height;
     var screenHeight = MediaQuery.of(context).size.height;
-    dx = MediaQuery.of(context).size.width / 2;
-    dy = (screenHeight - appBarHeight) / 2;
+    dx = MediaQuery.of(context).size.width / 2; // x 좌표 계산
+    dy = (screenHeight - appBarHeight) / 2; // y 좌표 계산
 
-    setInitialCircleOffsets();
+    setInitialCircleOffsets(); // 초기 원의 오프셋 설정
 
     setState(() {
       circleColors = [Colors.red, Colors.blue, Colors.green];
@@ -46,49 +50,51 @@ class _StageK3State extends State<StageK3> {
 
   void deleteCircle(int index) {
     setState(() {
-      circleColors[index] = Colors.transparent;
+      circleColors[index] = Colors.transparent; // 해당 인덱스의 원을 투명하게 처리하여 삭제
     });
   }
 
-  //충돌감지 함수
+  // 충돌 감지 함수
   void checkCollisions() {
     for (int i = 0; i < circleOffsets.length; i++) {
       if (circleColors[i] != Colors.transparent &&
           distance(circleOffsets[i], Offset(dx, dy)) < 35) {
-        deleteCircle(i);
+        deleteCircle(i); // 원과 충돌 시 해당 인덱스의 원을 삭제
         break;
       }
     }
-    //원이 전부 없어지면 클리어
+    // 모든 원이 없어지면 클리어
     if (circleColors.every((color) => color == Colors.transparent) &&
         !isCleared) {
       isCleared = true;
-      popUps.showClearedMessage(context).then((value) {
-        if (value == 1) {
-          //다시하기 버튼 코드
-          initStage();
-          setState(() {});
-        }
-        if (value == 2) {
-          //메뉴 버튼 코드
-        }
+      Future.delayed(const Duration(milliseconds: 800), () {
+        popUps.showClearedMessage(context).then((value) {
+          if (value == 1) {
+            // 다시하기 버튼 코드
+            initStage();
+            setState(() {});
+          }
+          if (value == 2) {
+            // 메뉴 버튼 코드
+          }
+        });
       });
       dbHelper.changeIsAccessible(13, true);
       dbHelper.changeIsCleared(12, true);
     }
   }
 
-  //모든 원이 사라지면 클리어 함수 호출
+  // 모든 원이 사라지면 클리어 함수 호출
   void checkClear() {
     if (circleColors.every((color) => color == Colors.transparent)) {
       popUps.showClearedMessage(context).then((value) {
         if (value == 1) {
-          //다시하기 버튼 코드
+          // 다시하기 버튼 코드
           initStage();
           setState(() {});
         }
         if (value == 2) {
-          //메뉴 버튼 코드
+          // 메뉴 버튼 코드
         }
       });
       print("clear");
@@ -119,13 +125,13 @@ class _StageK3State extends State<StageK3> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       popUps.showStartMessage(context);
-      initStage();
+      initStage(); // 스테이지 초기화
     });
     _gyroscopeSubscription =
         SensorsPlatform.instance.gyroscopeEvents.listen((event) {
       setState(() {
-        dx += event.y * 60;
-        dy += event.x * 60;
+        dx += event.y * 60; // 기울기에 따라 x 좌표 조정
+        dy += event.x * 60; // 기울기에 따라 y 좌표 조정
         checkBorder();
         checkCollisions();
       });
@@ -140,16 +146,16 @@ class _StageK3State extends State<StageK3> {
 
   void setInitialCircleOffsets() {
     Random random = Random();
-    circleOffsets[0] =
-        Offset(random.nextDouble() * 300, random.nextDouble() * 500);
-    circleOffsets[1] =
-        Offset(random.nextDouble() * 300, random.nextDouble() * 500);
-    circleOffsets[2] =
-        Offset(random.nextDouble() * 300, random.nextDouble() * 500);
+    circleOffsets[0] = Offset(random.nextDouble() * 300,
+        random.nextDouble() * 500); // 첫 번째 원의 초기 오프셋 설정
+    circleOffsets[1] = Offset(random.nextDouble() * 300,
+        random.nextDouble() * 500); // 두 번째 원의 초기 오프셋 설정
+    circleOffsets[2] = Offset(random.nextDouble() * 300,
+        random.nextDouble() * 500); // 세 번째 원의 초기 오프셋 설정
   }
 
   double distance(Offset a, Offset b) {
-    return (a - b).distance;
+    return (a - b).distance; // 두 점 사이의 거리 계산
   }
 
   @override
@@ -159,17 +165,19 @@ class _StageK3State extends State<StageK3> {
         width: 57,
         height: 57,
         decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-                color: const Color.fromARGB(255, 209, 223, 243),
-                width: 5,
-                style: BorderStyle.solid)),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: const Color.fromARGB(255, 209, 223, 243),
+            width: 5,
+            style: BorderStyle.solid,
+          ),
+        ),
         margin: const EdgeInsets.fromLTRB(0, 70, 0, 0),
         child: FloatingActionButton(
           focusColor: Colors.white54,
           backgroundColor: const Color.fromARGB(255, 67, 107, 175),
           onPressed: () {
-            popUps.showHintTabBar(context);
+            popUps.showHintTabBar(context); // 힌트 탭바 보여주기
           },
           child: const Icon(
             Icons.tips_and_updates,
@@ -178,7 +186,7 @@ class _StageK3State extends State<StageK3> {
           ),
         ),
       ),
-      //힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
+      // 힌트를 보여주는 탭바는 화면의 오른쪽 상단에 위치한다
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       appBar: AppBar(
         title: const Text(
