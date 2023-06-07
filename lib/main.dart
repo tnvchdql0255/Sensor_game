@@ -60,7 +60,7 @@ class _MyHomeState extends State<MyHome> {
     streamSubscription = accelerometerEvents.listen(
       (AccelerometerEvent event) {
         if (isShaking(event)) {
-          Vibration.vibrate(duration: 10);
+          Vibration.vibrate(duration: 500, amplitude: 125);
           print("흔들림 감지");
           setState(() {
             isShaked = true;

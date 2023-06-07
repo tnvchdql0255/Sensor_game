@@ -131,6 +131,7 @@ class _RowStageSelectionState extends State<RowStageSelection> {
         bool accessible = false;
         return GestureDetector(
           onTap: () {
+            print(accessible);
             if (accessible) {
               Navigator.push(
                       context,
@@ -139,7 +140,16 @@ class _RowStageSelectionState extends State<RowStageSelection> {
                   .then((value) => setState(() {}));
             } else {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("해당 스테이지는 아직 잠겨있습니다."),
+                backgroundColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                content: Text(
+                  "해당 스테이지는 아직 잠겨있습니다.",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
                 duration: Duration(seconds: 1),
               ));
             }
